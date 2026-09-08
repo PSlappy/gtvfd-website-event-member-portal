@@ -25,8 +25,10 @@ should be reviewed via live preview before moving to the next. Sequence:
 7. Donations + Contact + Rental pages
 8. Auth, event signup, admin panel (separate phase — see data model below)
 
-**Status:** Stage 1 (JumbotronFrame shell) has been prompted for; confirm
-whether it's built and approved before continuing to stage 2.
+**Status:** Stage 1 (JumbotronFrame shell) is built — full-viewport
+bezel frame with internal scroll, verified in-browser at desktop and
+mobile widths. Awaiting approval before starting stage 2
+(NextEventTicker).
 
 ## Project organization
 
