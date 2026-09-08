@@ -19,7 +19,7 @@ Building page-by-page / section-by-section rather than all at once, with
 each stage reviewed via live preview before moving on:
 
 1. ✅ Foundation — `JumbotronFrame` shell
-2. ⬜ `NextEventTicker` (persistent bottom bar) with placeholder data
+2. ✅ `NextEventTicker` (persistent bottom bar) with placeholder data
 3. ⬜ Home / Instagram carousel
 4. ⬜ Nav + page-swap transitions
 5. ⬜ Schedule page content

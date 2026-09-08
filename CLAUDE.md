@@ -17,7 +17,7 @@ Building page-by-page / section-by-section, not all at once. Each stage
 should be reviewed via live preview before moving to the next. Sequence:
 
 1. Foundation — JumbotronFrame shell (DONE — see status below)
-2. NextEventTicker (persistent bottom bar) with placeholder data
+2. NextEventTicker (persistent bottom bar) with placeholder data (DONE)
 3. Home / Instagram carousel (manual arrows + scroll-to-advance)
 4. Nav + page-swap transitions (broadcast-style cut/wipe)
 5. Schedule page content
@@ -25,10 +25,13 @@ should be reviewed via live preview before moving to the next. Sequence:
 7. Donations + Contact + Rental pages
 8. Auth, event signup, admin panel (separate phase — see data model below)
 
-**Status:** Stage 1 (JumbotronFrame shell) is built — full-viewport
-bezel frame with internal scroll, verified in-browser at desktop and
-mobile widths. Awaiting approval before starting stage 2
-(NextEventTicker).
+**Status:** Stages 1–2 are built. JumbotronFrame now lives in the root
+layout (not per-page) so the nav bar, brand strip, and NextEventTicker
+stay mounted across page navigation. NextEventTicker pulls the next
+upcoming tailgate from a placeholder 2026 schedule
+(`lib/schedule.ts`) — kickoff/tailgate-start times show as TBD since
+the conference hasn't announced them. Awaiting approval before
+starting stage 3 (Home / Instagram carousel).
 
 ## Project organization
 
