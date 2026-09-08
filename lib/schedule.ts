@@ -44,12 +44,17 @@ export const schedule2026: ScheduleGame[] = rawSchedule2026.map((game) => ({
   address: "TBD",
 }));
 
-export function getNextTailgate(
+/**
+ * The next game overall (home or away) — not filtered to tailgate
+ * games, since the ticker needs to show "No Tailgate" for an upcoming
+ * away game rather than skip straight to the next home game.
+ */
+export function getNextGame(
   referenceDate: Date = new Date(),
 ): ScheduleGame | null {
   const todayStr = referenceDate.toISOString().slice(0, 10);
   const upcoming = schedule2026
-    .filter((game) => game.tailgate && game.date >= todayStr)
+    .filter((game) => game.date >= todayStr)
     .sort((a, b) => a.date.localeCompare(b.date));
   return upcoming[0] ?? null;
 }
@@ -61,4 +66,18 @@ export function formatGameDate(dateStr: string): string {
     month: "short",
     day: "numeric",
   }).format(date);
+}
+
+/**
+ * Scoreboard convention: home team on the left panel, visiting team on
+ * the right — so which side GT lands on flips depending on whether
+ * this game is home or away.
+ */
+export function getTeamPanels(game: ScheduleGame): {
+  left: string;
+  right: string;
+} {
+  return game.location === "Home"
+    ? { left: "GT", right: game.opponent }
+    : { left: game.opponent, right: "GT" };
 }

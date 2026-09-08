@@ -144,3 +144,39 @@ body {
     animation: none;
   }
 }
+
+/*
+ * Jumbotron button — a chunky, beveled scoreboard-graphics button that
+ * lifts toward the viewer on hover and presses back on click. Uses
+ * `transition`, not `animation`, so it composes safely with
+ * .gt-display-in on the same element (see the note above the LED-glow
+ * classes about the animation-shorthand collision).
+ */
+.gt-jumbotron-btn {
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+  box-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.6),
+    0 5px 10px rgba(0, 0, 0, 0.45);
+}
+
+.gt-jumbotron-btn:hover {
+  transform: perspective(300px) rotateX(4deg) translateY(-2px);
+  box-shadow:
+    0 5px 0 rgba(0, 0, 0, 0.6),
+    0 10px 18px rgba(0, 0, 0, 0.5);
+}
+
+.gt-jumbotron-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-jumbotron-btn {
+    transition: none;
+  }
+}
