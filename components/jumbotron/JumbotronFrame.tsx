@@ -26,14 +26,14 @@ export default function JumbotronFrame({
 }) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black p-2 sm:p-4">
-      <div className="flex h-full w-full flex-col overflow-hidden rounded-md border-[3px] border-zinc-400 bg-black sm:border-4">
+      <div className="flex h-full w-full flex-col overflow-hidden rounded-md border-[3px] border-gt-gold bg-black sm:border-4">
         {/* nav bar */}
-        <div className="flex shrink-0 items-center justify-center border-b-[3px] border-zinc-400 bg-zinc-900 px-4 py-3 sm:border-b-4 sm:py-4">
+        <div className="flex shrink-0 items-center justify-center border-b-[3px] border-gt-gold bg-gt-navy px-4 py-3 sm:border-b-4 sm:py-4">
           {nav}
         </div>
 
         {/* home-team brand strip */}
-        <div className="flex shrink-0 items-center justify-center border-b-[3px] border-zinc-400 bg-black px-4 py-4 sm:border-b-4 sm:py-6">
+        <div className="flex shrink-0 items-center justify-center border-b-[3px] border-gt-gold bg-black px-4 py-4 sm:border-b-4 sm:py-6">
           {brand}
         </div>
 
@@ -43,11 +43,11 @@ export default function JumbotronFrame({
         </div>
 
         {/* bottom info bar: home team / event info / opponent */}
-        <div className="grid shrink-0 grid-cols-3 border-t-[3px] border-zinc-400 bg-zinc-900 sm:border-t-4">
-          <div className="flex items-center justify-center border-r-[3px] border-zinc-400 px-3 py-3 sm:border-r-4 sm:py-4">
+        <div className="grid shrink-0 grid-cols-3 border-t-[3px] border-gt-gold bg-gt-navy sm:border-t-4">
+          <div className="flex items-center justify-center border-r-[3px] border-gt-gold px-3 py-3 sm:border-r-4 sm:py-4">
             {bottomBarLeft}
           </div>
-          <div className="flex items-center justify-center border-r-[3px] border-zinc-400 px-3 py-3 sm:border-r-4 sm:py-4">
+          <div className="flex items-center justify-center border-r-[3px] border-gt-gold px-3 py-3 sm:border-r-4 sm:py-4">
             {bottomBarCenter}
           </div>
           <div className="flex items-center justify-center px-3 py-3 sm:py-4">

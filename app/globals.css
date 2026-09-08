@@ -3,11 +3,25 @@
 :root {
   --background: #000000;
   --foreground: #ededed;
+
+  /*
+   * Georgia Tech Athletics brand colors, per the official guidelines
+   * (ramblinwreck.com/georgia-tech-athletics-brand-guidelines). Gold and
+   * white are the primary identity colors; navy is the accent.
+   */
+  --gt-gold: #b39051;
+  --gt-navy: #051e39;
+  --gt-gray-dark: #545454;
+  --gt-gray-light: #e5e5e5;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-gt-gold: var(--gt-gold);
+  --color-gt-navy: var(--gt-navy);
+  --color-gt-gray-dark: var(--gt-gray-dark);
+  --color-gt-gray-light: var(--gt-gray-light);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
