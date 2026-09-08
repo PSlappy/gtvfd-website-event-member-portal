@@ -8,11 +8,13 @@ export default function Home() {
           Navigation Bar &mdash; coming in stage 4
         </span>
       }
+      brand={
+        <h1 className="text-3xl font-black uppercase tracking-widest text-white sm:text-5xl">
+          Ramblin&rsquo; Wreck
+        </h1>
+      }
       main={
         <div className="flex min-h-full flex-col items-center justify-center gap-6 px-6 py-16 text-center">
-          <h1 className="text-4xl font-black uppercase tracking-widest text-white sm:text-6xl">
-            Ramblin&rsquo; Wreck
-          </h1>
           <p className="max-w-md text-sm uppercase tracking-[0.3em] text-zinc-400 sm:text-base">
             Stage 1 &mdash; Jumbotron Frame Shell
           </p>
