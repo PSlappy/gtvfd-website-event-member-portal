@@ -1,31 +1,48 @@
 import type { ReactNode } from "react";
 
 /**
- * Full-viewport shell styled like a stadium video board. The outer page
- * never scrolls — if a page's content overflows, the main display area
- * scrolls internally while the bezel and bottom bar stay fixed.
+ * Full-viewport shell styled like a stadium video board: a nav bar strip,
+ * the main screen, and a bottom info bar split into three panels (home
+ * team / event info / opponent). The outer page never scrolls — if a
+ * page's content overflows, only the main screen scrolls internally,
+ * while the frame, nav bar, and bottom bar stay fixed.
  */
 export default function JumbotronFrame({
+  nav,
   main,
-  bottomBar,
+  bottomBarLeft,
+  bottomBarCenter,
+  bottomBarRight,
 }: {
+  nav: ReactNode;
   main: ReactNode;
-  bottomBar: ReactNode;
+  bottomBarLeft: ReactNode;
+  bottomBarCenter: ReactNode;
+  bottomBarRight: ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black p-2 sm:p-4 md:p-6">
-      <div
-        className="relative flex h-full w-full flex-col overflow-hidden rounded-xl border-4 border-zinc-700 bg-gradient-to-b from-zinc-800 via-zinc-900 to-black shadow-[0_0_60px_rgba(0,0,0,0.8)] sm:rounded-2xl sm:border-[6px]"
-        style={{
-          boxShadow:
-            "inset 0 0 0 2px rgba(255,255,255,0.05), inset 0 2px 12px rgba(0,0,0,0.6), 0 0 80px rgba(0,0,0,0.9)",
-        }}
-      >
-        {/* screen */}
-        <div className="relative m-1.5 flex flex-1 flex-col overflow-hidden rounded-lg bg-black sm:m-2">
-          <div className="flex-1 overflow-y-auto overflow-x-hidden">{main}</div>
-          <div className="shrink-0 border-t-2 border-zinc-800 bg-zinc-950">
-            {bottomBar}
+    <div className="fixed inset-0 flex items-center justify-center bg-black p-2 sm:p-4">
+      <div className="flex h-full w-full flex-col overflow-hidden rounded-md border-[3px] border-zinc-400 bg-black sm:border-4">
+        {/* nav bar */}
+        <div className="flex shrink-0 items-center justify-center border-b-[3px] border-zinc-400 bg-zinc-900 px-4 py-3 sm:border-b-4 sm:py-4">
+          {nav}
+        </div>
+
+        {/* main screen */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden bg-black">
+          {main}
+        </div>
+
+        {/* bottom info bar: home team / event info / opponent */}
+        <div className="grid shrink-0 grid-cols-3 border-t-[3px] border-zinc-400 bg-zinc-900 sm:border-t-4">
+          <div className="flex items-center justify-center border-r-[3px] border-zinc-400 px-3 py-3 sm:border-r-4 sm:py-4">
+            {bottomBarLeft}
+          </div>
+          <div className="flex items-center justify-center border-r-[3px] border-zinc-400 px-3 py-3 sm:border-r-4 sm:py-4">
+            {bottomBarCenter}
+          </div>
+          <div className="flex items-center justify-center px-3 py-3 sm:py-4">
+            {bottomBarRight}
           </div>
         </div>
       </div>

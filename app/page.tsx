@@ -3,6 +3,11 @@ import JumbotronFrame from "@/components/jumbotron/JumbotronFrame";
 export default function Home() {
   return (
     <JumbotronFrame
+      nav={
+        <span className="text-xs font-bold uppercase tracking-[0.3em] text-zinc-400 sm:text-sm">
+          Navigation Bar &mdash; coming in stage 4
+        </span>
+      }
       main={
         <div className="flex min-h-full flex-col items-center justify-center gap-6 px-6 py-16 text-center">
           <h1 className="text-4xl font-black uppercase tracking-widest text-white sm:text-6xl">
@@ -25,12 +30,22 @@ export default function Home() {
           </div>
         </div>
       }
-      bottomBar={
-        <div className="flex items-center justify-center px-4 py-3 sm:py-4">
-          <span className="text-xs uppercase tracking-[0.3em] text-zinc-600 sm:text-sm">
-            Next event ticker &mdash; coming in stage 2
-          </span>
-        </div>
+      bottomBarLeft={
+        <span className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-300 sm:text-sm">
+          GT
+        </span>
+      }
+      bottomBarCenter={
+        <span className="text-center text-[10px] uppercase leading-tight tracking-[0.15em] text-zinc-400 sm:text-xs">
+          Next event ticker
+          <br />
+          coming in stage 2
+        </span>
+      }
+      bottomBarRight={
+        <span className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-300 sm:text-sm">
+          Opponent
+        </span>
       }
     />
   );
