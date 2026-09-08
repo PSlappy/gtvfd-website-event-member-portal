@@ -35,3 +35,64 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/*
+ * Ambient screen effects for the JumbotronFrame shell: an LED pixel
+ * grid with a faint flicker, a slow scanning light sweep across the
+ * main screen, and a soft glow bleeding off the frame edges — sold as
+ * "a real video board is on", not just a styled rectangle.
+ */
+@keyframes gt-led-flicker {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes gt-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+@keyframes gt-scan-sweep {
+  0% {
+    transform: translateY(-120%);
+  }
+  100% {
+    transform: translateY(220%);
+  }
+}
+
+.gt-pixel-grid {
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.6) 0.6px,
+    transparent 0.6px
+  );
+  background-size: 3px 3px;
+  animation: gt-led-flicker 5s ease-in-out infinite;
+}
+
+.gt-glow {
+  animation: gt-glow-pulse 6s ease-in-out infinite;
+}
+
+.gt-scan-sweep {
+  animation: gt-scan-sweep 9s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-pixel-grid,
+  .gt-glow,
+  .gt-scan-sweep {
+    animation: none;
+  }
+}
