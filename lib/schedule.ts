@@ -45,16 +45,18 @@ export const schedule2026: ScheduleGame[] = rawSchedule2026.map((game) => ({
 }));
 
 /**
- * The next game overall (home or away) — not filtered to tailgate
- * games, since the ticker needs to show "No Tailgate" for an upcoming
- * away game rather than skip straight to the next home game.
+ * The bottom bar only ever shows the next home game — away games don't
+ * have a crew tailgate, so there's nothing for it to display. A home
+ * game can still be missing a tailgate (game.tailgate false) if the
+ * admin hasn't created one yet; that's handled separately by
+ * NextEventTicker, not by this filter.
  */
-export function getNextGame(
+export function getNextHomeGame(
   referenceDate: Date = new Date(),
 ): ScheduleGame | null {
   const todayStr = referenceDate.toISOString().slice(0, 10);
   const upcoming = schedule2026
-    .filter((game) => game.date >= todayStr)
+    .filter((game) => game.location === "Home" && game.date >= todayStr)
     .sort((a, b) => a.date.localeCompare(b.date));
   return upcoming[0] ?? null;
 }
@@ -66,18 +68,4 @@ export function formatGameDate(dateStr: string): string {
     month: "short",
     day: "numeric",
   }).format(date);
-}
-
-/**
- * Scoreboard convention: home team on the left panel, visiting team on
- * the right — so which side GT lands on flips depending on whether
- * this game is home or away.
- */
-export function getTeamPanels(game: ScheduleGame): {
-  left: string;
-  right: string;
-} {
-  return game.location === "Home"
-    ? { left: "GT", right: game.opponent }
-    : { left: game.opponent, right: "GT" };
 }
