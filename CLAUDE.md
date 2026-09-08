@@ -28,10 +28,17 @@ should be reviewed via live preview before moving to the next. Sequence:
 **Status:** Stages 1–2 are built. JumbotronFrame now lives in the root
 layout (not per-page) so the nav bar, brand strip, and NextEventTicker
 stay mounted across page navigation. NextEventTicker pulls the next
-upcoming tailgate from a placeholder 2026 schedule
-(`lib/schedule.ts`) — kickoff/tailgate-start times show as TBD since
-the conference hasn't announced them. Awaiting approval before
-starting stage 3 (Home / Instagram carousel).
+upcoming home game from a placeholder 2026 schedule (`lib/schedule.ts`)
+— kickoff/tailgate-start times show as TBD since the conference hasn't
+announced them. Stage 2 also pulled forward minimal versions of the
+Schedule page (`/schedule`) and a signup placeholder (`/signup`) so
+the ticker's buttons have somewhere real to go.
+
+Stage 3 (Home / Instagram carousel) is **blocked on Instagram Graph
+API credentials** — see the Recommended Stack note below for why the
+embed-widget fallback doesn't work. Once there's a long-lived access
+token and Instagram Business Account ID (`.env.example` documents
+what's needed), the carousel itself is ready to build.
 
 ## Project organization
 
@@ -194,8 +201,13 @@ Next.js (App Router, TypeScript) + Tailwind CSS + Framer Motion
 (animation library — unrelated to the Framer website builder) for the
 front end. Supabase for auth + Postgres database (member accounts,
 events, signups). Vercel for hosting. Gmail + Google Apps Script for
-email/calendar-invite automation. Instagram Basic Display API (or embed
-fallback) for the carousel content.
+email/calendar-invite automation. Instagram Graph API for the carousel
+content — not Basic Display API (deprecated) and not the public embed
+widget (tested during stage 3: only the profile card embed works,
+individual post embeds return 503, so it can't power a real per-post
+carousel). Requires a Meta developer app + a Business/Creator Instagram
+account linked to a Facebook Page; see the stage 3 status note above
+and `.env.example` for the credentials needed.
 
 ## Payments (not yet built)
 Amenities fee ($25/person) and donations are currently collected
