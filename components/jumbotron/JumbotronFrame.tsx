@@ -29,7 +29,7 @@ export default function JumbotronFrame({
       {/* ambient light bleeding off the video board onto the dark room */}
       <div
         aria-hidden
-        className="gt-glow pointer-events-none absolute inset-2 -z-10 rounded-md bg-gt-gold/25 blur-[70px] sm:inset-4"
+        className="gt-glow pointer-events-none absolute inset-2 -z-10 rounded-md bg-gt-gold/35 blur-[90px] sm:inset-4"
       />
 
       <div className="relative flex h-full w-full flex-col overflow-hidden rounded-md border-[3px] border-gt-gold bg-black sm:border-4">
