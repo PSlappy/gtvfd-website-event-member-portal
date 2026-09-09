@@ -9,9 +9,12 @@ const variantClasses = {
 } as const;
 
 /**
- * A chunky, beveled "scoreboard graphics" button — lifts on hover and
- * presses down on click. Used for on-screen calls to action like
- * Sign-Up and Full Schedule.
+ * The site's only two calls to action (Sign-Up, Full Schedule) — a
+ * pill-shaped "scoreboard graphics" button matching the Mute/Replay
+ * controls' shape, lifts on hover and presses down on click, pulses
+ * continuously to read as "act now" (see `.gt-jumbotron-btn-cta` in
+ * globals.css — that pulse is deliberately reserved for just these
+ * two buttons, not every button on the page).
  */
 export default function JumbotronButton({
   href,
@@ -27,7 +30,7 @@ export default function JumbotronButton({
   return (
     <Link
       href={href}
-      className={`gt-jumbotron-btn inline-block whitespace-nowrap rounded border-2 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] sm:text-xs ${variantClasses[variant]} ${className}`}
+      className={`gt-jumbotron-btn gt-jumbotron-btn-cta inline-block whitespace-nowrap rounded-full border-2 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] sm:text-xs ${variantClasses[variant]} ${className}`}
     >
       {children}
     </Link>

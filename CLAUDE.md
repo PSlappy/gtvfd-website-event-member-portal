@@ -250,6 +250,37 @@ button just disappeared into its own background. Sign-Up stays the
 gold variant. If a "navy" variant is needed again later, re-add it
 rather than assuming it still exists.
 
+**All buttons now share one pill-shaped design (Mute/Replay's), and
+the continuous pulse is reserved for Sign-Up/Full Schedule only.**
+Per the owner, every button should look like the `JumbotronCrawl`
+Mute/Replay controls (`rounded-full`, not the old slightly-rounded
+rectangle) — `JumbotronButton` and the Contact/Book Us submit buttons
+were switched to `rounded-full`. The About page's Featured In cards
+were deliberately left as `rounded-lg`: they're multi-line content
+cards sharing `.gt-jumbotron-btn` for the hover/press/glow mechanics,
+not literal buttons, and a full pill shape would look wrong on
+wrapped text.
+
+The pulse itself is now split out into `.gt-jumbotron-btn-cta`, a
+compound-selector modifier (`.gt-jumbotron-btn.gt-jumbotron-btn-cta`)
+so it reliably overrides the base animation regardless of rule order.
+Only `JumbotronButton` (Sign-Up, Full Schedule) applies it — Mute,
+Replay, the Featured In cards, and the form submit buttons all keep
+the one-time pop-in entrance but stay still once settled, so the
+pulse reads as "act now" on the two actual calls to action instead of
+every button on the page pulsing forever.
+
+**Fixed a real bug: the LED grid was invisible on pure-black panels.**
+`mix-blend-mode: overlay` mathematically cannot lighten a pure black
+backdrop — `overlay(0, x) = 0` for any blend value — so `.gt-pixel-grid`
+was always invisible on `bg-black` panels (main screen, brand strip)
+and only ever showed up faintly on navy. Switched every
+`gt-pixel-grid` usage (`JumbotronFrame`, `NextEventTicker`) from
+`mix-blend-overlay` to `mix-blend-screen`, which lightens correctly
+regardless of how dark the backdrop is. If a future panel needs a
+dark-on-dark texture effect again, use `screen`, not `overlay` — this
+isn't a one-off fix, it's the correct blend mode for this use case.
+
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no
 audio yet. Concept: an announcer-style voice reading each page's

@@ -185,7 +185,7 @@ body {
  * `position: relative` + `z-index` + `isolation: isolate` +
  * `mix-blend-mode: normal` fixes a real visual bug: the per-panel
  * `.gt-pixel-grid` overlay (see above) sits above everything in its
- * panel via `mix-blend-overlay`, and that blend mode read as noise on
+ * panel via `mix-blend-screen`, and that blend mode read as noise on
  * a button's solid fill instead of the clean LED sheen it gives dark
  * backgrounds. Lifting the button into its own isolated stacking
  * context (and explicitly resetting its own blend mode, belt and
@@ -240,9 +240,7 @@ body {
     rgba(255, 255, 255, 0.06) 42%,
     rgba(0, 0, 0, 0.16) 100%
   );
-  animation:
-    gt-btn-pop-in 550ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
-    gt-btn-pulse 2.4s ease-in-out 600ms infinite;
+  animation: gt-btn-pop-in 550ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   transition:
     transform 150ms ease,
     box-shadow 150ms ease;
@@ -251,6 +249,22 @@ body {
     0 5px 10px rgba(0, 0, 0, 0.45),
     0 0 5px rgba(179, 144, 81, 0.5),
     0 0 10px rgba(179, 144, 81, 0.2);
+}
+
+/*
+ * Continuous pulse is reserved for the two actual calls to action
+ * (Sign-Up, Full Schedule) — everything else that shares the base
+ * button look (Mute/Replay, the About page's Featured In cards,
+ * form submit buttons) gets the pop-in entrance but stays still once
+ * settled, so the pulse reads as "act now" rather than becoming
+ * background noise every button on the page does forever. Compound
+ * selector (not just a second class) so this reliably overrides the
+ * base animation regardless of the two rules' order in this file.
+ */
+.gt-jumbotron-btn.gt-jumbotron-btn-cta {
+  animation:
+    gt-btn-pop-in 550ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    gt-btn-pulse 2.4s ease-in-out 600ms infinite;
 }
 
 .gt-jumbotron-btn:hover,
@@ -277,7 +291,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gt-jumbotron-btn {
+  .gt-jumbotron-btn,
+  .gt-jumbotron-btn.gt-jumbotron-btn-cta {
     animation: none;
     transition: none;
   }

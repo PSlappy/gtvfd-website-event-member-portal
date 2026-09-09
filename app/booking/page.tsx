@@ -161,7 +161,7 @@ export default function BookingPage() {
 
         <button
           type="submit"
-          className="gt-jumbotron-btn w-full rounded border-2 border-gt-gold bg-gt-gold px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-black"
+          className="gt-jumbotron-btn w-full rounded-full border-2 border-gt-gold bg-gt-gold px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-black"
         >
           Send
         </button>

@@ -24,7 +24,7 @@ export default function NextEventTicker() {
         </span>
         <div
           aria-hidden
-          className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
+          className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-screen"
         />
       </div>
     );
@@ -38,7 +38,7 @@ export default function NextEventTicker() {
         </span>
         <div
           aria-hidden
-          className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
+          className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-screen"
         />
       </div>
 
@@ -72,7 +72,7 @@ export default function NextEventTicker() {
         </div>
         <div
           aria-hidden
-          className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
+          className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-screen"
         />
       </div>
 
@@ -82,7 +82,7 @@ export default function NextEventTicker() {
         </span>
         <div
           aria-hidden
-          className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
+          className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-screen"
         />
       </div>
     </div>
