@@ -22,9 +22,9 @@ each stage reviewed via live preview before moving on:
 2. ✅ `NextEventTicker` (persistent bottom bar) with placeholder data
 3. ⏸️ Home / Instagram carousel — on hold pending Instagram Graph API setup
 4. ✅ Nav + page-swap transitions (built out of order, ahead of stage 3)
-5. ⬜ Schedule page content
+5. ✅ Schedule page content
 6. ✅ About/History page + player-card component (built out of order, ahead of stages 5 & 7)
-7. ⬜ Donations + Contact + Rental pages
+7. ⬜ Donations + Contact + Rental pages (up next)
 8. ⬜ Auth, event signup, admin panel
 
 ## How it's built

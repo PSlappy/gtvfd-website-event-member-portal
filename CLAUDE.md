@@ -27,9 +27,9 @@ should be reviewed via live preview before moving to the next. Sequence:
 3. Home / Instagram carousel (manual arrows + scroll-to-advance) —
    ON HOLD, see status below
 4. Nav + page-swap transitions (broadcast-style cut/wipe) (DONE)
-5. Schedule page content
+5. Schedule page content (DONE — see status below)
 6. About/History page + PlayerCard component (DONE — see status below)
-7. Donations + Contact + Rental pages
+7. Donations + Contact + Rental pages (next, awaiting owner approval to start)
 8. Auth, event signup, admin panel (separate phase — see data model below)
 
 **Status:** Stages 1–2 are built. JumbotronFrame now lives in the root
@@ -152,6 +152,19 @@ Don't create these yet — add them when that phase of work begins.
   or bleed across them. Dot spacing is tight (5px grid, ~1.8px dot
   radius) so the dots read as what's forming the content, not as
   separate decoration behind it.
+
+Stage 5 (Schedule page content) is done. `/schedule` already covered
+the literal spec since stage 2's pull-forward (Date, Opponent,
+Location, Kickoff, Tailgate, Sign-Up on tailgate rows); this pass
+brought it in line with the LED-glow visual language the rest of the
+site has (glowing header/borders, `gt-led-text-dim` on body cells) and
+added a highlighted row + "Next" badge for whichever game
+`getNextHomeGame()` returns, tying the table back to the bottom
+ticker instead of the two feeling disconnected.
+
+Stage 7 (Donations/Contact/Rental) is next, but **the owner asked not
+to start it until they explicitly approve** — don't begin that work
+just because stage 5 finished.
 
 **Known issue, not yet fixed:** `JumbotronButton` (Sign-Up, Full
 Schedule, etc.) looks a little off with the pixel-grid overlay on
