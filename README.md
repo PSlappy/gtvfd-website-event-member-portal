@@ -24,7 +24,7 @@ each stage reviewed via live preview before moving on:
 4. ✅ Nav + page-swap transitions (built out of order, ahead of stage 3)
 5. ✅ Schedule page content
 6. ✅ About/History page + player-card component (built out of order, ahead of stages 5 & 7)
-7. ⬜ Donations + Contact + Rental pages (up next)
+7. ✅ Donations + Contact + Rental pages (Contact/Rental have real forms; submission isn't wired to a backend yet)
 8. ⬜ Auth, event signup, admin panel
 
 ## How it's built

@@ -29,7 +29,7 @@ should be reviewed via live preview before moving to the next. Sequence:
 4. Nav + page-swap transitions (broadcast-style cut/wipe) (DONE)
 5. Schedule page content (DONE — see status below)
 6. About/History page + PlayerCard component (DONE — see status below)
-7. Donations + Contact + Rental pages (next, awaiting owner approval to start)
+7. Donations + Contact + Rental pages (DONE — see status below)
 8. Auth, event signup, admin panel (separate phase — see data model below)
 
 **Status:** Stages 1–2 are built. JumbotronFrame now lives in the root
@@ -172,9 +172,30 @@ to stand in for "an admin created a tailgate event for this game" —
 that's the intended real behavior once stage 8's admin panel exists,
 not something that needs to change when it ships.
 
-Stage 7 (Donations/Contact/Rental) is next, but **the owner asked not
-to start it until they explicitly approve** — don't begin that work
-just because stage 5 finished.
+Stage 7 (Donations/Contact/Rental) is done, approved by the owner
+after stage 5. Donations stays the `ComingSoon` placeholder per its
+spec (payment method still undecided). Contact and Rental both got
+real forms (`app/contact/page.tsx`, `app/rental/page.tsx`) — client
+components with controlled fields, native HTML5 validation
+(`required`, `type="email"`), shared field styling
+(`lib/formStyles.ts`).
+
+**Submission isn't wired to a real backend yet, on purpose.** There's
+no email service or backend infra built (that's stage 8 territory),
+so rather than fake a successful send, submitting shows an honest
+"not connected yet, reach out via @ramblin_wrekd on Instagram in the
+meantime" message instead of a fake success confirmation. The owner
+is deciding between wiring these into a real backend later vs.
+embedding a JotForm as a working stopgap — don't build either without
+asking first, this was intentionally left as UI-only for now.
+
+Contact fields: name, email, phone (optional), reason (dropdown:
+General Inquiry / Sponsor-Partner Inquiry / Other), message. Rental
+fields: name, email, phone, event type (Wedding/Parade/Birthday/
+Other), event date, guest count (optional), event location,
+additional details — field set was owner's call to make per CLAUDE.md
+("exact fields not yet decided"), not a fixed spec, revisit if it
+turns out to be missing something.
 
 **Known issue, not yet fixed:** `JumbotronButton` (Sign-Up, Full
 Schedule, etc.) looks a little off with the pixel-grid overlay on
