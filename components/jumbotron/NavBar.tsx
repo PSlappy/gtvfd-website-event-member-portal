@@ -28,7 +28,7 @@ export default function NavBar() {
             className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-colors sm:text-xs ${
               active
                 ? "gt-led-text-gold text-gt-gold"
-                : "text-gt-gray-light/70 hover:text-gt-gray-light"
+                : "gt-led-text-dim text-gt-gray-light/70 hover:text-gt-gray-light"
             }`}
           >
             {item.label}

@@ -40,12 +40,12 @@ export default function NextEventTicker() {
           {formatGameDate(game.date)}
         </span>
         {/* Row 2: kickoff time or TBD */}
-        <span className="gt-display-in text-[9px] uppercase tracking-[0.15em] text-gt-gray-light/70 [animation-delay:80ms] sm:text-[10px]">
+        <span className="gt-led-text-dim gt-display-in text-[9px] uppercase tracking-[0.15em] text-gt-gray-light/70 [animation-delay:80ms] sm:text-[10px]">
           Kickoff {game.kickoff}
         </span>
         {/* Row 3: tailgate time, or no tailgate — set by the admin
             portal once an event exists for this game (stage 8) */}
-        <span className="gt-display-in text-[9px] uppercase tracking-[0.15em] text-gt-gray-light/70 [animation-delay:160ms] sm:text-[10px]">
+        <span className="gt-led-text-dim gt-display-in text-[9px] uppercase tracking-[0.15em] text-gt-gray-light/70 [animation-delay:160ms] sm:text-[10px]">
           {game.tailgate ? `Tailgate ${game.tailgateStart}` : "No Tailgate"}
         </span>
         {/* Row 4: sign-up — only if a tailgate event exists for this game */}

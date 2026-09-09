@@ -135,6 +135,50 @@ Don't create these yet — add them when that phase of work begins.
   scroll input, with Mute (reserved for future announcer-voice
   narration audio) and Replay controls. Built reusable since the owner
   wants it on other pages eventually, not just About.
+- **Everything on screen should read as lit**, not just headings: the
+  LED pixel-grid overlay (`gt-pixel-grid`) covers the whole board, and
+  `gt-led-text-gold` / `gt-led-text-white` (strong glow, headings and
+  key labels) / `gt-led-text-dim` (soft glow, body copy and secondary
+  text) / `gt-led-border-gold` (glowing card outlines) are the
+  building blocks for it. Apply these to new text/graphics by default
+  going forward — About and the nav got a full pass, other existing
+  pages haven't been retrofitted yet.
+
+### Future: announcer narration audio (not started)
+The jumbotron crawl's Mute button is wired up for this but there's no
+audio yet. Concept: an announcer-style voice reading each page's
+content aloud in sync with the crawl, like a stadium PA read straight
+off the jumbotron.
+
+**Blocked on:** finalizing the actual page copy first — re-generating
+narration audio every time the text changes wastes effort (and, for
+paid-per-character services, money), so don't record anything until a
+page's content is considered done.
+
+**Free/low-cost TTS options to generate the narration once ready**
+(current as of this note; verify pricing/limits before committing to
+one, they change):
+- **ElevenLabs** — best voice quality/expressiveness for an
+  "announcer" feel, easiest signup. Free tier is character-limited per
+  month (small, but likely enough for a short page). Good first choice
+  to prototype the tone.
+- **Google Cloud Text-to-Speech** (WaveNet/Neural2 voices) — much
+  larger free monthly character allowance, but needs a GCP account
+  (billing info required even to stay in the free tier) and voices
+  lean more "neutral newscaster" than "hype announcer."
+- **Microsoft Azure AI Speech** — Neural voices, generous free tier,
+  similar GCP-style setup friction (Azure account required).
+  Amazon Polly — Neural voices, large free allowance but only for an
+  account's first 12 months.
+- **Murf.ai / PlayHT** — marketed specifically toward broadcast/
+  announcer-style voices, closest out-of-the-box "sports hype" tone,
+  but free tiers are small trial credits rather than an ongoing
+  monthly allowance.
+
+Recommendation: prototype the tone in ElevenLabs first since it needs
+the least setup and sounds the most like an actual announcer; move to
+Google/Azure/Amazon only if ongoing volume outgrows ElevenLabs' free
+tier.
 - Known risk: Framer couldn't reliably do the fixed-frame + inner-scroll +
   scroll-hijacked carousel behavior — that's why this moved to a custom
   build. Prioritize proving these interactions work early (stages 1–3).

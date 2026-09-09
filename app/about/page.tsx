@@ -42,7 +42,7 @@ export default function AboutPage() {
           About &amp; History
         </h2>
 
-        <div className="gt-display-in max-w-2xl space-y-4 text-balance text-zinc-300 [animation-delay:80ms]">
+        <div className="gt-led-text-dim gt-display-in max-w-2xl space-y-4 text-balance text-zinc-300 [animation-delay:80ms]">
           <p>
             The tailgate tradition dates back to 2008. In 2014, Georgia Tech
             alumni Sam Huffman and Christian Shea found a 1977 Ford fire
@@ -74,34 +74,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="gt-display-in grid w-full max-w-3xl grid-cols-1 gap-3 [animation-delay:160ms] sm:grid-cols-2">
-          {sourceArticles.map((article) => (
-            <a
-              key={article.href}
-              href={article.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="gt-jumbotron-btn flex items-start gap-3 rounded-lg border-2 border-gt-gold bg-black/60 p-4 transition-colors hover:bg-gt-navy/60"
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-gt-gold/70 bg-gt-navy text-[10px] font-black tracking-tight text-gt-gold">
-                {article.logo}
-              </span>
-              <span>
-                <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-gt-gold">
-                  {article.source}
-                </span>
-                <span className="mt-1 block text-sm font-bold text-white">
-                  {article.title}
-                </span>
-                <span className="mt-1 block text-xs text-zinc-400">
-                  {article.description}
-                </span>
-              </span>
-            </a>
-          ))}
-        </div>
-
-        <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:240ms]">
+        <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:160ms]">
           <p className="text-sm uppercase tracking-[0.3em] text-gt-gold">
             Current Owners
           </p>
@@ -111,7 +84,7 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:320ms]">
+        <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:240ms]">
           <p className="text-sm uppercase tracking-[0.3em] text-gt-gold">
             Founders, Previous Owners &amp; Donors
           </p>
@@ -122,6 +95,38 @@ export default function AboutPage() {
               lastName="Shea"
               role="Founder"
             />
+          </div>
+        </div>
+
+        <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:320ms]">
+          <p className="text-sm uppercase tracking-[0.3em] text-gt-gold">
+            Featured In
+          </p>
+          <div className="grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-2">
+            {sourceArticles.map((article) => (
+              <a
+                key={article.href}
+                href={article.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gt-jumbotron-btn gt-led-border-gold flex items-start gap-3 rounded-lg border-2 border-gt-gold bg-black/60 p-4 transition-colors hover:bg-gt-navy/60"
+              >
+                <span className="gt-led-text-gold flex h-9 w-9 shrink-0 items-center justify-center rounded border border-gt-gold/70 bg-gt-navy text-[10px] font-black tracking-tight text-gt-gold">
+                  {article.logo}
+                </span>
+                <span>
+                  <span className="gt-led-text-gold block text-[10px] font-bold uppercase tracking-[0.2em] text-gt-gold">
+                    {article.source}
+                  </span>
+                  <span className="gt-led-text-white mt-1 block text-sm font-bold text-white">
+                    {article.title}
+                  </span>
+                  <span className="gt-led-text-dim mt-1 block text-xs text-zinc-400">
+                    {article.description}
+                  </span>
+                </span>
+              </a>
+            ))}
           </div>
         </div>
       </div>

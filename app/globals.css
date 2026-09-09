@@ -45,10 +45,10 @@ body {
 @keyframes gt-led-flicker {
   0%,
   100% {
-    opacity: 0.35;
+    opacity: 0.3;
   }
   50% {
-    opacity: 0.55;
+    opacity: 0.7;
   }
 }
 
@@ -74,10 +74,10 @@ body {
 .gt-pixel-grid {
   background-image: radial-gradient(
     circle,
-    rgba(255, 255, 255, 0.6) 0.6px,
-    transparent 0.6px
+    rgba(255, 255, 255, 0.75) 2px,
+    transparent 2.1px
   );
-  background-size: 3px 3px;
+  background-size: 10px 10px;
   animation: gt-led-flicker 5s ease-in-out infinite;
 }
 
@@ -109,6 +109,26 @@ body {
   text-shadow:
     0 0 3px rgba(255, 255, 255, 0.65),
     0 0 12px rgba(255, 255, 255, 0.35);
+}
+
+/*
+ * Softer glow for body copy and secondary text — everything on the
+ * board should read as lit, not just headings, but a full-strength
+ * glow on paragraph-length text turns it into a blurry mess. This is
+ * the toned-down version for anything meant to stay easily readable.
+ */
+.gt-led-text-dim {
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.3),
+    0 0 6px rgba(255, 255, 255, 0.12);
+}
+
+/* Same idea for gold borders: a card outline should look like it's
+   lit from within, not just a flat colored line. */
+.gt-led-border-gold {
+  box-shadow:
+    0 0 6px rgba(179, 144, 81, 0.5),
+    0 0 14px rgba(179, 144, 81, 0.22);
 }
 
 /*
