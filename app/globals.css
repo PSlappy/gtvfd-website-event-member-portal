@@ -167,36 +167,98 @@ body {
 
 /*
  * Jumbotron button — a chunky, beveled scoreboard-graphics button that
- * lifts toward the viewer on hover and presses back on click. Uses
- * `transition`, not `animation`, so it composes safely with
- * .gt-display-in on the same element (see the note above the LED-glow
- * classes about the animation-shorthand collision).
+ * pops in from small like a broadcast graphic, floats gently in place
+ * once settled, lifts toward the viewer on hover, and presses back on
+ * click.
+ *
+ * `position: relative` + `z-index` + `isolation: isolate` fixes a real
+ * visual bug: the per-panel `.gt-pixel-grid` overlay (see above) sits
+ * above everything in its panel via `mix-blend-overlay`, and that blend
+ * mode reads as noise on a button's solid gold/navy fill instead of the
+ * clean LED sheen it gives dark backgrounds. Lifting the button into
+ * its own higher stacking context keeps it above that overlay entirely.
+ *
+ * The pop-in/float animation and the hover/active box-shadow both
+ * target `transform`, so hover pauses the animation
+ * (`animation-play-state`) rather than letting the two fight over the
+ * property every frame. box-shadow here also folds in the gold glow
+ * that `.gt-led-border-gold` provides elsewhere: both classes land on
+ * the same element in a couple of places (e.g. the About page's
+ * Featured In cards), and since they'd otherwise both set `box-shadow`
+ * outright, whichever rule comes later in this file would silently
+ * win and drop the other's shadow entirely — the same category of bug
+ * as the animation-shorthand collision noted above the LED-glow
+ * classes. Baking the glow in here avoids that rather than relying on
+ * call sites to combine the two classes correctly.
  */
+@keyframes gt-btn-pop-in {
+  0% {
+    opacity: 0;
+    transform: perspective(500px) scale(0.35) rotateX(40deg) translateY(14px);
+  }
+  60% {
+    opacity: 1;
+    transform: perspective(500px) scale(1.06) rotateX(-4deg) translateY(-3px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(500px) scale(1) rotateX(0deg) translateY(0);
+  }
+}
+
+@keyframes gt-btn-float {
+  0%,
+  100% {
+    transform: perspective(500px) rotateX(0deg) translateY(0);
+  }
+  50% {
+    transform: perspective(500px) rotateX(3deg) translateY(-3px);
+  }
+}
+
 .gt-jumbotron-btn {
+  position: relative;
+  z-index: 20;
+  isolation: isolate;
+  animation:
+    gt-btn-pop-in 550ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    gt-btn-float 3.2s ease-in-out 600ms infinite;
   transition:
     transform 150ms ease,
     box-shadow 150ms ease;
   box-shadow:
     0 3px 0 rgba(0, 0, 0, 0.6),
-    0 5px 10px rgba(0, 0, 0, 0.45);
+    0 5px 10px rgba(0, 0, 0, 0.45),
+    0 0 6px rgba(179, 144, 81, 0.5),
+    0 0 14px rgba(179, 144, 81, 0.22);
+}
+
+.gt-jumbotron-btn:hover,
+.gt-jumbotron-btn:active {
+  animation-play-state: paused;
 }
 
 .gt-jumbotron-btn:hover {
   transform: perspective(300px) rotateX(4deg) translateY(-2px);
   box-shadow:
     0 5px 0 rgba(0, 0, 0, 0.6),
-    0 10px 18px rgba(0, 0, 0, 0.5);
+    0 10px 18px rgba(0, 0, 0, 0.5),
+    0 0 8px rgba(179, 144, 81, 0.6),
+    0 0 18px rgba(179, 144, 81, 0.28);
 }
 
 .gt-jumbotron-btn:active {
   transform: translateY(1px);
   box-shadow:
     0 1px 0 rgba(0, 0, 0, 0.6),
-    0 2px 4px rgba(0, 0, 0, 0.4);
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 0 6px rgba(179, 144, 81, 0.5),
+    0 0 14px rgba(179, 144, 81, 0.22);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .gt-jumbotron-btn {
+    animation: none;
     transition: none;
   }
 }

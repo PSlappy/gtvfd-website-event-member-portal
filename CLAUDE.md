@@ -208,16 +208,23 @@ additional details — field set was owner's call to make per CLAUDE.md
 ("exact fields not yet decided"), not a fixed spec, revisit if it
 turns out to be missing something.
 
-**Known issue, not yet fixed:** `JumbotronButton` (Sign-Up, Full
-Schedule, etc.) looks a little off with the pixel-grid overlay on
-top of it — the panel's `gt-pixel-grid` sits above everything in that
-panel including buttons, and `mix-blend-overlay` white dots on a
-solid gold/navy button fill reads more like noise than the clean LED
-sheen it gives the black/navy panel backgrounds. Revisit later:
-likely fix is excluding the button's own footprint from the overlay
-(e.g. a solid-fill mask, or moving the pixel-grid behind the button
-in stacking order for that element specifically) rather than changing
-the grid itself.
+**Fixed:** the button pixelation issue above is resolved.
+`.gt-jumbotron-btn` now gets `position: relative; z-index: 20;
+isolation: isolate;`, which lifts every jumbotron button into its own
+stacking context above the panel's `gt-pixel-grid` overlay, so the
+`mix-blend-overlay` dots no longer paint over button fills. Buttons
+also now pop in from small with a 3D perspective flip on mount
+(`gt-btn-pop-in`) and float gently in place afterward
+(`gt-btn-float`), pausing on hover/active so that transition doesn't
+fight the infinite float animation over `transform`. While in there,
+also fixed a second silent-collision bug in the same family as the
+`gt-display-in`/LED-glow one documented above: `.gt-jumbotron-btn` and
+`.gt-led-border-gold` both set `box-shadow`, and were combined on the
+About page's Featured In cards — whichever rule came later in the
+stylesheet was winning outright and dropping the other's shadow.
+Folded the gold glow directly into `.gt-jumbotron-btn`'s box-shadow
+(rest/hover/active) instead, so any button reads as lit by default
+without needing to correctly combine two classes at each call site.
 
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no
