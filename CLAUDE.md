@@ -136,13 +136,22 @@ Don't create these yet — add them when that phase of work begins.
   narration audio) and Replay controls. Built reusable since the owner
   wants it on other pages eventually, not just About.
 - **Everything on screen should read as lit**, not just headings: the
-  LED pixel-grid overlay (`gt-pixel-grid`) covers the whole board, and
-  `gt-led-text-gold` / `gt-led-text-white` (strong glow, headings and
-  key labels) / `gt-led-text-dim` (soft glow, body copy and secondary
-  text) / `gt-led-border-gold` (glowing card outlines) are the
-  building blocks for it. Apply these to new text/graphics by default
-  going forward — About and the nav got a full pass, other existing
-  pages haven't been retrofitted yet.
+  LED pixel-grid overlay (`gt-pixel-grid`) and `gt-led-text-gold` /
+  `gt-led-text-white` (strong glow, headings and key labels) /
+  `gt-led-text-dim` (soft glow, body copy and secondary text) /
+  `gt-led-border-gold` (glowing card outlines) are the building blocks
+  for it. Apply these to new text/graphics by default going forward —
+  About and the nav got a full pass, other existing pages haven't been
+  retrofitted yet.
+- **Gold = physical bezel, not a screen.** The pixel grid is applied
+  per-panel (nav bar, brand strip, main screen, and each of
+  NextEventTicker's three columns each get their own `gt-pixel-grid`
+  overlay scoped to just that panel), never as one overlay spanning
+  the whole frame — the gold borders/dividers are the bezel material
+  between separate physical displays, so LED texture must never touch
+  or bleed across them. Dot spacing is tight (5px grid, ~1.8px dot
+  radius) so the dots read as what's forming the content, not as
+  separate decoration behind it.
 
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no

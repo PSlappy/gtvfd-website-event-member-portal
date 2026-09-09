@@ -29,14 +29,23 @@ export default function JumbotronFrame({
       />
 
       <div className="relative flex h-full w-full flex-col overflow-hidden rounded-md border-[3px] border-gt-gold bg-black sm:border-4">
-        {/* nav bar */}
-        <div className="flex shrink-0 items-center justify-center border-b-[3px] border-gt-gold bg-gt-navy px-4 py-3 sm:border-b-4 sm:py-4">
+        {/* nav bar — its own screen behind the gold bezel, not shared
+            with its neighbors */}
+        <div className="relative flex shrink-0 items-center justify-center border-b-[3px] border-gt-gold bg-gt-navy px-4 py-3 sm:border-b-4 sm:py-4">
           {nav}
+          <div
+            aria-hidden
+            className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
+          />
         </div>
 
         {/* home-team brand strip */}
-        <div className="flex shrink-0 items-center justify-center border-b-[3px] border-gt-gold bg-black px-4 py-4 sm:border-b-4 sm:py-6">
+        <div className="relative flex shrink-0 items-center justify-center border-b-[3px] border-gt-gold bg-black px-4 py-4 sm:border-b-4 sm:py-6">
           {brand}
+          <div
+            aria-hidden
+            className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
+          />
         </div>
 
         {/* main screen */}
@@ -49,18 +58,17 @@ export default function JumbotronFrame({
             aria-hidden
             className="gt-scan-sweep pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-transparent via-white/[0.05] to-transparent mix-blend-screen"
           />
+          <div
+            aria-hidden
+            className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
+          />
         </div>
 
-        {/* bottom info bar */}
+        {/* bottom info bar — NextEventTicker applies its own per-panel
+            pixel grid, since it owns three separate columns */}
         <div className="shrink-0 border-t-[3px] border-gt-gold sm:border-t-4">
           {bottomBar}
         </div>
-
-        {/* LED pixel grid, over the whole board so every panel reads as one screen */}
-        <div
-          aria-hidden
-          className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
-        />
       </div>
     </div>
   );
