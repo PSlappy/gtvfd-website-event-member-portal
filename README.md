@@ -23,7 +23,7 @@ each stage reviewed via live preview before moving on:
 3. ⏸️ Home / Instagram carousel — on hold pending Instagram Graph API setup
 4. ✅ Nav + page-swap transitions (built out of order, ahead of stage 3)
 5. ⬜ Schedule page content
-6. ⬜ About/History page + player-card component
+6. ✅ About/History page + player-card component (built out of order, ahead of stages 5 & 7)
 7. ⬜ Donations + Contact + Rental pages
 8. ⬜ Auth, event signup, admin panel
 
@@ -50,10 +50,10 @@ fit the visible display.
 
 Source material used in building this site:
 
-- [ramblinwreck.com](https://ramblinwreck.com) — background on the crew
-  and the truck
-- Atlanta Journal-Constitution (AJC) coverage of the tailgate firetruck
-- Wall Street Journal coverage of the tailgate firetruck
+- [Converted Fire Truck to Real, Live Ramblin' Wreck](https://ramblinwreck.com/news/2014/08/27/converted-fire-truck-to-real-live-ramblin-wreck) — ramblinwreck.com, 2014, the original story
+- [Georgia Tech vs. Miami Tailgating](https://www.ajc.com/sports/college/georgia-tech-miami-tailgating/GZGUnG68nSSbPVL7rXgg6N/) — Atlanta Journal-Constitution
+- [Georgia Tech and a Real, Live Ramblin' Wreck](https://www.wsj.com/articles/georgia-tech-and-a-real-live-ramblin-wreck-1409084402) — Wall Street Journal
+- [My Ride: A Ramblin' Wreck to Georgia Tech](https://www.wsj.com/articles/my-ride-a-ramblin-wreck-to-georgia-tech-1409083358) — Wall Street Journal
 - [@ramblin_wrekd](https://www.instagram.com/ramblin_wrekd) on Instagram
   — source for the home page video carousel
 

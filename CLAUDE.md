@@ -22,7 +22,7 @@ should be reviewed via live preview before moving to the next. Sequence:
    ON HOLD, see status below
 4. Nav + page-swap transitions (broadcast-style cut/wipe) (DONE)
 5. Schedule page content
-6. About/History page + PlayerCard component
+6. About/History page + PlayerCard component (DONE — see status below)
 7. Donations + Contact + Rental pages
 8. Auth, event signup, admin panel (separate phase — see data model below)
 
@@ -53,6 +53,14 @@ layout. About/Donations/Contact/Rental all got minimal `ComingSoon`
 placeholder pages (`components/jumbotron/ComingSoon.tsx`) so every nav
 link goes somewhere real instead of 404ing, matching the pattern
 already used for `/schedule` and `/signup`.
+
+Stage 6 (About/History) is done, also out of sequence — stages 5
+(Schedule page content beyond the stage-2 pull-forward) and 7
+(Donations/Contact/Rental, still ComingSoon placeholders) haven't
+happened yet. `/about` now has real history copy, four real source
+link-preview cards, and `PlayerCard`
+(`components/jumbotron/PlayerCard.tsx`) for the Current Owners and
+Previous Owners/Founders sections.
 
 ## Project organization
 
@@ -128,14 +136,22 @@ updated closer to each game):
 | Nov. 21 | Wake Forest | Home |
 | Nov. 28 | Georgia | Away |
 
-### About/History page
-- Background/history text (see draft copy in prior chat — 1977 fire
-  engine, bought on eBay in 2014 for $2,800, converted into the tailgate
-  vehicle; confirm make — sources conflict between "Ford" and "Pierce")
-- Link-preview cards (not reproduced text) for the ramblinwreck.com, AJC,
-  and WSJ source articles
-- Current Owners section (player-card style): Patrick Shea, Harry Rizvi
-- Previous Owners/Founders section (player-card style): placeholder
+### About/History page (DONE — see status above; `/about`)
+- Background/history text — 1977 fire engine, bought on eBay in 2014
+  for $2,800 by GT alum Sam Huffman, converted into the tailgate
+  vehicle. Make confirmed as a **Ford C-802**: the crew's own Instagram
+  bio and the AJC article both say Ford; only the original 2014
+  ramblinwreck.com piece called it a Pierce, which the page now notes
+  as a press discrepancy rather than picking one silently.
+- Link-preview cards (not reproduced text) for the ramblinwreck.com,
+  AJC, and two WSJ source articles — real URLs, all four live on the
+  page.
+- Current Owners section (player-card style): Patrick Shea, Harry
+  Rizvi — `PlayerCard` component, initials monogram since there are no
+  real photos yet (swap in `photoSrc` prop once available).
+- Previous Owners/Founders section (player-card style): still a
+  placeholder card ("Names Coming Soon") per the top-of-file note that
+  founder names are TBD.
 
 ### Donations page
 Placeholder content — payment collection method not yet decided.
