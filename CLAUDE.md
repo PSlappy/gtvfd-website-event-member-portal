@@ -209,22 +209,37 @@ additional details — field set was owner's call to make per CLAUDE.md
 turns out to be missing something.
 
 **Fixed:** the button pixelation issue above is resolved.
-`.gt-jumbotron-btn` now gets `position: relative; z-index: 20;
-isolation: isolate;`, which lifts every jumbotron button into its own
-stacking context above the panel's `gt-pixel-grid` overlay, so the
+`.gt-jumbotron-btn` gets `position: relative; z-index: 20; isolation:
+isolate; mix-blend-mode: normal;`, which lifts every jumbotron button
+into its own stacking context above the panel's `gt-pixel-grid`
+overlay (with an explicit blend-mode reset as extra insurance), so the
 `mix-blend-overlay` dots no longer paint over button fills. Buttons
-also now pop in from small with a 3D perspective flip on mount
-(`gt-btn-pop-in`) and float gently in place afterward
-(`gt-btn-float`), pausing on hover/active so that transition doesn't
-fight the infinite float animation over `transform`. While in there,
-also fixed a second silent-collision bug in the same family as the
-`gt-display-in`/LED-glow one documented above: `.gt-jumbotron-btn` and
-`.gt-led-border-gold` both set `box-shadow`, and were combined on the
-About page's Featured In cards — whichever rule came later in the
-stylesheet was winning outright and dropping the other's shadow.
-Folded the gold glow directly into `.gt-jumbotron-btn`'s box-shadow
-(rest/hover/active) instead, so any button reads as lit by default
-without needing to correctly combine two classes at each call site.
+also got a genuine visual upgrade per the owner: a top-to-bottom
+glossy `background-image` gradient so they read as a rendered CG 3D
+object rather than a flat colored rectangle, matching "like you'd see
+at a football game" jumbotron graphics. They pop in from small with a
+3D perspective flip on mount (`gt-btn-pop-in`) and **pulse** gently in
+place afterward (`gt-btn-pulse`, a scale breathe — this replaced an
+earlier floating/bobbing version per owner feedback that
+"floating" wasn't what they meant), pausing on hover/active so
+transition doesn't fight the infinite pulse animation over the same
+properties. While in there, also fixed a second silent-collision bug
+in the same family as the `gt-display-in`/LED-glow one documented
+above: `.gt-jumbotron-btn` and `.gt-led-border-gold` both set
+`box-shadow`, and were combined on the About page's Featured In cards
+— whichever rule came later in the stylesheet was winning outright
+and dropping the other's shadow. Folded the gold glow directly into
+`.gt-jumbotron-btn`'s box-shadow (rest/hover/active) instead, so any
+button reads as lit by default without needing to correctly combine
+two classes at each call site.
+
+**Full Schedule button is now the "white" variant, not "navy".**
+`JumbotronButton`'s navy variant was replaced with `white` (off-white
+per the GT brand guide's Light Gray/White, `bg-gt-gray-light`) — the
+Full Schedule button sits on an already-navy ticker panel, so a navy
+button just disappeared into its own background. Sign-Up stays the
+gold variant. If a "navy" variant is needed again later, re-add it
+rather than assuming it still exists.
 
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no

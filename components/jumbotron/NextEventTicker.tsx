@@ -66,7 +66,7 @@ export default function NextEventTicker() {
         )}
         {/* Row 5: always shown */}
         <div className="gt-display-in [animation-delay:320ms]">
-          <JumbotronButton href="/schedule" variant="navy">
+          <JumbotronButton href="/schedule" variant="white">
             Full Schedule
           </JumbotronButton>
         </div>

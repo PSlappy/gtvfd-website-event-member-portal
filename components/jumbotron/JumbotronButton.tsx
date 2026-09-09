@@ -3,7 +3,9 @@ import type { ReactNode } from "react";
 
 const variantClasses = {
   gold: "border-gt-gold bg-gt-gold text-black",
-  navy: "border-gt-gold bg-gt-navy text-gt-gray-light",
+  // Off-white per the GT brand guide, not navy — most buttons sit on
+  // navy panels already, so a navy button just disappeared into it.
+  white: "border-gt-gold bg-gt-gray-light text-black",
 } as const;
 
 /**
