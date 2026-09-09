@@ -71,6 +71,24 @@ roster tile (photo/monogram filling the card, dark name plate across
 the bottom) per an owner-supplied reference image, used for both the
 Current Owners and Founders/Previous Owners/Donors sections.
 
+`/about` also has the first "jumbotron crawl": on arrival, the page
+auto-scrolls itself top to bottom like a Star Wars opening or a
+broadcast teleprompter (`components/jumbotron/JumbotronCrawl.tsx`).
+Any real user scroll input (wheel, touch, pointer, keyboard) cancels
+autoplay instantly and leaves the scroll wherever they left it — it
+never fights the visitor. Mute and Replay controls float in the
+bottom corner over a fade-to-black scrim so scrolling text doesn't
+clip behind them. Mute doesn't do anything audible yet since there's
+no narration audio built (that's a future addition: an announcer
+voice reading the page, as if it came on the real jumbotron); the
+toggle exists now so that feature just has to check `muted` /
+subscribe via the `onMutedChange` prop rather than needing new UI
+later. Respects `prefers-reduced-motion` by not auto-starting (Replay
+still works if explicitly clicked). Built as a reusable wrapper
+specifically so it can be applied to other pages later, per the
+owner's request — not About-specific despite currently only being
+used there.
+
 Site copy avoids em dashes throughout (owner preference) — use commas,
 periods, or colons instead when writing any user-facing page text.
 
@@ -109,7 +127,14 @@ Don't create these yet — add them when that phase of work begins.
   on a timer.
 - **Owner/team info** (About/History page): styled like football
   broadcast "player cards" (photo, name, key info in a graphic card
-  layout). Exact visual TBD pending example images from the user.
+  layout). Roster-tile visual confirmed against an owner-supplied GT
+  All-ACC graphic — see `PlayerCard`.
+- **Jumbotron crawl** (`JumbotronCrawl`, currently used on About only):
+  auto-scrolls a page's content top to bottom like a Star Wars
+  opening/teleprompter on arrival, cancels instantly on any real user
+  scroll input, with Mute (reserved for future announcer-voice
+  narration audio) and Replay controls. Built reusable since the owner
+  wants it on other pages eventually, not just About.
 - Known risk: Framer couldn't reliably do the fixed-frame + inner-scroll +
   scroll-hijacked carousel behavior — that's why this moved to a custom
   build. Prioritize proving these interactions work early (stages 1–3).
