@@ -18,8 +18,9 @@ should be reviewed via live preview before moving to the next. Sequence:
 
 1. Foundation — JumbotronFrame shell (DONE — see status below)
 2. NextEventTicker (persistent bottom bar) with placeholder data (DONE)
-3. Home / Instagram carousel (manual arrows + scroll-to-advance)
-4. Nav + page-swap transitions (broadcast-style cut/wipe)
+3. Home / Instagram carousel (manual arrows + scroll-to-advance) —
+   ON HOLD, see status below
+4. Nav + page-swap transitions (broadcast-style cut/wipe) (DONE)
 5. Schedule page content
 6. About/History page + PlayerCard component
 7. Donations + Contact + Rental pages
@@ -34,11 +35,24 @@ announced them. Stage 2 also pulled forward minimal versions of the
 Schedule page (`/schedule`) and a signup placeholder (`/signup`) so
 the ticker's buttons have somewhere real to go.
 
-Stage 3 (Home / Instagram carousel) is **blocked on Instagram Graph
-API credentials** — see the Recommended Stack note below for why the
-embed-widget fallback doesn't work. Once there's a long-lived access
-token and Instagram Business Account ID (`.env.example` documents
-what's needed), the carousel itself is ready to build.
+Stage 3 (Home / Instagram carousel) is **on hold** — Graph API setup
+(see the Recommended Stack note below for why the embed-widget
+fallback doesn't work) was creating blockers, so by owner's call we
+skipped ahead to stage 4 rather than wait on it. Once there's a
+long-lived access token and Instagram Business Account ID
+(`.env.example` documents what's needed), the carousel is ready to
+build — home page currently just shows a status placeholder instead.
+
+Stage 4 (nav + page-swap transitions) is done, out of sequence ahead
+of stage 3. Real `NavBar` (`components/jumbotron/NavBar.tsx`) links to
+all seven nav destinations; `PageTransition`
+(`components/jumbotron/PageTransition.tsx`, needs Framer Motion —
+added in this stage) plays a broadcast-style gold wipe across the
+screen on every route change, wrapping `{children}` in the root
+layout. About/Donations/Contact/Rental all got minimal `ComingSoon`
+placeholder pages (`components/jumbotron/ComingSoon.tsx`) so every nav
+link goes somewhere real instead of 404ing, matching the pattern
+already used for `/schedule` and `/signup`.
 
 ## Project organization
 

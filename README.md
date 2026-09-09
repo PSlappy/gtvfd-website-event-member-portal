@@ -20,8 +20,8 @@ each stage reviewed via live preview before moving on:
 
 1. ✅ Foundation — `JumbotronFrame` shell
 2. ✅ `NextEventTicker` (persistent bottom bar) with placeholder data
-3. ⬜ Home / Instagram carousel
-4. ⬜ Nav + page-swap transitions
+3. ⏸️ Home / Instagram carousel — on hold pending Instagram Graph API setup
+4. ✅ Nav + page-swap transitions (built out of order, ahead of stage 3)
 5. ⬜ Schedule page content
 6. ⬜ About/History page + player-card component
 7. ⬜ Donations + Contact + Rental pages
@@ -30,15 +30,16 @@ each stage reviewed via live preview before moving on:
 ## How it's built
 
 - **Next.js** (App Router, TypeScript) + **Tailwind CSS** for the front
-  end, with **Framer Motion** planned for the broadcast-style page
-  transitions
+  end, with **Framer Motion** driving the broadcast-style gold wipe on
+  page navigation
 - **Supabase** (Postgres + auth) planned for the member portal — event
   signups, guest management, admin panel
 - **Vercel** for hosting
 - Gmail + Google Apps Script planned for email/calendar-invite automation
   (reminders, newsletter, admin broadcasts)
-- Instagram Basic Display API (or an embed fallback) planned for the
-  home page video carousel
+- Instagram Graph API planned for the home page video carousel (on
+  hold — needs a Meta developer app + access token; the public embed
+  widget doesn't reliably support individual post embeds)
 
 The outer page never scrolls — it's a fixed full-viewport frame styled
 like a video board bezel. Page content swaps inside that frame with
