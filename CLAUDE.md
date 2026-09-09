@@ -9,8 +9,14 @@ Not an official Georgia Tech site — do not use official GT logos or imply
 university affiliation.
 
 ## Current owners
-Patrick Shea and Harry Rizvi. Original founders/owners are friends who
-still attend the tailgate (names TBD for the site).
+Patrick Shea (younger brother of founder Christian Shea) and Harry
+Rizvi (Patrick's best friend since age 5) bought the truck from
+founder Sam Huffman for $1,000 in October 2021, taking over from the
+original owners as they got older, started families, and had less
+time for tailgate/truck upkeep. Full story lives on the About page
+(`/about`) and in that stage's CLAUDE.md status note below. Founders:
+Sam Huffman and Christian Shea, GT alumni who bought and converted the
+truck in 2014.
 
 ## Build approach
 Building page-by-page / section-by-section, not all at once. Each stage
@@ -57,10 +63,16 @@ already used for `/schedule` and `/signup`.
 Stage 6 (About/History) is done, also out of sequence — stages 5
 (Schedule page content beyond the stage-2 pull-forward) and 7
 (Donations/Contact/Rental, still ComingSoon placeholders) haven't
-happened yet. `/about` now has real history copy, four real source
-link-preview cards, and `PlayerCard`
-(`components/jumbotron/PlayerCard.tsx`) for the Current Owners and
-Previous Owners/Founders sections.
+happened yet. `/about` has the full ownership history (see the
+About/History page section below for the story), four real source
+link-preview cards with outlet badges, and `PlayerCard`
+(`components/jumbotron/PlayerCard.tsx`) redesigned as a football
+roster tile (photo/monogram filling the card, dark name plate across
+the bottom) per an owner-supplied reference image, used for both the
+Current Owners and Founders/Previous Owners/Donors sections.
+
+Site copy avoids em dashes throughout (owner preference) — use commas,
+periods, or colons instead when writing any user-facing page text.
 
 ## Project organization
 
@@ -137,21 +149,38 @@ updated closer to each game):
 | Nov. 28 | Georgia | Away |
 
 ### About/History page (DONE — see status above; `/about`)
-- Background/history text — 1977 fire engine, bought on eBay in 2014
-  for $2,800 by GT alum Sam Huffman, converted into the tailgate
-  vehicle. Make confirmed as a **Ford C-802**: the crew's own Instagram
-  bio and the AJC article both say Ford; only the original 2014
-  ramblinwreck.com piece called it a Pierce, which the page now notes
-  as a press discrepancy rather than picking one silently.
+- Background/history text, full story now confirmed by the owner:
+  - 2008: the tailgate tradition itself starts.
+  - 2014: GT alumni Sam Huffman and Christian Shea buy a 1977 Ford fire
+    engine on eBay (Indiana) for $2,800, convert it (keg, sound system,
+    deck), and start driving it to games as "the Grant Field Volunteer
+    Fire Department." Make is a **Ford** — "Pierce" in some early press
+    refers to the apparatus body builder, not a competing make claim,
+    so the page doesn't need to explain that nuance, it just states
+    Ford.
+  - As the founders aged, started families, and had less time for
+    tailgate/truck upkeep, they looked to pass it down. Patrick Shea
+    (Christian's younger brother, grown up around the tailgate's GT
+    alumni group) and Harry Rizvi (Patrick's best friend since age 5,
+    attending since the tradition began) asked to take over "to keep
+    it in the family." Sam sold them the truck for $1,000 in October
+    2021; they prepped it that offseason for the 2022 season.
+  - Since taking over: new stereo system, three TVs, turf on the upper
+    deck, 1996 Atlanta Olympic Stadium seats (replacing the old bench
+    seating), retractable awnings, ongoing mechanical maintenance.
 - Link-preview cards (not reproduced text) for the ramblinwreck.com,
   AJC, and two WSJ source articles — real URLs, all four live on the
-  page.
+  page, each with a small monogram "logo" badge (RW / AJC / WSJ) since
+  using the outlets' actual trademarked logo art wasn't pursued.
 - Current Owners section (player-card style): Patrick Shea, Harry
-  Rizvi — `PlayerCard` component, initials monogram since there are no
-  real photos yet (swap in `photoSrc` prop once available).
-- Previous Owners/Founders section (player-card style): still a
-  placeholder card ("Names Coming Soon") per the top-of-file note that
-  founder names are TBD.
+  Rizvi. Founders/Previous Owners/Donors section: Sam Huffman,
+  Christian Shea (both "for now" per the owner — a dedicated donors
+  list may expand this later). `PlayerCard`
+  (`components/jumbotron/PlayerCard.tsx`) is a roster-tile design
+  (photo/initials-monogram fills the card, dark name plate across the
+  bottom: first name small, last name bold, role beneath) modeled on
+  an owner-supplied GT All-ACC roster graphic. No real photos yet;
+  pass `photoSrc` once available.
 
 ### Donations page
 Placeholder content — payment collection method not yet decided.

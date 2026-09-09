@@ -3,6 +3,7 @@ import PlayerCard from "@/components/jumbotron/PlayerCard";
 const sourceArticles = [
   {
     source: "ramblinwreck.com",
+    logo: "RW",
     title: "Converted Fire Truck to Real, Live Ramblin' Wreck",
     description:
       "The original 2014 story on how the truck got its start and its name.",
@@ -10,6 +11,7 @@ const sourceArticles = [
   },
   {
     source: "Atlanta Journal-Constitution",
+    logo: "AJC",
     title: "Georgia Tech vs. Miami Tailgating",
     description:
       "AJC coverage of the truck out on the lot on a GT tailgate Saturday.",
@@ -17,12 +19,14 @@ const sourceArticles = [
   },
   {
     source: "The Wall Street Journal",
+    logo: "WSJ",
     title: "Georgia Tech and a Real, Live Ramblin' Wreck",
     description: "WSJ feature on the tailgate firetruck (subscription).",
     href: "https://www.wsj.com/articles/georgia-tech-and-a-real-live-ramblin-wreck-1409084402",
   },
   {
     source: "The Wall Street Journal",
+    logo: "WSJ",
     title: "My Ride: A Ramblin' Wreck to Georgia Tech",
     description: "WSJ's \"My Ride\" column on the truck (subscription).",
     href: "https://www.wsj.com/articles/my-ride-a-ramblin-wreck-to-georgia-tech-1409083358",
@@ -38,26 +42,33 @@ export default function AboutPage() {
 
       <div className="gt-display-in max-w-2xl space-y-4 text-balance text-zinc-300 [animation-delay:80ms]">
         <p>
-          The tailgate crew&rsquo;s tradition goes back to 2008, but the
-          truck itself joined a few years later. In 2014, Georgia Tech
-          alum Sam Huffman found a 1977 fire engine listed on eBay out of
-          Indiana and bought it for $2,800. He and his friends spent the
-          offseason turning it into a rolling tailgate rig &mdash; a
-          working keg, a sound system, a deck welded onto the bed &mdash;
-          and started driving it to games as &ldquo;the Grant Field
+          The tailgate tradition dates back to 2008. In 2014, Georgia Tech
+          alumni Sam Huffman and Christian Shea found a 1977 Ford fire
+          engine listed on eBay out of Indiana and bought it for $2,800.
+          They spent the offseason turning it into a rolling tailgate rig:
+          a working keg, a sound system, and a deck welded onto the bed,
+          then started driving it to games as &ldquo;the Grant Field
           Volunteer Fire Department,&rdquo; a nod to Georgia Tech&rsquo;s
           engineering reputation.
         </p>
         <p>
-          Early press coverage disagreed on the exact make &mdash; one
-          article called it a Pierce, another a Ford &mdash; but the
-          crew&rsquo;s own records put it at a 1977 Ford C-802.
+          As the years went on, the original owners got older, started
+          families, and had less time to manage tailgates and keep the
+          truck running, so they started looking to pass it down. Patrick
+          Shea, Christian&rsquo;s younger brother, had grown up around the
+          group of GT alumni who owned and supported the tailgate, and had
+          been attending with Harry Rizvi, his best friend since they were
+          five years old, since the tradition began. When Patrick and
+          Harry said they wanted to keep it in the family, Sam sold them
+          the truck for $1,000 in October 2021, and they spent that
+          offseason getting it ready for the 2022 season.
         </p>
         <p>
-          The truck has been passed down through a rotating cast of
-          tailgate regulars ever since. Patrick Shea and Harry Rizvi now
-          keep it running and parked outside Bobby Dodd Stadium every home
-          game.
+          Since taking over, Patrick and Harry have kept upgrading it: a
+          new stereo system, three TVs, turf on the upper deck, 1996
+          Atlanta Olympic Stadium seats in place of the old bench seating,
+          retractable awnings, and a steady stream of mechanical
+          maintenance to keep a 50 year old fire engine road ready.
         </p>
       </div>
 
@@ -68,17 +79,22 @@ export default function AboutPage() {
             href={article.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="gt-jumbotron-btn block rounded-lg border-2 border-gt-gold bg-black/60 p-4 transition-colors hover:bg-gt-navy/60"
+            className="gt-jumbotron-btn flex items-start gap-3 rounded-lg border-2 border-gt-gold bg-black/60 p-4 transition-colors hover:bg-gt-navy/60"
           >
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gt-gold">
-              {article.source}
-            </p>
-            <p className="mt-1 text-sm font-bold text-white">
-              {article.title}
-            </p>
-            <p className="mt-1 text-xs text-zinc-400">
-              {article.description}
-            </p>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-gt-gold/70 bg-gt-navy text-[10px] font-black tracking-tight text-gt-gold">
+              {article.logo}
+            </span>
+            <span>
+              <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-gt-gold">
+                {article.source}
+              </span>
+              <span className="mt-1 block text-sm font-bold text-white">
+                {article.title}
+              </span>
+              <span className="mt-1 block text-xs text-zinc-400">
+                {article.description}
+              </span>
+            </span>
           </a>
         ))}
       </div>
@@ -88,16 +104,19 @@ export default function AboutPage() {
           Current Owners
         </p>
         <div className="flex flex-wrap justify-center gap-4">
-          <PlayerCard name="Patrick Shea" role="Owner" />
-          <PlayerCard name="Harry Rizvi" role="Owner" />
+          <PlayerCard firstName="Patrick" lastName="Shea" role="Owner" />
+          <PlayerCard firstName="Harry" lastName="Rizvi" role="Owner" />
         </div>
       </div>
 
       <div className="gt-display-in flex flex-col items-center gap-4 pb-6 [animation-delay:320ms]">
         <p className="text-sm uppercase tracking-[0.3em] text-gt-gold">
-          Previous Owners &amp; Founders
+          Founders, Previous Owners &amp; Donors
         </p>
-        <PlayerCard name="Names Coming Soon" role="Founding Crew" />
+        <div className="flex flex-wrap justify-center gap-4">
+          <PlayerCard firstName="Sam" lastName="Huffman" role="Founder" />
+          <PlayerCard firstName="Christian" lastName="Shea" role="Founder" />
+        </div>
       </div>
     </div>
   );
