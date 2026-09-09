@@ -150,9 +150,18 @@ Don't create these yet — add them when that phase of work begins.
   overlay scoped to just that panel), never as one overlay spanning
   the whole frame — the gold borders/dividers are the bezel material
   between separate physical displays, so LED texture must never touch
-  or bleed across them. Dot spacing is tight (5px grid, ~1.8px dot
-  radius) so the dots read as what's forming the content, not as
-  separate decoration behind it.
+  or bleed across them. Dot spacing is tight (5px grid) so the dots
+  read as what's forming the content, not as separate decoration
+  behind it.
+- **Every LED emits its own light, not just lit-up text.** Per the
+  owner: a real panel this size glows across its whole surface, blank
+  areas included, not just behind whatever text happens to be on
+  screen. `.gt-pixel-grid`'s dots use a soft multi-stop radial-gradient
+  falloff (bright core, faded halo) plus a slight `filter: blur(0.4px)`
+  instead of a hard-edged circle, so the grid itself blooms uniformly
+  across black and navy backgrounds alike — text-shadow-based glow
+  (`gt-led-text-*`) is additive on top of this, not the only source of
+  light anymore.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,

@@ -71,13 +71,23 @@ body {
   }
 }
 
+/*
+ * Each dot has a soft falloff (bright core, faded halo) instead of a
+ * hard-edged circle, plus a touch of blur, so every LED emits a small
+ * bloom of its own. A real panel this size glows across its whole
+ * surface, not just behind lit-up characters — the previous crisp
+ * dots only really showed as "glow" wherever text-shadow was doing
+ * separate work on top of them.
+ */
 .gt-pixel-grid {
   background-image: radial-gradient(
     circle,
-    rgba(255, 255, 255, 0.75) 1.8px,
-    transparent 1.9px
+    rgba(255, 255, 255, 0.95) 0.5px,
+    rgba(255, 255, 255, 0.4) 1.5px,
+    rgba(255, 255, 255, 0) 2.75px
   );
   background-size: 5px 5px;
+  filter: blur(0.4px);
   animation: gt-led-flicker 5s ease-in-out infinite;
 }
 
