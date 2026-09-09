@@ -162,6 +162,16 @@ added a highlighted row + "Next" badge for whichever game
 `getNextHomeGame()` returns, tying the table back to the bottom
 ticker instead of the two feeling disconnected.
 
+Follow-up per the owner: `/schedule` now filters to **home games
+only** (`schedule2026` itself still holds the full season, away games
+included, as the source of truth — the page just filters it) and
+dropped the Location column since every row is a home game by
+definition now. Sign-Up visibility (here and on the bottom ticker)
+already runs off the placeholder `game.tailgate` flag, which is meant
+to stand in for "an admin created a tailgate event for this game" —
+that's the intended real behavior once stage 8's admin panel exists,
+not something that needs to change when it ships.
+
 Stage 7 (Donations/Contact/Rental) is next, but **the owner asked not
 to start it until they explicitly approve** — don't begin that work
 just because stage 5 finished.

@@ -1,6 +1,14 @@
 import JumbotronButton from "@/components/jumbotron/JumbotronButton";
 import { formatGameDate, getNextHomeGame, schedule2026 } from "@/lib/schedule";
 
+/**
+ * Only home games are shown here — those are the only ones with a
+ * crew tailgate. schedule2026 itself still holds the full season
+ * (away games included) as the source of truth; this page just
+ * filters down to what's relevant to display.
+ */
+const homeGames = schedule2026.filter((game) => game.location === "Home");
+
 export default function SchedulePage() {
   const nextHome = getNextHomeGame();
 
@@ -10,12 +18,14 @@ export default function SchedulePage() {
         2026 Schedule
       </h2>
       <p className="gt-led-text-dim gt-display-in max-w-lg text-balance text-center text-sm text-zinc-400 [animation-delay:80ms]">
-        Kickoff times below show as TBD until the conference announces
-        them. Sign-Up only appears on games with a tailgate.
+        Home games only, since those are the only ones with a crew
+        tailgate. Kickoff times show as TBD until the conference
+        announces them. Sign-Up will appear once the admin portal has a
+        tailgate event created for that game.
       </p>
 
       <div className="gt-display-in gt-led-border-gold w-full max-w-2xl overflow-x-auto rounded-lg border-2 border-gt-gold [animation-delay:160ms]">
-        <table className="w-full min-w-[620px] border-collapse text-left text-xs sm:text-sm">
+        <table className="w-full min-w-[520px] border-collapse text-left text-xs sm:text-sm">
           <thead>
             <tr className="bg-gt-navy text-gt-gray-light">
               <th className="gt-led-text-gold px-3 py-2 font-bold uppercase tracking-wider text-gt-gold">
@@ -23,9 +33,6 @@ export default function SchedulePage() {
               </th>
               <th className="gt-led-text-gold px-3 py-2 font-bold uppercase tracking-wider text-gt-gold">
                 Opponent
-              </th>
-              <th className="gt-led-text-gold px-3 py-2 font-bold uppercase tracking-wider text-gt-gold">
-                Location
               </th>
               <th className="gt-led-text-gold px-3 py-2 font-bold uppercase tracking-wider text-gt-gold">
                 Kickoff
@@ -37,7 +44,7 @@ export default function SchedulePage() {
             </tr>
           </thead>
           <tbody>
-            {schedule2026.map((game, i) => {
+            {homeGames.map((game, i) => {
               const isNext = nextHome?.date === game.date;
               return (
                 <tr
@@ -60,9 +67,6 @@ export default function SchedulePage() {
                   </td>
                   <td className="gt-led-text-dim px-3 py-2 text-white">
                     {game.opponent}
-                  </td>
-                  <td className="gt-led-text-dim px-3 py-2 text-gt-gray-light/80">
-                    {game.location}
                   </td>
                   <td className="gt-led-text-dim px-3 py-2 text-gt-gray-light/80">
                     {game.kickoff}
