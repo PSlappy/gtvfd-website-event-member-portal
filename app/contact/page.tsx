@@ -6,11 +6,15 @@ import { fieldClass, labelClass } from "@/lib/formStyles";
 const reasons = [
   "General Inquiry",
   "Sponsor / Partner Inquiry",
+  "Booking Inquiry",
   "Other",
 ] as const;
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [reason, setReason] = useState<(typeof reasons)[number]>(
+    "General Inquiry",
+  );
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -96,13 +100,31 @@ export default function ContactPage() {
           <label className={labelClass} htmlFor="reason">
             Reason
           </label>
-          <select id="reason" name="reason" className={fieldClass} required>
-            {reasons.map((reason) => (
-              <option key={reason} value={reason}>
-                {reason}
+          <select
+            id="reason"
+            name="reason"
+            className={fieldClass}
+            required
+            value={reason}
+            onChange={(e) =>
+              setReason(e.target.value as (typeof reasons)[number])
+            }
+          >
+            {reasons.map((r) => (
+              <option key={r} value={r}>
+                {r}
               </option>
             ))}
           </select>
+          {reason === "Booking Inquiry" && (
+            <p className="gt-led-text-dim mt-2 text-xs text-zinc-400">
+              Booking the truck for a wedding, parade, or other event? The{" "}
+              <a href="/booking" className="gt-led-text-gold text-gt-gold underline">
+                Book Us
+              </a>{" "}
+              page has a dedicated form for event details.
+            </p>
+          )}
         </div>
 
         <div>

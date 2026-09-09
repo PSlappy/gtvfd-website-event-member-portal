@@ -29,7 +29,8 @@ should be reviewed via live preview before moving to the next. Sequence:
 4. Nav + page-swap transitions (broadcast-style cut/wipe) (DONE)
 5. Schedule page content (DONE — see status below)
 6. About/History page + PlayerCard component (DONE — see status below)
-7. Donations + Contact + Rental pages (DONE — see status below)
+7. Donations + Contact + Rental pages (DONE — see status below;
+   Rental was renamed to "Book Us" partway through, see status)
 8. Auth, event signup, admin panel (separate phase — see data model below)
 
 **Status:** Stages 1–2 are built. JumbotronFrame now lives in the root
@@ -174,11 +175,20 @@ not something that needs to change when it ships.
 
 Stage 7 (Donations/Contact/Rental) is done, approved by the owner
 after stage 5. Donations stays the `ComingSoon` placeholder per its
-spec (payment method still undecided). Contact and Rental both got
-real forms (`app/contact/page.tsx`, `app/rental/page.tsx`) — client
-components with controlled fields, native HTML5 validation
-(`required`, `type="email"`), shared field styling
-(`lib/formStyles.ts`).
+spec (payment method still undecided). Contact and the former Rental
+page both got real forms (`app/contact/page.tsx`,
+`app/booking/page.tsx`) — client components with controlled fields,
+native HTML5 validation (`required`, `type="email"`), shared field
+styling (`lib/formStyles.ts`).
+
+**"Rental" was renamed to "Book Us"** (nav label, page heading, and
+the route itself: `/rental` → `/booking`) shortly after this stage
+shipped, per the owner: people want the crew to bring the truck to
+their event, which reads more like booking a vendor than renting
+equipment. Contact's reason dropdown also got a matching "Booking
+Inquiry" option, which shows a hint pointing to `/booking` for the
+fuller event-detail form when selected. If you're looking for the
+rental page/form elsewhere in older context, this is it.
 
 **Submission isn't wired to a real backend yet, on purpose.** There's
 no email service or backend infra built (that's stage 8 territory),
@@ -190,9 +200,10 @@ embedding a JotForm as a working stopgap — don't build either without
 asking first, this was intentionally left as UI-only for now.
 
 Contact fields: name, email, phone (optional), reason (dropdown:
-General Inquiry / Sponsor-Partner Inquiry / Other), message. Rental
-fields: name, email, phone, event type (Wedding/Parade/Birthday/
-Other), event date, guest count (optional), event location,
+General Inquiry / Sponsor-Partner Inquiry / Booking Inquiry / Other),
+message. Book Us fields: name, email, phone, event type
+(Wedding/Parade/Birthday/Other), event date, guest count (optional),
+event location,
 additional details — field set was owner's call to make per CLAUDE.md
 ("exact fields not yet decided"), not a fixed spec, revisit if it
 turns out to be missing something.
@@ -248,9 +259,11 @@ tier.
   build. Prioritize proving these interactions work early (stages 1–3).
 
 ## Site structure / nav
-Home · Schedule/Events · About/History · Donations · Contact · Rental
-(firetruck rental — separate page) · Sign Up/Register/Member Login
-(portal). Partnerships/Sponsors is a section on Home, not a separate page.
+Home · Schedule/Events · About/History · Donations · Contact · Book Us
+(bringing the firetruck to weddings/parades/other paid events —
+separate page, was called "Rental" until stage 7) · Sign Up/Register/
+Member Login (portal). Partnerships/Sponsors is a section on Home, not
+a separate page.
 
 ### Home page sections
 1. Landing / high-level intro
@@ -322,10 +335,12 @@ Placeholder content — payment collection method not yet decided.
 General inquiry form. Also handles sponsor/partner inquiries (from the
 Home page "Become a Partner" button).
 
-### Rental page (separate from Contact)
-Inquiries about renting the firetruck for weddings, parades, birthdays,
-and other paid events outside of tailgates. Dedicated rental-specific
-inquiry form — exact fields not yet decided.
+### Book Us page (`/booking`, separate from Contact — DONE, see status above)
+Inquiries about bringing the firetruck to weddings, parades, birthdays,
+and other paid events outside of tailgates. Called "Rental" until
+stage 7; renamed since the crew brings the truck to the event, which
+reads more like booking a vendor than renting equipment. Dedicated
+inquiry form with its own field set (see status above).
 
 ## Member portal (phase 2, after jumbotron front end is approved)
 

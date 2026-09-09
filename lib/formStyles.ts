@@ -1,5 +1,5 @@
 /**
- * Shared styling for jumbotron-themed form fields (Contact, Rental, and
+ * Shared styling for jumbotron-themed form fields (Contact, Book Us, and
  * whatever else needs a form later). Kept as plain class strings rather
  * than a component since inputs, selects, and textareas all need it but
  * don't share a common element to wrap.

@@ -5,7 +5,7 @@ import { fieldClass, labelClass } from "@/lib/formStyles";
 
 const eventTypes = ["Wedding", "Parade", "Birthday", "Other"] as const;
 
-export default function RentalPage() {
+export default function BookingPage() {
   const [submitted, setSubmitted] = useState(false);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -39,11 +39,11 @@ export default function RentalPage() {
   return (
     <div className="flex min-h-full flex-col items-center gap-6 px-4 py-10 sm:px-8">
       <h2 className="gt-led-text-gold gt-display-in text-2xl font-black uppercase tracking-widest text-gt-gold sm:text-4xl">
-        Firetruck Rental
+        Book Us
       </h2>
       <p className="gt-led-text-dim gt-display-in max-w-md text-balance text-center text-sm text-zinc-400 [animation-delay:80ms]">
-        Weddings, parades, birthdays, and other paid events outside of
-        tailgates, tell us about it below.
+        We&rsquo;ll bring the firetruck to your wedding, parade, birthday, or
+        other paid event outside of tailgates, tell us about it below.
       </p>
 
       <form
