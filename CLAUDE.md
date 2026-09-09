@@ -153,6 +153,17 @@ Don't create these yet — add them when that phase of work begins.
   radius) so the dots read as what's forming the content, not as
   separate decoration behind it.
 
+**Known issue, not yet fixed:** `JumbotronButton` (Sign-Up, Full
+Schedule, etc.) looks a little off with the pixel-grid overlay on
+top of it — the panel's `gt-pixel-grid` sits above everything in that
+panel including buttons, and `mix-blend-overlay` white dots on a
+solid gold/navy button fill reads more like noise than the clean LED
+sheen it gives the black/navy panel backgrounds. Revisit later:
+likely fix is excluding the button's own footprint from the overlay
+(e.g. a solid-fill mask, or moving the pixel-grid behind the button
+in stacking order for that element specifically) rather than changing
+the grid itself.
+
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no
 audio yet. Concept: an announcer-style voice reading each page's
