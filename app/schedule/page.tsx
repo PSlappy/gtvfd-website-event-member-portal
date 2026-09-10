@@ -21,11 +21,11 @@ export default function SchedulePage() {
       <p className="gt-led-text-dim gt-display-in max-w-lg text-balance text-center text-sm text-zinc-400 [animation-delay:80ms]">
         <Typewriter
           text="Home games only, since those are the only ones with a crew tailgate. Kickoff times show as TBD until the conference announces them. Sign-Up will appear once the admin portal has a tailgate event created for that game."
-          speed={16}
+          speed={24}
         />
       </p>
 
-      <div className="gt-display-in gt-led-border-gold w-full max-w-2xl overflow-x-auto rounded-lg border-2 border-gt-gold [animation-delay:160ms]">
+      <div className="gt-display-in gt-led-border-gold gt-depth-panel w-full max-w-2xl overflow-x-auto rounded-lg border-2 border-gt-gold [animation-delay:160ms]">
         <table className="w-full min-w-[520px] border-collapse text-left text-xs sm:text-sm">
           <thead>
             <tr className="bg-gt-navy text-gt-gray-light">

@@ -18,7 +18,7 @@ export default function NextEventTicker() {
 
   if (!game) {
     return (
-      <div className="relative flex items-center justify-center bg-gt-navy px-4 py-3 sm:py-4">
+      <div className="gt-depth-panel relative flex items-center justify-center bg-gt-navy px-4 py-3 sm:py-4">
         <span className="gt-led-text-white text-xs font-bold uppercase tracking-[0.2em] text-gt-gray-light sm:text-sm">
           No upcoming home games on the schedule
         </span>
@@ -32,7 +32,7 @@ export default function NextEventTicker() {
 
   return (
     <div className="grid grid-cols-3 bg-gt-navy">
-      <div className="relative flex items-center justify-center border-r-[3px] border-gt-gold px-3 py-3 sm:border-r-4 sm:py-4">
+      <div className="gt-depth-panel relative flex items-center justify-center border-r-[3px] border-gt-gold px-3 py-3 sm:border-r-4 sm:py-4">
         <span className="gt-led-text-gold gt-display-in text-xs font-bold uppercase tracking-[0.2em] text-gt-gold sm:text-base">
           GT
         </span>
@@ -42,7 +42,7 @@ export default function NextEventTicker() {
         />
       </div>
 
-      <div className="relative flex flex-col items-center justify-center gap-1 border-r-[3px] border-gt-gold px-2 py-2 text-center sm:border-r-4 sm:py-3">
+      <div className="gt-depth-panel relative flex flex-col items-center justify-center gap-1 border-r-[3px] border-gt-gold px-2 py-2 text-center sm:border-r-4 sm:py-3">
         {/* Row 1: day, date */}
         <span className="gt-led-text-white gt-display-in text-xs font-bold text-white sm:text-sm">
           {formatGameDate(game.date)}
@@ -76,7 +76,7 @@ export default function NextEventTicker() {
         />
       </div>
 
-      <div className="relative flex items-center justify-center px-3 py-3 sm:py-4">
+      <div className="gt-depth-panel relative flex items-center justify-center px-3 py-3 sm:py-4">
         <span className="gt-led-text-white gt-display-in text-xs font-bold uppercase tracking-[0.2em] text-gt-gray-light sm:text-base">
           {game.opponent}
         </span>

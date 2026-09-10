@@ -21,7 +21,7 @@ export default function ComingSoon({
         <Typewriter text={title} startDelay={700} />
       </h2>
       <p className="gt-display-in max-w-md text-balance text-zinc-400 [animation-delay:80ms]">
-        <Typewriter text={description} speed={18} />
+        <Typewriter text={description} speed={27} />
       </p>
     </div>
   );

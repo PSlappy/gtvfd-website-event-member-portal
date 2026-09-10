@@ -198,6 +198,70 @@ body {
 }
 
 /*
+ * Depth pass for the main screen and the bottom ticker's three
+ * panels: per the owner, everything shown on a "screen" should read
+ * as a rendered CG graphic sitting in front of it, not flat colored
+ * shapes painted onto it. Two matched surfaces:
+ *
+ * `.gt-depth-panel` — for anything that's an output (cards, table,
+ * ticker panels): a top inset highlight plus a bottom inset shadow
+ * simulate a beveled edge catching light, and an outer drop shadow
+ * lifts it off the screen behind it. Same visual language as
+ * `.gt-jumbotron-btn`'s glossy gradient, just for non-button panels.
+ *
+ * `.gt-depth-recessed` — for form inputs: the inverse (shadow on top,
+ * faint highlight on the bottom edge) reads as pressed *into* the
+ * screen instead of floating off it, which fits "typing into the
+ * display" better than a raised panel would.
+ */
+.gt-depth-panel {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 -10px 18px rgba(0, 0, 0, 0.45) inset,
+    0 10px 20px rgba(0, 0, 0, 0.5),
+    0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.gt-depth-recessed {
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.55) inset,
+    0 -1px 0 rgba(255, 255, 255, 0.06) inset;
+}
+
+/*
+ * `.gt-depth-panel` gets combined with two other classes that also
+ * set `box-shadow` outright (`.gt-led-border-gold` on PlayerCard and
+ * the schedule table; `.gt-jumbotron-btn` on the About page's
+ * Featured In cards) — same silent-collision failure mode documented
+ * above the LED-glow classes: whichever single-class rule comes later
+ * in this file would otherwise win outright and drop the other's
+ * shadow. Compound selectors here fold both into one value instead,
+ * so it's correct regardless of source order. Placed before
+ * `.gt-jumbotron-btn`'s own `:hover`/`:active` rules further down so
+ * those still win on interaction, same as they already do over the
+ * plain base class.
+ */
+.gt-depth-panel.gt-led-border-gold {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 -10px 18px rgba(0, 0, 0, 0.45) inset,
+    0 10px 20px rgba(0, 0, 0, 0.5),
+    0 2px 6px rgba(0, 0, 0, 0.45),
+    0 0 6px rgba(179, 144, 81, 0.5),
+    0 0 14px rgba(179, 144, 81, 0.22);
+}
+
+.gt-depth-panel.gt-jumbotron-btn {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 -10px 18px rgba(0, 0, 0, 0.45) inset,
+    0 3px 0 rgba(0, 0, 0, 0.6),
+    0 5px 10px rgba(0, 0, 0, 0.45),
+    0 0 5px rgba(179, 144, 81, 0.5),
+    0 0 10px rgba(179, 144, 81, 0.2);
+}
+
+/*
  * Jumbotron button — a glossy, beveled CG-rendered scoreboard graphic:
  * pops in from small on mount, pulses gently in place once settled,
  * lifts toward the viewer on hover, and presses back on click. The

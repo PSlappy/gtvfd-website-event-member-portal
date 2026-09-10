@@ -19,7 +19,7 @@ export default function PlayerCard({
   const initials = `${firstName[0] ?? ""}${lastName[0] ?? ""}`.toUpperCase();
 
   return (
-    <div className="gt-display-in gt-led-border-gold relative aspect-[3/4] w-40 overflow-hidden rounded-md border-2 border-gt-gold bg-black sm:w-48">
+    <div className="gt-display-in gt-led-border-gold gt-depth-panel relative aspect-[3/4] w-40 overflow-hidden rounded-md border-2 border-gt-gold bg-black sm:w-48">
       {photoSrc ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
