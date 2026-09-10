@@ -163,6 +163,26 @@ Don't create these yet — add them when that phase of work begins.
   scroll input, with Mute (reserved for future announcer-voice
   narration audio) and Replay controls. Built reusable since the owner
   wants it on other pages eventually, not just About.
+- **Typewriter effect** (`Typewriter`, used site-wide on headings and
+  paragraph copy): types text out character by character the first
+  time it scrolls into view, like a caption being typed live on the
+  board, per the owner. Deliberately not applied to nav links,
+  buttons, form fields, table data, or PlayerCard/source-card content
+  — only prose. Works together with two small pieces of shared state:
+  `TypeSequenceContext` (provided once per page by `PageTransition`,
+  reset on every navigation) makes blocks type one at a time in DOM
+  order instead of a heading and the paragraph under it both typing at
+  once just because both are already on screen; `TypingCoordinationContext`
+  lets a block tell the nearest `JumbotronCrawl` to pause its
+  autoscroll while the block is actively typing (a no-op outside a
+  crawl), so the crawl can never scroll a caption away mid-type.
+  Real bug hit while building this, worth remembering: the per-block
+  sequence id was first assigned inside a `useState` lazy initializer,
+  which React's dev StrictMode double-invokes — that silently burned
+  ids off the shared counter and permanently desynced every block
+  after the first from its turn. Any similar "assign a stable id from
+  a shared counter" pattern needs to live in a ref-guarded `useEffect`,
+  not a lazy initializer or the render body itself.
 - **Everything on screen should read as lit**, not just headings: the
   LED pixel-grid overlay (`gt-pixel-grid`) and `gt-led-text-gold` /
   `gt-led-text-white` (strong glow, headings and key labels) /
