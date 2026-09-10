@@ -54,12 +54,39 @@ Stage 4 (nav + page-swap transitions) is done, out of sequence ahead
 of stage 3. Real `NavBar` (`components/jumbotron/NavBar.tsx`) links to
 all seven nav destinations; `PageTransition`
 (`components/jumbotron/PageTransition.tsx`, needs Framer Motion —
-added in this stage) plays a broadcast-style gold wipe across the
-screen on every route change, wrapping `{children}` in the root
-layout. About/Donations/Contact/Rental all got minimal `ComingSoon`
-placeholder pages (`components/jumbotron/ComingSoon.tsx`) so every nav
-link goes somewhere real instead of 404ing, matching the pattern
-already used for `/schedule` and `/signup`.
+added in this stage) wraps `{children}` in the root layout and plays a
+transition on every route change. About/Donations/Contact/Book Us all
+got minimal `ComingSoon` placeholder pages (some later replaced with
+real content/forms — see their own stage notes) so every nav link goes
+somewhere real instead of 404ing, matching the pattern already used
+for `/schedule` and `/signup`.
+
+**`PageTransition` was later rebuilt with four randomized transition
+variants** instead of the original single gold-wipe effect, per the
+owner: side **swipe** (slides left, like a billboard panel change),
+**iris** (circular reveal from center, like a broadcast graphics
+package cueing in), **vertical** wipe (same idea as swipe, top-to-
+bottom), and a hard **flash** cut (quick fade/scale plus a brief gold
+flash). One is picked at random on every route change, excluding
+whichever one played last so the same transition never repeats back
+to back. Falls back to a plain instant swap (no animation) for
+`prefers-reduced-motion`.
+
+**Real bug caught and fixed while building this:** the first version
+picked the random transition via `Math.random()` inside a `useMemo`
+that ran during render, which is unsafe for a component that gets
+server-rendered on first load — the server and the client's hydration
+pass each call `Math.random()` independently and get different
+results, producing mismatched inline styles and a genuine React
+hydration-mismatch console error (confirmed, not assumed). Fixed by
+giving the first render a fixed, non-random default transition
+(`DEFAULT_TRANSITION = "swipe"`, safe since `AnimatePresence`'s
+`initial={false}` means it isn't animated on first paint anyway) and
+only starting to randomize inside a `useEffect` — which only ever
+runs client-side, after hydration, once a real navigation has
+happened — rather than during the render itself. If this component
+grows more client-only randomness later, keep that pattern: pick
+inside an effect, never inside render, for anything server-rendered.
 
 Stage 6 (About/History) is done, also out of sequence — stages 5
 (Schedule page content beyond the stage-2 pull-forward) and 7
@@ -270,16 +297,21 @@ the one-time pop-in entrance but stay still once settled, so the
 pulse reads as "act now" on the two actual calls to action instead of
 every button on the page pulsing forever.
 
-**Fixed a real bug: the LED grid was invisible on pure-black panels.**
+**Known limitation, reverted on purpose: the LED grid is invisible on
+pure-black panels (main screen, brand strip), visible only on navy.**
 `mix-blend-mode: overlay` mathematically cannot lighten a pure black
-backdrop — `overlay(0, x) = 0` for any blend value — so `.gt-pixel-grid`
-was always invisible on `bg-black` panels (main screen, brand strip)
-and only ever showed up faintly on navy. Switched every
-`gt-pixel-grid` usage (`JumbotronFrame`, `NextEventTicker`) from
-`mix-blend-overlay` to `mix-blend-screen`, which lightens correctly
-regardless of how dark the backdrop is. If a future panel needs a
-dark-on-dark texture effect again, use `screen`, not `overlay` — this
-isn't a one-off fix, it's the correct blend mode for this use case.
+backdrop — `overlay(0, x) = 0` for any blend value — so
+`.gt-pixel-grid` has never actually lit up `bg-black` panels. Tried
+switching every usage to `mix-blend-screen` (which does lighten black
+correctly), but at the scale of an entire panel with the soft/blurred
+dot falloff already in place, screen blend over-brightened everything
+into a washed-out, milky look across the whole site, not just the
+previously-invisible black areas — the owner asked to undo it.
+Reverted to `mix-blend-overlay` everywhere. If black-panel visibility
+matters enough to revisit, the real fix is tuning the dot gradient
+(smaller radius, less blur, lower peak alpha) specifically for screen
+blend rather than reusing the overlay-tuned values, not just swapping
+the blend mode on its own.
 
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no
