@@ -1,4 +1,5 @@
 import JumbotronButton from "@/components/jumbotron/JumbotronButton";
+import Typewriter from "@/components/jumbotron/Typewriter";
 import { formatGameDate, getNextHomeGame, schedule2026 } from "@/lib/schedule";
 
 /**
@@ -15,13 +16,13 @@ export default function SchedulePage() {
   return (
     <div className="flex min-h-full flex-col items-center gap-6 px-4 py-10 sm:px-8">
       <h2 className="gt-led-text-gold gt-display-in text-2xl font-black uppercase tracking-widest text-gt-gold sm:text-4xl">
-        2026 Schedule
+        <Typewriter text="2026 Schedule" startDelay={700} />
       </h2>
       <p className="gt-led-text-dim gt-display-in max-w-lg text-balance text-center text-sm text-zinc-400 [animation-delay:80ms]">
-        Home games only, since those are the only ones with a crew
-        tailgate. Kickoff times show as TBD until the conference
-        announces them. Sign-Up will appear once the admin portal has a
-        tailgate event created for that game.
+        <Typewriter
+          text="Home games only, since those are the only ones with a crew tailgate. Kickoff times show as TBD until the conference announces them. Sign-Up will appear once the admin portal has a tailgate event created for that game."
+          speed={16}
+        />
       </p>
 
       <div className="gt-display-in gt-led-border-gold w-full max-w-2xl overflow-x-auto rounded-lg border-2 border-gt-gold [animation-delay:160ms]">

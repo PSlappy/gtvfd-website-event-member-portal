@@ -8,6 +8,7 @@ import {
 } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { TypeSequenceProvider } from "./TypeSequenceContext";
 
 /**
  * Broadcast-style page-swap: on every route change, the old screen
@@ -126,7 +127,7 @@ export default function PageTransition({
           exit={variant.exit}
           className="relative h-full w-full"
         >
-          {children}
+          <TypeSequenceProvider>{children}</TypeSequenceProvider>
           {transitionName === "flash" && (
             <div
               aria-hidden

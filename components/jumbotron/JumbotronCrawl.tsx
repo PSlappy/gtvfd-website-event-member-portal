@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { TypingCoordinationProvider } from "./TypingCoordinationContext";
 
 function IconSpeaker() {
   return (
@@ -88,8 +89,22 @@ export default function JumbotronCrawl({
   const scrollRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
   const lastTsRef = useRef<number | null>(null);
+  const activeTypersRef = useRef(0);
   const [muted, setMuted] = useState(false);
   const reduceMotion = useReducedMotion();
+
+  // Stable across renders so it can be handed to context without
+  // retriggering consumers. Any Typewriter inside the crawl that's
+  // actively typing bumps this, which pauses the scroll loop below
+  // until every active typewriter has finished.
+  const coordination = useRef({
+    onTypingStart: () => {
+      activeTypersRef.current += 1;
+    },
+    onTypingEnd: () => {
+      activeTypersRef.current = Math.max(0, activeTypersRef.current - 1);
+    },
+  }).current;
 
   function stop() {
     if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
@@ -101,6 +116,16 @@ export default function JumbotronCrawl({
     const el = scrollRef.current;
     if (!el) return;
     if (lastTsRef.current === null) lastTsRef.current = ts;
+    // A caption is mid-type below: hold position rather than scroll
+    // it away, but keep ticking (rather than fully stopping) so we
+    // notice the moment it's done and pick back up. Reset lastTsRef
+    // each paused frame so dt doesn't accumulate into one big jump
+    // once scrolling resumes.
+    if (activeTypersRef.current > 0) {
+      lastTsRef.current = ts;
+      rafRef.current = requestAnimationFrame(tick);
+      return;
+    }
     // Cap dt so a backgrounded/throttled tab doesn't "catch up" with one
     // huge jump in scroll position once the frame finally fires again.
     const dt = Math.min((ts - lastTsRef.current) / 1000, 0.1);
@@ -176,7 +201,9 @@ export default function JumbotronCrawl({
         tabIndex={0}
         className="h-full w-full overflow-y-auto overflow-x-hidden outline-none"
       >
-        {children}
+        <TypingCoordinationProvider value={coordination}>
+          {children}
+        </TypingCoordinationProvider>
       </div>
 
       {/* fade the crawl to black before it reaches the control row, so text

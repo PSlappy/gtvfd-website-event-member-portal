@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { fieldClass, labelClass } from "@/lib/formStyles";
+import Typewriter from "@/components/jumbotron/Typewriter";
 
 const eventTypes = ["Wedding", "Parade", "Birthday", "Other"] as const;
 
@@ -39,11 +40,13 @@ export default function BookingPage() {
   return (
     <div className="flex min-h-full flex-col items-center gap-6 px-4 py-10 sm:px-8">
       <h2 className="gt-led-text-gold gt-display-in text-2xl font-black uppercase tracking-widest text-gt-gold sm:text-4xl">
-        Book Us
+        <Typewriter text="Book Us" startDelay={700} />
       </h2>
       <p className="gt-led-text-dim gt-display-in max-w-md text-balance text-center text-sm text-zinc-400 [animation-delay:80ms]">
-        We&rsquo;ll bring the firetruck to your wedding, parade, birthday, or
-        other paid event outside of tailgates, tell us about it below.
+        <Typewriter
+          text="We’ll bring the firetruck to your wedding, parade, birthday, or other paid event outside of tailgates, tell us about it below."
+          speed={18}
+        />
       </p>
 
       <form
