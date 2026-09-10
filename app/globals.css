@@ -166,11 +166,33 @@ body {
   animation: gt-display-in 800ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
+/*
+ * Quick gold flash accompanying the "flash" page-transition variant
+ * (see PageTransition.tsx) — a brief bright pulse right at the cut,
+ * like a camera flash punctuating a broadcast scene change.
+ */
+@keyframes gt-cut-flash {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.gt-cut-flash {
+  animation: gt-cut-flash 300ms ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .gt-pixel-grid,
   .gt-glow,
   .gt-scan-sweep,
-  .gt-display-in {
+  .gt-display-in,
+  .gt-cut-flash {
     animation: none;
   }
 }
@@ -185,7 +207,7 @@ body {
  * `position: relative` + `z-index` + `isolation: isolate` +
  * `mix-blend-mode: normal` fixes a real visual bug: the per-panel
  * `.gt-pixel-grid` overlay (see above) sits above everything in its
- * panel via `mix-blend-screen`, and that blend mode read as noise on
+ * panel via `mix-blend-overlay`, and that blend mode read as noise on
  * a button's solid fill instead of the clean LED sheen it gives dark
  * backgrounds. Lifting the button into its own isolated stacking
  * context (and explicitly resetting its own blend mode, belt and

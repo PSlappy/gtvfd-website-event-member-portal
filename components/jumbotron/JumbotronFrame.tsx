@@ -35,7 +35,7 @@ export default function JumbotronFrame({
           {nav}
           <div
             aria-hidden
-            className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-screen"
+            className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
           />
         </div>
 
@@ -44,7 +44,7 @@ export default function JumbotronFrame({
           {brand}
           <div
             aria-hidden
-            className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-screen"
+            className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
           />
         </div>
 
@@ -60,7 +60,7 @@ export default function JumbotronFrame({
           />
           <div
             aria-hidden
-            className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-screen"
+            className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
           />
         </div>
 
