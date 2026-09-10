@@ -183,6 +183,12 @@ Don't create these yet — add them when that phase of work begins.
   after the first from its turn. Any similar "assign a stable id from
   a shared counter" pattern needs to live in a ref-guarded `useEffect`,
   not a lazy initializer or the render body itself.
+  Default typing speed is 33ms/character (every page's explicit
+  `speed` override scaled the same way) after the owner asked for the
+  effect to run 50% slower than the first pass. About's three history
+  paragraphs are also center-aligned now, matching every other
+  typewriter block on the site instead of reading as left-aligned
+  prose.
 - **Everything on screen should read as lit**, not just headings: the
   LED pixel-grid overlay (`gt-pixel-grid`) and `gt-led-text-gold` /
   `gt-led-text-white` (strong glow, headings and key labels) /
@@ -316,6 +322,41 @@ Replay, the Featured In cards, and the form submit buttons all keep
 the one-time pop-in entrance but stay still once settled, so the
 pulse reads as "act now" on the two actual calls to action instead of
 every button on the page pulsing forever.
+
+**Later still, per the owner: every button on the site, including nav
+links, needed to match.** `NavBar` used to be plain text links; it now
+renders each item through `JumbotronButton` too. `JumbotronButton`
+gained an `outline` variant (dim, mostly-transparent border/fill) for
+inactive nav links — a filled gold or navy pill per item would either
+turn the whole bar gold or vanish into the nav bar's own navy
+background — and a `pulse` prop (default on) so nav links and anything
+else that shouldn't breathe forever can opt out; `gt-jumbotron-btn-cta`
+is only applied when `pulse` is true. Contact and Book Us's submit
+buttons were resized to match the same text size/tracking as
+everything else and now pulse too, since each is that page's one
+actual call to action.
+
+**Persistent 3D depth was added on top of all this, per the owner:
+"everything on the [main and bottom] screens" should read as a
+rendered graphic sitting in front of the screen, not a flat color
+fill** — the same idea `.gt-jumbotron-btn`'s glossy gradient already
+sold for buttons, extended everywhere else. Two new classes in
+`globals.css`: `.gt-depth-panel` (inset top highlight + inset bottom
+shadow + outer drop shadow, for anything raised — PlayerCard, the
+About page's source cards, the schedule table, all three
+`NextEventTicker` panels) and `.gt-depth-recessed` (the inverse, for
+form inputs — reads as pressed *into* the screen, which fits "typing
+into the display" better than a raised panel would). Combining
+`.gt-depth-panel` with `.gt-led-border-gold` or `.gt-jumbotron-btn` —
+both of which already set `box-shadow` outright — hits the exact
+silent-collision failure mode documented above (the LED-glow classes,
+and again for `.gt-jumbotron-btn`'s own box-shadow): whichever
+single-class rule sits later in the file wins and drops the other's
+shadow. Fixed the same way as before, with compound-selector overrides
+(`.gt-depth-panel.gt-led-border-gold`, `.gt-depth-panel.gt-jumbotron-btn`)
+that fold both into one value, placed before `.gt-jumbotron-btn`'s own
+`:hover`/`:active` rules so those still win on interaction as they
+already did for the plain base class.
 
 **Known limitation, reverted on purpose: the LED grid is invisible on
 pure-black panels (main screen, brand strip), visible only on navy.**
