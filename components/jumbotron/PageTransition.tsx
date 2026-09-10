@@ -1,6 +1,11 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  type TargetAndTransition,
+} from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
@@ -34,14 +39,14 @@ const EASE_IN = [0.4, 0, 1, 1] as const;
 
 const VARIANTS: Record<
   TransitionName,
-  { initial: object; animate: object; exit: object }
+  { initial: TargetAndTransition; animate: TargetAndTransition; exit: TargetAndTransition }
 > = {
   // Side swipe: new screen slides in from the right as the old one
   // slides out to the left, like an electronic billboard panel change.
   swipe: {
     initial: { x: "100%", opacity: 1 },
-    animate: { x: "0%", opacity: 1, transition: { duration: 0.45, ease: EASE_OUT } },
-    exit: { x: "-100%", opacity: 1, transition: { duration: 0.4, ease: EASE_IN } },
+    animate: { x: "0%", opacity: 1, transition: { duration: 0.9, ease: EASE_OUT } },
+    exit: { x: "-100%", opacity: 1, transition: { duration: 0.8, ease: EASE_IN } },
   },
   // Iris reveal: expands open from the center, like a broadcast
   // graphics package cueing in.
@@ -50,27 +55,27 @@ const VARIANTS: Record<
     animate: {
       clipPath: "circle(150% at 50% 50%)",
       opacity: 1,
-      transition: { duration: 0.55, ease: "easeInOut" },
+      transition: { duration: 1.1, ease: "easeInOut" },
     },
     exit: {
       clipPath: "circle(0% at 50% 50%)",
       opacity: 1,
-      transition: { duration: 0.4, ease: EASE_IN },
+      transition: { duration: 0.8, ease: EASE_IN },
     },
   },
   // Vertical wipe: same idea as swipe, top-to-bottom instead of
   // side-to-side, for variety.
   vertical: {
     initial: { y: "100%", opacity: 1 },
-    animate: { y: "0%", opacity: 1, transition: { duration: 0.45, ease: EASE_OUT } },
-    exit: { y: "-100%", opacity: 1, transition: { duration: 0.4, ease: EASE_IN } },
+    animate: { y: "0%", opacity: 1, transition: { duration: 0.9, ease: EASE_OUT } },
+    exit: { y: "-100%", opacity: 1, transition: { duration: 0.8, ease: EASE_IN } },
   },
   // Hard cut: quick fade/scale, snappier and more abrupt than the
   // others, plus a brief gold flash for a "broadcast cut" feel.
   flash: {
     initial: { opacity: 0, scale: 1.02 },
-    animate: { opacity: 1, scale: 1, transition: { duration: 0.25, delay: 0.1 } },
-    exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15 } },
+    animate: { opacity: 1, scale: 1, transition: { duration: 0.5, delay: 0.2 } },
+    exit: { opacity: 0, scale: 0.98, transition: { duration: 0.3 } },
   },
 };
 

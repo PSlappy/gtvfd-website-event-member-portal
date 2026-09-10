@@ -30,7 +30,7 @@ export default function JumbotronButton({
   return (
     <Link
       href={href}
-      className={`gt-jumbotron-btn gt-jumbotron-btn-cta inline-block whitespace-nowrap rounded-full border-2 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] sm:text-xs ${variantClasses[variant]} ${className}`}
+      className={`gt-jumbotron-btn gt-jumbotron-btn-cta inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full border-2 px-4 text-[10px] font-bold uppercase tracking-wider sm:text-xs ${variantClasses[variant]} ${className}`}
     >
       {children}
     </Link>

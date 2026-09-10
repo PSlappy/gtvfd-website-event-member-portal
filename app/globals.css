@@ -184,7 +184,7 @@ body {
 }
 
 .gt-cut-flash {
-  animation: gt-cut-flash 300ms ease-out both;
+  animation: gt-cut-flash 600ms ease-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {
