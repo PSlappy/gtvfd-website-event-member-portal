@@ -751,3 +751,81 @@ body {
     opacity: 0;
   }
 }
+
+/*
+ * TEST-ONLY, /nav-color-test — "metallic" backgrounds: a banded
+ * light/dark diagonal gradient meant to suggest a brushed-metal sheen
+ * (a flat CSS color can't actually be metallic; a gradient is the
+ * closest approximation). Per the owner, requested after seeing the
+ * Tech Gold (Metallic) reference swatch, which used this same
+ * technique because the brand guide gives Metallic Tech Gold (PMS
+ * 10126 C) no RGB/CMYK/HEX at all — it's an offset-print-only spot
+ * color, not something with an official digital value. Gold's bands
+ * here are that same invented approximation; navy's and white's are
+ * new, equally invented (their solid colors DO have official digital
+ * values — `--gt-navy`, `--gt-gray-light` — a "metallic" version of
+ * either is a look this brand guide doesn't define at all).
+ *
+ * Combined with `.gt-jumbotron-btn` via a compound selector (same
+ * pattern as `.gt-depth-panel.gt-jumbotron-btn` elsewhere in this
+ * file) rather than colliding with it: both classes would otherwise
+ * set `background-image` outright on the same element, and whichever
+ * came later in the file would silently win. The compound rule
+ * layers the button's own glossy top-to-bottom highlight *over* the
+ * metallic band gradient instead, so a metallic button still reads
+ * as the same rendered CG object every other button on the site is,
+ * just with a shimmering fill instead of a flat one.
+ */
+.gt-jumbotron-btn.gt-metallic-gold {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(255, 255, 255, 0.05) 40%,
+      rgba(0, 0, 0, 0.15) 100%
+    ),
+    linear-gradient(
+      135deg,
+      #b39051 0%,
+      #ddc38a 22%,
+      #8a7350 45%,
+      #ddc38a 68%,
+      #b39051 100%
+    );
+}
+
+.gt-jumbotron-btn.gt-metallic-navy {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.25) 0%,
+      rgba(255, 255, 255, 0.03) 40%,
+      rgba(0, 0, 0, 0.25) 100%
+    ),
+    linear-gradient(
+      135deg,
+      #051e39 0%,
+      #3d5f8a 22%,
+      #02101f 45%,
+      #3d5f8a 68%,
+      #051e39 100%
+    );
+}
+
+.gt-jumbotron-btn.gt-metallic-white {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.1) 40%,
+      rgba(0, 0, 0, 0.08) 100%
+    ),
+    linear-gradient(
+      135deg,
+      #e5e5e5 0%,
+      #ffffff 22%,
+      #9a9a9a 45%,
+      #ffffff 68%,
+      #e5e5e5 100%
+    );
+}

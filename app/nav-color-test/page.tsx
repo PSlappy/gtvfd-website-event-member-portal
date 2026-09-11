@@ -15,6 +15,11 @@ import JumbotronCrawl from "@/components/jumbotron/JumbotronCrawl";
  * sweep on every button here, bottom-left to upper-right) and
  * "Refresh Sweep" (a faint background scan, gated to just this route
  * inside JumbotronFrame.tsx). Neither is used anywhere else yet.
+ *
+ * Also has a current-vs-metallic fill comparison (gold/navy/white),
+ * requested before committing to any site-wide color replacement —
+ * see the `metallicComparisons` array and `.gt-metallic-*` in
+ * globals.css.
  */
 
 type ColorKey = "navy" | "white" | "gold";
@@ -219,6 +224,47 @@ const goldSwatches: {
   },
 ];
 
+/**
+ * Current-vs-metallic comparison, per the owner, requested after
+ * seeing the Tech Gold (Metallic) swatch above — same technique
+ * (banded gradient) extended to navy and white too. Deliberately no
+ * Chase Ring or Shine on any of these six (owner's request: "the
+ * other effects can be left off" for this comparison), so the only
+ * variable being compared is the fill itself.
+ */
+const metallicComparisons: {
+  label: string;
+  className: string;
+  textClass: string;
+}[] = [
+  { label: "Gold (current)", className: "bg-gt-gold", textClass: "text-black" },
+  {
+    label: "Gold (metallic)",
+    className: "gt-metallic-gold",
+    textClass: "text-black",
+  },
+  {
+    label: "Navy (current)",
+    className: "bg-gt-navy",
+    textClass: "text-gt-gray-light",
+  },
+  {
+    label: "Navy (metallic)",
+    className: "gt-metallic-navy",
+    textClass: "text-gt-gray-light",
+  },
+  {
+    label: "White (current)",
+    className: "bg-gt-gray-light",
+    textClass: "text-gt-gold",
+  },
+  {
+    label: "White (metallic)",
+    className: "gt-metallic-white",
+    textClass: "text-gt-gold",
+  },
+];
+
 // Two extra rows, not requested but worth having next to the three
 // above: mixing which item gets which bg color (rows 1-3 give every
 // item in a row the same background; these vary it), and a version
@@ -279,6 +325,22 @@ export default function NavColorTestPage() {
                   {swatch.caption}
                 </p>
               </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex w-full max-w-2xl flex-col gap-3">
+          <p className="gt-led-text-dim text-center text-[10px] uppercase tracking-[0.25em] text-gt-gray-light/60 sm:text-xs">
+            Row: current vs. metallic (no Chase Ring / Shine, fill only)
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {metallicComparisons.map((item) => (
+              <span
+                key={item.label}
+                className={`gt-jumbotron-btn inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full border-2 border-gt-gold px-4 text-[10px] font-bold uppercase tracking-wider sm:text-xs ${item.className} ${item.textClass}`}
+              >
+                {item.label}
+              </span>
             ))}
           </div>
         </div>
