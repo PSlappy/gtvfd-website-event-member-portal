@@ -230,7 +230,11 @@ const goldSwatches: {
  * (banded gradient) extended to navy and white too. Deliberately no
  * Chase Ring or Shine on any of these six (owner's request: "the
  * other effects can be left off" for this comparison), so the only
- * variable being compared is the fill itself.
+ * variable being compared is the fill itself. Also renders with
+ * `.gt-solid-fill` (see globals.css), which strips the button's
+ * usual semi-transparent glossy overlay — per the owner, these six
+ * specifically should be fully solid/opaque, not diluted by that
+ * highlight layer.
  */
 const metallicComparisons: {
   label: string;
@@ -337,7 +341,7 @@ export default function NavColorTestPage() {
             {metallicComparisons.map((item) => (
               <span
                 key={item.label}
-                className={`gt-jumbotron-btn inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full border-2 border-gt-gold px-4 text-[10px] font-bold uppercase tracking-wider sm:text-xs ${item.className} ${item.textClass}`}
+                className={`gt-jumbotron-btn gt-solid-fill inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full border-2 border-gt-gold px-4 text-[10px] font-bold uppercase tracking-wider sm:text-xs ${item.className} ${item.textClass}`}
               >
                 {item.label}
               </span>
