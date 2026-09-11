@@ -162,12 +162,17 @@ Don't create these yet — add them when that phase of work begins.
   broadcast "player cards" (photo, name, key info in a graphic card
   layout). Roster-tile visual confirmed against an owner-supplied GT
   All-ACC graphic — see `PlayerCard`.
-- **Jumbotron crawl** (`JumbotronCrawl`, currently used on About only):
-  auto-scrolls a page's content top to bottom like a Star Wars
+- **Jumbotron crawl** (`JumbotronCrawl`, now used on every page —
+  originally About-only, extended everywhere per the owner so the
+  autoscroll and the typewriter effect always run together, not just
+  there): auto-scrolls a page's content top to bottom like a Star Wars
   opening/teleprompter on arrival, cancels instantly on any real user
   scroll input, with Mute (reserved for future announcer-voice
-  narration audio) and Replay controls. Built reusable since the owner
-  wants it on other pages eventually, not just About.
+  narration audio) and Replay controls. Already no-ops gracefully when
+  a page's content is short enough not to need scrolling, so wrapping
+  every page was safe. Scroll speed is 48px/s (was 40, +20% per the
+  owner). `ComingSoon` applies it once at the shared-component level
+  so Donations and Signup both picked it up for free.
 - **Typewriter effect** (`Typewriter`, used site-wide on headings and
   paragraph copy): types text out character by character the first
   time it scrolls into view, like a caption being typed live on the
@@ -188,11 +193,18 @@ Don't create these yet — add them when that phase of work begins.
   after the first from its turn. Any similar "assign a stable id from
   a shared counter" pattern needs to live in a ref-guarded `useEffect`,
   not a lazy initializer or the render body itself.
-  Default typing speed is 55ms/character now (every page's explicit
-  `speed` override scaled the same way each time) after two rounds of
-  "still too fast" from the owner. About's three history paragraphs
-  are also center-aligned now, matching every other typewriter block
-  on the site instead of reading as left-aligned prose.
+  Default typing speed is 42ms/character now (every page's explicit
+  `speed` override scaled the same way each time) after three rounds
+  of "still too fast" from the owner — went 22 -> 33 -> 55 -> 42 (the
+  55 -> 42 step was a 30%-faster request, not another slowdown, so
+  don't assume the trend only ever goes slower). **Text alignment,
+  settled after going back and forth:** body paragraphs are
+  left-aligned (the block itself stays centered on screen via the
+  existing flex containers) — an earlier request for "centered"
+  typewriter text had made paragraphs `text-align: center` for a
+  stretch, which read as uneven ragged-left prose; headings and short
+  uppercase labels ("Current Owners", the Home page's eyebrow, etc.)
+  stay center-aligned throughout.
   **Real layout bug fixed, also worth remembering:** it originally
   rendered `text.slice(0, visibleChars)`, so the paragraph's own word
   wrap recalculated on every character as the string grew, visibly
@@ -234,7 +246,25 @@ Don't create these yet — add them when that phase of work begins.
   instead of a hard-edged circle, so the grid itself blooms uniformly
   across black and navy backgrounds alike — text-shadow-based glow
   (`gt-led-text-*`) is additive on top of this, not the only source of
-  light anymore.
+  light anymore. The flicker itself (`gt-led-flicker`) was made more
+  pronounced per the owner: quick irregular brightness dips (3.5s
+  cycle) instead of a slow smooth sine fade (was 5s), so it actually
+  reads as a flicker rather than a gentle breathe.
+- **Ambient glow orbs** on the main screen (`JumbotronFrame.tsx`, four
+  blurred slowly-pulsing color blobs behind the pixel grid) — per the
+  owner, copied from a reference site's hero-section glow blobs and
+  adapted to the GT gold/off-white palette. Real bug hit while
+  building these, same failure mode as anything else absolutely
+  positioned in this frame: with no explicit z-index they painted
+  above the (non-positioned) page content regardless of DOM order,
+  and without a blend mode they sat as solid-ish color patches
+  directly over text — confirmed by finding a heading's text fully
+  present and correctly styled in the DOM while completely invisible
+  on screen. `mix-blend-screen` fixed it (additive light only, content
+  underneath stays legible), same pattern as `.gt-pixel-grid-screen`
+  below — and needed the same much-lower-than-you'd-guess alpha
+  tuning to avoid a wash-out, for the same "screen blend has no
+  threshold" reason.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
@@ -396,21 +426,26 @@ that fold both into one value, placed before `.gt-jumbotron-btn`'s own
 `:hover`/`:active` rules so those still win on interaction as they
 already did for the plain base class.
 
-**Known limitation, reverted on purpose: the LED grid is invisible on
-pure-black panels (main screen, brand strip), visible only on navy.**
-`mix-blend-mode: overlay` mathematically cannot lighten a pure black
-backdrop — `overlay(0, x) = 0` for any blend value — so
-`.gt-pixel-grid` has never actually lit up `bg-black` panels. Tried
-switching every usage to `mix-blend-screen` (which does lighten black
-correctly), but at the scale of an entire panel with the soft/blurred
-dot falloff already in place, screen blend over-brightened everything
-into a washed-out, milky look across the whole site, not just the
-previously-invisible black areas — the owner asked to undo it.
-Reverted to `mix-blend-overlay` everywhere. If black-panel visibility
-matters enough to revisit, the real fix is tuning the dot gradient
-(smaller radius, less blur, lower peak alpha) specifically for screen
-blend rather than reusing the overlay-tuned values, not just swapping
-the blend mode on its own.
+**Resolved: the LED grid used to be invisible on pure-black panels
+(main screen, brand strip), visible only on navy.** `mix-blend-mode:
+overlay` mathematically cannot lighten a pure black backdrop —
+`overlay(0, x) = 0` for any blend value — so `.gt-pixel-grid` never
+actually lit up `bg-black` panels. Two earlier attempts: reverting to
+overlay everywhere and accepting it as a known limitation (a straight
+swap to `mix-blend-screen`, which *can* lighten black, had reused
+overlay's dot alpha values and washed the whole site out into a
+milky haze). The eventual fix, once the owner asked for this again:
+a **second** class, `.gt-pixel-grid-screen`, with alpha tuned much
+lower specifically for screen blend (confirmed by testing — even a
+core alpha of 0.22 was still too strong at 5px dot spacing, since
+screen blend has no threshold the way overlay does; settled on 0.09).
+Used with `mix-blend-screen` only at the two black-panel call sites in
+`JumbotronFrame.tsx`; navy panels (nav bar, `NextEventTicker`'s three
+columns) keep `.gt-pixel-grid` + `mix-blend-overlay` untouched, since
+that already looked right there. So: **the grid now blooms on both
+black and navy panels, tuned differently for each** — the "blooms
+uniformly across black and navy alike" line earlier in this section
+was aspirational when written and is accurate now.
 
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no
