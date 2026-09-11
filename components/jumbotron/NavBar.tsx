@@ -8,34 +8,12 @@ import JumbotronButton from "./JumbotronButton";
 // reachable from the bottom ticker and every tailgate row on the
 // schedule table, so a nav link for it was redundant. The route
 // itself (`/signup`) stays, those links still point to it.
-//
-// `test` is a temporary, owner-requested color A/B test: four fixed
-// combos shown side by side regardless of which page is current, so
-// they can be compared in one screenshot rather than one at a time.
-// Contact has no `test` entry and keeps the normal active/inactive
-// gold-vs-outline behavior every other button on the site uses.
 const navItems = [
-  {
-    href: "/about",
-    label: "About",
-    test: { variant: "navyWhite", chase: "white" },
-  },
-  {
-    href: "/schedule",
-    label: "Schedule",
-    test: { variant: "navyGold", chase: "gold" },
-  },
-  {
-    href: "/donations",
-    label: "Donations",
-    test: { variant: "navyWhite", chase: "gold" },
-  },
-  {
-    href: "/booking",
-    label: "Book Us",
-    test: { variant: "navyGold", chase: "white" },
-  },
-  { href: "/contact", label: "Contact", test: null },
+  { href: "/about", label: "About" },
+  { href: "/schedule", label: "Schedule" },
+  { href: "/donations", label: "Donations" },
+  { href: "/booking", label: "Book Us" },
+  { href: "/contact", label: "Contact" },
 ] as const;
 
 function IconFiretruck() {
@@ -92,20 +70,6 @@ export default function NavBar() {
       <div className="flex flex-1 flex-wrap items-center justify-center gap-2 sm:gap-3">
         {navItems.map((item) => {
           const active = pathname === item.href;
-          if (item.test) {
-            return (
-              <JumbotronButton
-                key={item.href}
-                href={item.href}
-                variant={item.test.variant}
-                chaseRing
-                chaseColor={item.test.chase}
-                ariaCurrent={active ? "page" : undefined}
-              >
-                {item.label}
-              </JumbotronButton>
-            );
-          }
           return (
             <JumbotronButton
               key={item.href}

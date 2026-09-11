@@ -44,7 +44,7 @@ import { useEffect, useRef } from "react";
  */
 const CELL = 10;
 const TICK_MS = 140;
-const SNAKE_COUNT = 4;
+const SNAKE_COUNT = 8;
 const MIN_LEN = 4;
 const MAX_LEN = 8;
 const TURN_CHANCE = 0.12;

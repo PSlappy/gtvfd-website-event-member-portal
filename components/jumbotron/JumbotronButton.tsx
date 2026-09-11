@@ -20,14 +20,6 @@ const variantClasses = {
   // "lit up" against the rest.
   outline:
     "border-gt-gold/45 bg-black/55 text-gt-gray-light/70 hover:border-gt-gold hover:bg-black/70 hover:text-gt-gray-light",
-  // Temporary: two navy-filled variants for the owner's nav color A/B
-  // test (see NavBar.tsx) — a filled navy pill on the nav bar's own
-  // navy background, distinguished only by border/text, which is
-  // exactly the "just vanished into the background" problem the
-  // `outline` comment above already flagged. Kept anyway since this
-  // is deliberately a side-by-side comparison, not a final look.
-  navyWhite: "border-gt-gold bg-gt-navy text-gt-gray-light",
-  navyGold: "border-gt-gold bg-gt-navy text-gt-gold",
 } as const;
 
 /**
@@ -53,10 +45,17 @@ const variantClasses = {
  * the button's own border. Not applied to Full Schedule (owner's
  * call, tested side by side with Sign-Up and preferred it off there),
  * so it's opt-in per call site rather than tied to a variant.
- * `chaseColor` picks which color it runs in — gold (default) or
- * white, via the `.gt-chase-white` modifier — added for the nav
- * color test below.
+ * `chaseColor` picks which color it runs in — gold (default), white,
+ * or navy (a brightened blue, not the literal `--gt-navy`, which is
+ * nearly invisible against this site's own black/navy backgrounds) —
+ * via the `.gt-chase-white`/`.gt-chase-navy` modifiers.
  */
+const CHASE_COLOR_CLASS = {
+  gold: "",
+  white: "gt-chase-white",
+  navy: "gt-chase-navy",
+} as const;
+
 export default function JumbotronButton({
   href,
   variant = "gold",
@@ -72,7 +71,7 @@ export default function JumbotronButton({
   variant?: keyof typeof variantClasses;
   iconOnly?: boolean;
   chaseRing?: boolean;
-  chaseColor?: "gold" | "white";
+  chaseColor?: keyof typeof CHASE_COLOR_CLASS;
   ariaLabel?: string;
   ariaCurrent?: "page";
   className?: string;
@@ -83,7 +82,7 @@ export default function JumbotronButton({
       href={href}
       aria-label={ariaLabel}
       aria-current={ariaCurrent}
-      className={`gt-jumbotron-btn ${chaseRing ? "gt-chase-ring" : ""} ${chaseRing && chaseColor === "white" ? "gt-chase-white" : ""} inline-flex h-9 ${iconOnly ? "w-9" : "px-4"} items-center justify-center whitespace-nowrap rounded-full border-2 text-[10px] font-bold uppercase tracking-wider transition-colors sm:text-xs ${variantClasses[variant]} ${className}`}
+      className={`gt-jumbotron-btn ${chaseRing ? "gt-chase-ring" : ""} ${chaseRing ? CHASE_COLOR_CLASS[chaseColor] : ""} inline-flex h-9 ${iconOnly ? "w-9" : "px-4"} items-center justify-center whitespace-nowrap rounded-full border-2 text-[10px] font-bold uppercase tracking-wider transition-colors sm:text-xs ${variantClasses[variant]} ${className}`}
     >
       {children}
     </Link>

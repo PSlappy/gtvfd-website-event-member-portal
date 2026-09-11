@@ -541,15 +541,23 @@ body {
 
 .gt-chase-ring {
   position: relative;
-  /* Gold by default. `.gt-chase-white` (combined alongside this
-     class) overrides the variable to run the same ring in white
-     instead — added for the owner's nav color A/B test, so the ring
-     color is a variable rather than hardcoded into the gradient. */
+  /* Gold by default. `.gt-chase-white`/`.gt-chase-navy` (combined
+     alongside this class) override the variable to run the same ring
+     in a different color instead, so the color is a variable rather
+     than hardcoded into the gradient. */
   --gt-chase-color: 179, 144, 81;
 }
 
 .gt-chase-white {
   --gt-chase-color: 245, 245, 245;
+}
+
+/* Brightened navy, not the literal `--gt-navy` (#051e39) — the real
+   navy is nearly as dark as this panel's own black/navy backgrounds,
+   so a ring in the literal brand color would be almost invisible.
+   Same brightened blue Snake Trail uses for its navy dots. */
+.gt-chase-navy {
+  --gt-chase-color: 94, 138, 196;
 }
 
 /*
