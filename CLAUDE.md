@@ -480,6 +480,21 @@ colors), Chase Ring and Shine both deliberately off so the fill is the
 only variable. **The actual site-wide replacement has not happened —
 next step once the owner has seen this and picked a direction.**
 
+**Follow-up: the six comparison buttons were still visibly diluted,
+fixed with a new `.gt-solid-fill` class.** Every `.gt-jumbotron-btn`
+(and, redundantly, the top layer of each `.gt-metallic-*` gradient)
+carries its own semi-transparent glossy `background-image` overlay,
+which was washing out both the flat current-color fills and the
+metallic bands underneath it — not obvious until the owner asked for
+these six specifically to render fully solid/opaque, no transparency.
+`.gt-solid-fill` strips `background-image` to `none` outright, with
+three more compound overrides
+(`.gt-jumbotron-btn.gt-metallic-gold.gt-solid-fill` etc.) that redefine
+it as just the pure banded gradient for the metallic swatches, gloss
+layer excluded entirely. Applied only via the `gt-solid-fill` class on
+these six spans in `/nav-color-test` — every other button on the site
+keeps its normal glossy highlight, this wasn't a global change.
+
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
 Location, Kickoff, Tailgate, Sign-Up on tailgate rows); this pass
