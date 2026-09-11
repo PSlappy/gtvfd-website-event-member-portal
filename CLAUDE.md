@@ -265,6 +265,60 @@ Don't create these yet — add them when that phase of work begins.
   below — and needed the same much-lower-than-you'd-guess alpha
   tuning to avoid a wash-out, for the same "screen blend has no
   threshold" reason.
+  **Fixed properly, later:** the main screen's actual content wrapper
+  got an explicit `relative z-10` (matching the pixel grid's own
+  `z-10`, which still wins on top since it's declared later in the
+  DOM). This is the real root-cause fix for the bug above — any
+  future decorative absolutely-positioned sibling added to this panel
+  with no z-index of its own now reliably paints *underneath* real
+  content by default, rather than needing every single one to
+  independently get the blend-mode treatment right.
+- **"Spark Float"** (`.gt-spark` in globals.css): small gold/white
+  glyphs (`+`, `·`, `✦`) drifting up and fading, an ambient background
+  layer behind whatever's on the main screen — per the owner, also
+  adapted from that reference site (there: green symbols tied to one
+  specific badge; here: not tied to any element, just atmosphere for
+  the whole screen). Eight fixed position/size/delay instances in
+  `JumbotronFrame.tsx`, CSS-only (`animation: gt-spark-float ...
+  infinite`), so the whole set repeats forever with no JS driving it.
+- **"Chase Ring"** (`.gt-chase-ring`): a bright point of light that
+  sweeps continuously around an element's own border, fading into a
+  short comet-tail behind it — per the owner, the third effect
+  adapted from that reference site (there: a green ring around one
+  pill badge; here: gold, and applied broadly — see the "own review"
+  reference name below). Standard CSS "gradient border" technique: a
+  `conic-gradient` on a `::before`, animated by rotating a
+  **registered** custom property (`@property --gt-chase-angle`) —
+  `@property` is what makes a value *inside* a gradient animatable via
+  keyframes at all; a plain (unregistered) custom property here would
+  just silently not animate, no error. `padding` + a two-layer
+  `mask`/`mask-composite: exclude` clips that filled gradient down to
+  a thin ring matching the padding thickness, instead of a filled
+  shape. `border-radius: inherit` on the pseudo-element is what lets
+  *one* class work on a pill, a card, or anything else without
+  per-shape variants.
+  **Needs a non-clipping wrapper wherever the target has
+  `overflow-hidden` or a scroll container** (PlayerCard, the schedule
+  table, the About source cards partly needed this) — the ring's
+  `::before` extends outside the element's own box by design (that's
+  how it traces the border from the outside), so anything that clips
+  its own overflow will clip the ring away too. The pattern used each
+  time: an outer `<div className="gt-chase-ring relative ... rounded-*">`
+  with no overflow rule of its own, wrapping the original element
+  (which keeps its own `overflow-hidden`/`rounded-*` unchanged).
+  Currently applied to: whichever nav item is the current page,
+  Sign-Up (the ticker button and every schedule table row), Full
+  Schedule, both `PlayerCard`s, the schedule table, and all four
+  About page source cards — the owner's ask was "essentially anything
+  displayed on the video monitors," scoped in practice to buttons and
+  card-shaped content rather than literally every element, since a
+  border-chase effect needs a defined box to trace.
+
+**"Chase Ring" and "Spark Float" are the owner's own reference names
+for these two effects going forward** (not the reference site's
+internal class names, which were `beam-pill`/`beam-spin` and
+`heal-float`) — use these names, not a re-description, when either
+comes up again in later conversations.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
@@ -403,6 +457,13 @@ tailgate row on the schedule table, so a nav link for it was
 redundant (the route itself, `/signup`, still exists and those links
 still point to it). The remaining items are now ordered About,
 Schedule, Donations, Book Us, Contact.
+
+**Buttons made more solid, per the owner:** the nav's `outline`
+(inactive) variant went from `bg-black/30 border-gt-gold/30` to
+`bg-black/55 border-gt-gold/45`, and the About page's source cards
+from `bg-black/60` to `bg-black/80` — still visibly dimmer than the
+filled gold/white variants (that contrast is still how "this is the
+current page" reads), just less transparent than before.
 
 **Persistent 3D depth was added on top of all this, per the owner:
 "everything on the [main and bottom] screens" should read as a
