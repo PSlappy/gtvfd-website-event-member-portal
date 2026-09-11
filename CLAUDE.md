@@ -144,7 +144,10 @@ Don't create these yet — add them when that phase of work begins.
 - **Bottom info bar** (persistent across all pages): shows the next
   upcoming tailgate event — Opponent, Date, Kickoff Time, Tailgate Start
   Time, Address. Only updates when the actual next event changes, not
-  based on navigation.
+  based on navigation. **No longer has a Full Schedule button** — it
+  used to sit next to Sign-Up here, but per the owner it was a
+  redundant way to reach `/schedule` once Schedule became a real nav
+  link. Sign-Up stays, since it isn't in the nav.
 - **Main display** (rest of frame): content swaps based on nav selection,
   with a broadcast-style transition. If a page's content doesn't fit the
   visible frame, scrolling reveals more content *inside* the frame — the
@@ -315,8 +318,9 @@ Don't create these yet — add them when that phase of work begins.
   content rather than literally every element, since a border-chase
   effect needs a defined box to trace. **Not** on Full Schedule
   anymore — the owner tested it side by side with Sign-Up and
-  preferred it off there; Full Schedule's text is gold now too
-  (was black).
+  preferred it off there; Full Schedule's text was changed to gold
+  (was black) before the button was removed from the ticker entirely,
+  see the bottom-bar note further down.
   Color is a CSS custom property (`--gt-chase-color`, gold by
   default) rather than hardcoded into the gradient, with a
   `.gt-chase-white` modifier — added for the nav color test below, so
@@ -433,6 +437,32 @@ here for now, not rolled out anywhere else yet:**
   component needs route-awareness for something else after this test
   page is gone, keep the client-component change; if not, both can be
   reverted together.
+  Shine's color is a `--gt-shine-color` custom property (white by
+  default, same pattern as Chase Ring's `--gt-chase-color`) with
+  `.gt-shine-gold`/`.gt-shine-navy` modifiers — added so specific
+  buttons could run a different color per the owner's exact mapping:
+  Row 1's Donations/Book Us and Row 2's About/Schedule shine gold;
+  Row 2's Donations/Book Us and Row 3's Donations/Book Us shine navy;
+  everything else stays the white default. Verified per-button by
+  reading the actual class off each `.gt-shine` span in the DOM
+  afterward, not by eyeballing which streak looked which color in a
+  screenshot.
+
+**The page also grew a fourth content row: Georgia Tech's three
+official Tech Gold variants**, per the owner, fetched fresh from
+ramblinwreck.com/georgia-tech-athletics-brand-guidelines rather than
+assumed — getting a brand color reference wrong would be misleading
+in exactly the context where it matters most. PMS 118C, its CMYK
+equivalent, and the digital HEX all convert to the exact same RGB
+(179, 144, 81) — shown as three separate swatches anyway since the
+guide lists them as three line items, even though two render
+identically on screen. Metallic Tech Gold (PMS 10126 C) has **no**
+RGB/CMYK/HEX in the guide at all — it's explicitly for offset
+printing only, a spot metallic ink that RGB can't reproduce — so
+rather than invent a number, that swatch uses a banded gold gradient
+to suggest a metallic sheen and its caption states plainly that no
+digital value exists. If a real Tech Gold reference is ever needed
+elsewhere in the app, these are the values to reuse.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
