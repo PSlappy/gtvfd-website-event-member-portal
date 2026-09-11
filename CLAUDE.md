@@ -313,12 +313,45 @@ Don't create these yet — add them when that phase of work begins.
   displayed on the video monitors," scoped in practice to buttons and
   card-shaped content rather than literally every element, since a
   border-chase effect needs a defined box to trace.
+  **Fixed: the first version was too subtle to actually notice**
+  ("I do not see the Chase Ring anywhere") despite rendering
+  correctly — confirmed it really was there (computed styles checked
+  again from scratch, and watched the bright arc visibly sweep across
+  several screenshots on `PlayerCard`), the comet was just only
+  bright for the last ~20% of a 2.5s rotation on a 2px ring. Added a
+  **second, static** ring via `::after` (a plain glowing `box-shadow`
+  on the pseudo-element, always visible regardless of where the
+  animated comet currently is) and made the comet itself thicker
+  (3px), brighter, a bigger share of the arc (~45%), and slower
+  (3.5s) so it lingers longer per pass. The static ring lives on
+  `::after` rather than as a `box-shadow` directly on `.gt-chase-ring`
+  on purpose: that class combines with `.gt-jumbotron-btn` (and, on
+  the About cards, `.gt-depth-panel` too) on the same element, both of
+  which already set `box-shadow` outright — the exact silent-collision
+  bug documented throughout this file. A second pseudo-element can't
+  collide with the host's own box-shadow since it isn't touching that
+  property.
+- **"Snake Trail"** (`SnakeTrail.tsx`, on the main screen only): a
+  handful of short dot-trails crawling across the LED grid on a
+  discrete tick loop, game-of-Snake style — bright head, fading tail,
+  turns randomly, respawns elsewhere on hitting an edge. The fourth
+  effect adapted from the reference site (there: a `<canvas>` layered
+  over a static dot-grid background; same idea here). Built as a
+  canvas rather than DOM nodes per dot since it's genuinely a step
+  interval (140ms ticks), not a smooth CSS animation — canvas is the
+  natural fit for that. Steps in 20px increments, a multiple of
+  `.gt-pixel-grid`'s own 5px spacing, so every position still lands on
+  a real grid dot rather than an imperceptible 5px nudge. Deliberately
+  left with no explicit z-index so it inherits the main screen
+  content wrapper's `z-10` guarantee (see the glow-orb entry above)
+  and can never paint over real text.
 
-**"Chase Ring" and "Spark Float" are the owner's own reference names
-for these two effects going forward** (not the reference site's
-internal class names, which were `beam-pill`/`beam-spin` and
-`heal-float`) — use these names, not a re-description, when either
-comes up again in later conversations.
+**"Chase Ring," "Spark Float," and "Snake Trail" are the owner's own
+reference names for these three effects going forward** (not the
+reference site's internal class/variable names, which were
+`beam-pill`/`beam-spin`, `heal-float`, and an unnamed `<canvas>`) —
+use these names, not a re-description, when any of them comes up
+again in later conversations.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
