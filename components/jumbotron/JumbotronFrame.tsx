@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import SnakeTrail from "./SnakeTrail";
 
 /**
  * Full-viewport shell styled like a stadium video board: a nav bar strip,
@@ -194,6 +195,11 @@ export default function JumbotronFrame({
             aria-hidden
             className="gt-pixel-grid-screen pointer-events-none absolute inset-0 z-10 mix-blend-screen"
           />
+          {/* Snake Trail — bright dot-trails crawling across the LED
+              grid, game-of-Snake style. See SnakeTrail.tsx for why
+              it's a canvas rather than DOM nodes, and why it's
+              deliberately left without a z-index. */}
+          <SnakeTrail />
         </div>
 
         {/* bottom info bar — NextEventTicker applies its own per-panel

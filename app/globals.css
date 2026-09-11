@@ -499,11 +499,11 @@ body {
  * comet-tail behind it. Per the owner, adapted from a reference
  * site's pill-badge border effect. Technique: a `::before` filled
  * edge-to-edge with a `conic-gradient` that's transparent for most of
- * the circle and only bright for the last ~15% of the arc, animated
- * by rotating a registered custom property (`@property` is what
- * makes a value inside a gradient animatable via keyframes at all —
- * a plain custom property here would just silently not animate) so
- * the bright point sweeps around. `padding` + the two-layer
+ * the circle and only bright for a stretch of the arc, animated by
+ * rotating a registered custom property (`@property` is what makes a
+ * value inside a gradient animatable via keyframes at all — a plain
+ * custom property here would just silently not animate) so the
+ * bright point sweeps around. `padding` + the two-layer
  * `mask`/`mask-composite: exclude` trick then clips that filled
  * gradient down to a thin ring matching the padding thickness,
  * instead of a filled shape — the standard CSS "gradient border"
@@ -515,6 +515,17 @@ body {
  * already has this via `.gt-jumbotron-btn` or its own `relative`
  * class) so the pseudo-element's `absolute` positioning is scoped to
  * it, not some other ancestor.
+ *
+ * `.gt-chase-ring` itself also carries a constant, non-animated
+ * `box-shadow` ring underneath the animated comet — per the owner,
+ * the first version (comet bright for only the last ~15% of a 2.5s
+ * rotation, on a 2px-thick ring) was too subtle to actually notice at
+ * button size, effectively invisible in normal use even though it
+ * was rendering correctly. This baseline glow means there's always
+ * something visibly there regardless of where the comet currently is
+ * in its rotation; the animated sweep is layered on top as the
+ * "broadcast graphics" flourish, not the only thing making the ring
+ * visible at all.
  */
 @property --gt-chase-angle {
   syntax: "<angle>";
@@ -532,20 +543,41 @@ body {
   position: relative;
 }
 
+/*
+ * Static baseline ring lives on `::after`, deliberately not as a
+ * `box-shadow` on `.gt-chase-ring` itself: `.gt-chase-ring` combines
+ * with `.gt-jumbotron-btn` (and, on the About source cards, with
+ * `.gt-depth-panel` too) on the same element, and those already set
+ * `box-shadow` outright — the exact silent-collision failure mode
+ * documented throughout this file. A second pseudo-element sidesteps
+ * the whole problem: it can't collide with the host's own box-shadow
+ * because it isn't touching that property at all.
+ */
+.gt-chase-ring::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  box-shadow:
+    0 0 0 1px rgba(179, 144, 81, 0.55),
+    0 0 6px rgba(179, 144, 81, 0.4);
+  pointer-events: none;
+}
+
 .gt-chase-ring::before {
   content: "";
   position: absolute;
-  inset: -2px;
+  inset: -3px;
   border-radius: inherit;
-  padding: 2px;
+  padding: 3px;
   background: conic-gradient(
     from var(--gt-chase-angle),
     transparent 0%,
-    transparent 80%,
-    rgba(179, 144, 81, 0.15) 86%,
-    rgba(179, 144, 81, 0.45) 92%,
-    rgba(179, 144, 81, 0.85) 97%,
-    #b39051 100%,
+    transparent 55%,
+    rgba(179, 144, 81, 0.2) 65%,
+    rgba(179, 144, 81, 0.5) 78%,
+    rgba(179, 144, 81, 0.85) 90%,
+    #e8c98a 100%,
     transparent 100%
   );
   -webkit-mask:
@@ -554,7 +586,7 @@ body {
   mask:
     linear-gradient(#fff 0 0) content-box exclude,
     linear-gradient(#fff 0 0) exclude;
-  animation: gt-chase-spin 2.5s linear infinite;
+  animation: gt-chase-spin 3.5s linear infinite;
   pointer-events: none;
 }
 
