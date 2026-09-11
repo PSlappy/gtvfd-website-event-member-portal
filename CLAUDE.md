@@ -464,6 +464,22 @@ to suggest a metallic sheen and its caption states plainly that no
 digital value exists. If a real Tech Gold reference is ever needed
 elsewhere in the app, these are the values to reuse.
 
+**Pending decision, not yet acted on: the owner asked to replace every
+use of Gold on the site with Metallic Tech Gold, and whether metallic
+Navy/White versions were possible too.** Given the scale (Gold is used
+essentially everywhere — borders, text, backgrounds, glows, Chase
+Ring's default) and that Metallic Tech Gold has no official digital
+value at all (see above), a comparison was built first rather than
+doing the site-wide swap sight-unseen: `.gt-metallic-gold`/`-navy`/
+`-white` in globals.css (a banded diagonal gradient suggesting a
+brushed-metal sheen — gold reuses the Tech Gold swatch's exact
+banding; navy and white are equally invented, since the brand guide
+doesn't define a metallic version of either), shown on
+`/nav-color-test` as six buttons (current vs. metallic for all three
+colors), Chase Ring and Shine both deliberately off so the fill is the
+only variable. **The actual site-wide replacement has not happened —
+next step once the owner has seen this and picked a direction.**
+
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
 Location, Kickoff, Tailgate, Sign-Up on tailgate rows); this pass
