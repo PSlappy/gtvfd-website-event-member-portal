@@ -5,7 +5,8 @@ const variantClasses = {
   gold: "border-gt-gold bg-gt-gold text-black",
   // Off-white per the GT brand guide, not navy — most buttons sit on
   // navy panels already, so a navy button just disappeared into it.
-  white: "border-gt-gold bg-gt-gray-light text-black",
+  // Text is gold, not black, per the owner.
+  white: "border-gt-gold bg-gt-gray-light text-gt-gold",
   // For nav links sitting on the nav bar's own navy panel: a filled
   // navy or gold pill for every item would either vanish into the
   // background or turn the whole bar into a wall of gold, so inactive
@@ -19,6 +20,14 @@ const variantClasses = {
   // "lit up" against the rest.
   outline:
     "border-gt-gold/45 bg-black/55 text-gt-gray-light/70 hover:border-gt-gold hover:bg-black/70 hover:text-gt-gray-light",
+  // Temporary: two navy-filled variants for the owner's nav color A/B
+  // test (see NavBar.tsx) — a filled navy pill on the nav bar's own
+  // navy background, distinguished only by border/text, which is
+  // exactly the "just vanished into the background" problem the
+  // `outline` comment above already flagged. Kept anyway since this
+  // is deliberately a side-by-side comparison, not a final look.
+  navyWhite: "border-gt-gold bg-gt-navy text-gt-gray-light",
+  navyGold: "border-gt-gold bg-gt-navy text-gt-gold",
 } as const;
 
 /**
@@ -41,16 +50,19 @@ const variantClasses = {
  *
  * `chaseRing` adds the Chase Ring effect (`.gt-chase-ring` in
  * globals.css) — a point of light that sweeps continuously around
- * the button's own border. Reserved for the site's actual calls to
- * action (Sign-Up, Full Schedule) and whichever nav item is the
- * current page, not every button, so it still reads as "this one
- * matters" rather than becoming background noise.
+ * the button's own border. Not applied to Full Schedule (owner's
+ * call, tested side by side with Sign-Up and preferred it off there),
+ * so it's opt-in per call site rather than tied to a variant.
+ * `chaseColor` picks which color it runs in — gold (default) or
+ * white, via the `.gt-chase-white` modifier — added for the nav
+ * color test below.
  */
 export default function JumbotronButton({
   href,
   variant = "gold",
   iconOnly = false,
   chaseRing = false,
+  chaseColor = "gold",
   ariaLabel,
   ariaCurrent,
   className = "",
@@ -60,6 +72,7 @@ export default function JumbotronButton({
   variant?: keyof typeof variantClasses;
   iconOnly?: boolean;
   chaseRing?: boolean;
+  chaseColor?: "gold" | "white";
   ariaLabel?: string;
   ariaCurrent?: "page";
   className?: string;
@@ -70,7 +83,7 @@ export default function JumbotronButton({
       href={href}
       aria-label={ariaLabel}
       aria-current={ariaCurrent}
-      className={`gt-jumbotron-btn ${chaseRing ? "gt-chase-ring" : ""} inline-flex h-9 ${iconOnly ? "w-9" : "px-4"} items-center justify-center whitespace-nowrap rounded-full border-2 text-[10px] font-bold uppercase tracking-wider transition-colors sm:text-xs ${variantClasses[variant]} ${className}`}
+      className={`gt-jumbotron-btn ${chaseRing ? "gt-chase-ring" : ""} ${chaseRing && chaseColor === "white" ? "gt-chase-white" : ""} inline-flex h-9 ${iconOnly ? "w-9" : "px-4"} items-center justify-center whitespace-nowrap rounded-full border-2 text-[10px] font-bold uppercase tracking-wider transition-colors sm:text-xs ${variantClasses[variant]} ${className}`}
     >
       {children}
     </Link>

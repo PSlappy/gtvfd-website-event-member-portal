@@ -541,6 +541,15 @@ body {
 
 .gt-chase-ring {
   position: relative;
+  /* Gold by default. `.gt-chase-white` (combined alongside this
+     class) overrides the variable to run the same ring in white
+     instead — added for the owner's nav color A/B test, so the ring
+     color is a variable rather than hardcoded into the gradient. */
+  --gt-chase-color: 179, 144, 81;
+}
+
+.gt-chase-white {
+  --gt-chase-color: 245, 245, 245;
 }
 
 /*
@@ -559,8 +568,8 @@ body {
   inset: -3px;
   border-radius: inherit;
   box-shadow:
-    0 0 0 1px rgba(179, 144, 81, 0.55),
-    0 0 6px rgba(179, 144, 81, 0.4);
+    0 0 0 1px rgba(var(--gt-chase-color), 0.55),
+    0 0 6px rgba(var(--gt-chase-color), 0.4);
   pointer-events: none;
 }
 
@@ -574,10 +583,10 @@ body {
     from var(--gt-chase-angle),
     transparent 0%,
     transparent 55%,
-    rgba(179, 144, 81, 0.2) 65%,
-    rgba(179, 144, 81, 0.5) 78%,
-    rgba(179, 144, 81, 0.85) 90%,
-    #e8c98a 100%,
+    rgba(var(--gt-chase-color), 0.2) 65%,
+    rgba(var(--gt-chase-color), 0.5) 78%,
+    rgba(var(--gt-chase-color), 0.85) 90%,
+    rgb(var(--gt-chase-color)) 100%,
     transparent 100%
   );
   -webkit-mask:

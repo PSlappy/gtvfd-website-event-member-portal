@@ -14,9 +14,25 @@ import { useEffect, useRef } from "react";
  * steps on an interval, not a smooth CSS animation — and canvas is
  * the natural fit for that, same as the reference.
  *
- * `CELL` is 20px: a multiple of `.gt-pixel-grid`'s own 5px spacing,
+ * `CELL` is 10px: a multiple of `.gt-pixel-grid`'s own 5px spacing,
  * so every step still lands exactly on a real grid dot, just a
  * visually perceptible jump instead of an imperceptible 5px nudge.
+ * Tuned down from an initial 20px per the owner ("closer together").
+ *
+ * Each snake gets one color, chosen at spawn from the GT palette
+ * (gold / a brightened navy blue / white) — plain navy itself
+ * (`--gt-navy`, `#051e39`) would be nearly invisible against this
+ * panel's black background, so it's lightened here specifically for
+ * this effect's visibility, not meant to match the navy used
+ * elsewhere on the board.
+ *
+ * No `mix-blend-screen` here, unlike this panel's other ambient
+ * layers (glow orbs, the pixel grid itself): screen blend would wash
+ * the navy dots down toward black (screen blend can't make a dark
+ * color read as a distinct hue against a dark backdrop, it can only
+ * add brightness). Plain small, low-alpha dots stay legible in all
+ * three colors instead, and are still small/transparent enough not
+ * to meaningfully compete with real content for attention.
  *
  * Deliberately rendered with no z-index (stacking level "auto"), so
  * it always paints *underneath* the main screen's actual content —
@@ -26,16 +42,23 @@ import { useEffect, useRef } from "react";
  * orbs and Spark Float, rather than something that could ever sit
  * on top of a heading or paragraph.
  */
-const CELL = 20;
+const CELL = 10;
 const TICK_MS = 140;
-const SNAKE_COUNT = 3;
+const SNAKE_COUNT = 4;
 const MIN_LEN = 4;
 const MAX_LEN = 8;
 const TURN_CHANCE = 0.12;
+const MAX_ALPHA = 0.5;
+
+const COLORS = [
+  "232, 201, 138", // gold
+  "245, 245, 245", // white
+  "94, 138, 196", // brightened navy blue
+];
 
 type Dir = { dx: number; dy: number };
 type Cell = { x: number; y: number };
-type Snake = { cells: Cell[]; dir: Dir; maxLen: number };
+type Snake = { cells: Cell[]; dir: Dir; maxLen: number; color: string };
 
 const DIRS: Dir[] = [
   { dx: 1, dy: 0 },
@@ -90,6 +113,7 @@ export default function SnakeTrail({
         cells: [randomCell()],
         dir: randomDir(),
         maxLen: MIN_LEN + Math.floor(Math.random() * (MAX_LEN - MIN_LEN)),
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
       };
     }
 
@@ -124,9 +148,9 @@ export default function SnakeTrail({
       for (const snake of snakes) {
         snake.cells.forEach((cell, idx) => {
           const fade = 1 - idx / snake.maxLen;
-          const radius = Math.max(0.6, 2.1 - idx * 0.15);
+          const radius = Math.max(0.3, 1.3 - idx * 0.1);
           ctx!.beginPath();
-          ctx!.fillStyle = `rgba(232, 201, 138, ${Math.max(0, fade * 0.85)})`;
+          ctx!.fillStyle = `rgba(${snake.color}, ${Math.max(0, fade * MAX_ALPHA)})`;
           ctx!.arc(
             cell.x * CELL + CELL / 2,
             cell.y * CELL + CELL / 2,
@@ -159,7 +183,7 @@ export default function SnakeTrail({
     <canvas
       ref={canvasRef}
       aria-hidden
-      className={`pointer-events-none absolute inset-0 mix-blend-screen ${className}`}
+      className={`pointer-events-none absolute inset-0 ${className}`}
     />
   );
 }
