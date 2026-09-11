@@ -50,9 +50,113 @@ export default function JumbotronFrame({
 
         {/* main screen */}
         <div className="relative flex-1 overflow-hidden bg-black">
-          <div className="gt-no-scrollbar h-full overflow-y-auto overflow-x-hidden">
+          {/* Explicit z-10 here (matching the pixel grid's own z-10,
+              which still wins on top since it's declared later in the
+              DOM) is the real fix for the glow-orb bug noted below:
+              any future decorative absolutely-positioned sibling
+              added to this panel without its own z-index now reliably
+              paints underneath actual page content, not above it. */}
+          <div className="gt-no-scrollbar relative z-10 h-full overflow-y-auto overflow-x-hidden">
             {main}
           </div>
+          {/* Spark Float — small gold/white glyphs drifting up and
+              fading, an ambient background layer behind whatever's
+              displayed here. Per the owner, adapted from the same
+              reference site (there: green symbols tied to one badge;
+              here: not tied to any element, just atmosphere for the
+              whole screen). Fixed position/size/delay per particle so
+              the set repeats forever with no JS driving it. */}
+          <span
+            aria-hidden
+            className="gt-spark pointer-events-none text-lg text-gt-gold"
+            style={{ left: "8%", bottom: "10%", animationDuration: "6s" }}
+          >
+            +
+          </span>
+          <span
+            aria-hidden
+            className="gt-spark pointer-events-none text-sm text-gt-gray-light"
+            style={{
+              left: "22%",
+              bottom: "35%",
+              animationDuration: "5s",
+              animationDelay: "1.2s",
+            }}
+          >
+            ·
+          </span>
+          <span
+            aria-hidden
+            className="gt-spark pointer-events-none text-base text-gt-gold"
+            style={{
+              left: "38%",
+              bottom: "5%",
+              animationDuration: "7s",
+              animationDelay: "2.4s",
+            }}
+          >
+            ✦
+          </span>
+          <span
+            aria-hidden
+            className="gt-spark pointer-events-none text-sm text-gt-gray-light"
+            style={{
+              left: "55%",
+              bottom: "50%",
+              animationDuration: "5.5s",
+              animationDelay: "0.6s",
+            }}
+          >
+            ·
+          </span>
+          <span
+            aria-hidden
+            className="gt-spark pointer-events-none text-lg text-gt-gold"
+            style={{
+              left: "68%",
+              bottom: "18%",
+              animationDuration: "6.5s",
+              animationDelay: "3.1s",
+            }}
+          >
+            +
+          </span>
+          <span
+            aria-hidden
+            className="gt-spark pointer-events-none text-sm text-gt-gray-light"
+            style={{
+              left: "80%",
+              bottom: "40%",
+              animationDuration: "5s",
+              animationDelay: "1.8s",
+            }}
+          >
+            ·
+          </span>
+          <span
+            aria-hidden
+            className="gt-spark pointer-events-none text-base text-gt-gold"
+            style={{
+              left: "92%",
+              bottom: "8%",
+              animationDuration: "7.5s",
+              animationDelay: "4s",
+            }}
+          >
+            ✦
+          </span>
+          <span
+            aria-hidden
+            className="gt-spark pointer-events-none text-sm text-gt-gray-light"
+            style={{
+              left: "14%",
+              bottom: "60%",
+              animationDuration: "6s",
+              animationDelay: "2.9s",
+            }}
+          >
+            ·
+          </span>
           {/* Ambient glow orbs, behind the pixel grid — see gt-orb-glow
               in globals.css for why these exist. mix-blend-screen is
               load-bearing, not just stylistic: without it these paint

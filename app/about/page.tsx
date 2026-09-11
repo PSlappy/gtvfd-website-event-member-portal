@@ -99,7 +99,7 @@ export default function AboutPage() {
                 href={article.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="gt-jumbotron-btn gt-depth-panel flex items-start gap-3 rounded-lg border-2 border-gt-gold bg-black/60 p-4 transition-colors hover:bg-gt-navy/60"
+                className="gt-jumbotron-btn gt-depth-panel gt-chase-ring flex items-start gap-3 rounded-lg border-2 border-gt-gold bg-black/80 p-4 transition-colors hover:bg-gt-navy/80"
               >
                 <span className="gt-led-text-gold flex h-9 w-9 shrink-0 items-center justify-center rounded border border-gt-gold/70 bg-gt-navy text-[10px] font-black tracking-tight text-gt-gold">
                   {article.logo}

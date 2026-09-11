@@ -59,14 +59,14 @@ export default function NextEventTicker() {
         {/* Row 4: sign-up — only if a tailgate event exists for this game */}
         {game.tailgate && (
           <div className="gt-display-in [animation-delay:240ms]">
-            <JumbotronButton href="/signup" variant="gold">
+            <JumbotronButton href="/signup" variant="gold" chaseRing>
               Sign-Up
             </JumbotronButton>
           </div>
         )}
         {/* Row 5: always shown */}
         <div className="gt-display-in [animation-delay:320ms]">
-          <JumbotronButton href="/schedule" variant="white">
+          <JumbotronButton href="/schedule" variant="white" chaseRing>
             Full Schedule
           </JumbotronButton>
         </div>

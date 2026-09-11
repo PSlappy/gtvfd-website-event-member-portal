@@ -12,8 +12,13 @@ const variantClasses = {
   // links stay a dim, mostly-transparent outline and only light up
   // fully (via the `gold` variant, chosen by the caller) on the
   // current page.
+  // Bumped from /30 to /55 (border /30 to /45) per the owner: every
+  // button should read as more solid, not this transparent — while
+  // still staying visibly dimmer than the filled gold/white variants,
+  // since that contrast is what makes the active nav item read as
+  // "lit up" against the rest.
   outline:
-    "border-gt-gold/30 bg-black/30 text-gt-gray-light/70 hover:border-gt-gold hover:bg-black/50 hover:text-gt-gray-light",
+    "border-gt-gold/45 bg-black/55 text-gt-gray-light/70 hover:border-gt-gold hover:bg-black/70 hover:text-gt-gray-light",
 } as const;
 
 /**
@@ -33,11 +38,19 @@ const variantClasses = {
  * `iconOnly` swaps the horizontal pill padding for a square-ish
  * `w-9` box matching Mute's circular icon button, for a nav item
  * whose content is an icon rather than a text label.
+ *
+ * `chaseRing` adds the Chase Ring effect (`.gt-chase-ring` in
+ * globals.css) — a point of light that sweeps continuously around
+ * the button's own border. Reserved for the site's actual calls to
+ * action (Sign-Up, Full Schedule) and whichever nav item is the
+ * current page, not every button, so it still reads as "this one
+ * matters" rather than becoming background noise.
  */
 export default function JumbotronButton({
   href,
   variant = "gold",
   iconOnly = false,
+  chaseRing = false,
   ariaLabel,
   ariaCurrent,
   className = "",
@@ -46,6 +59,7 @@ export default function JumbotronButton({
   href: string;
   variant?: keyof typeof variantClasses;
   iconOnly?: boolean;
+  chaseRing?: boolean;
   ariaLabel?: string;
   ariaCurrent?: "page";
   className?: string;
@@ -56,7 +70,7 @@ export default function JumbotronButton({
       href={href}
       aria-label={ariaLabel}
       aria-current={ariaCurrent}
-      className={`gt-jumbotron-btn inline-flex h-9 ${iconOnly ? "w-9" : "px-4"} items-center justify-center whitespace-nowrap rounded-full border-2 text-[10px] font-bold uppercase tracking-wider transition-colors sm:text-xs ${variantClasses[variant]} ${className}`}
+      className={`gt-jumbotron-btn ${chaseRing ? "gt-chase-ring" : ""} inline-flex h-9 ${iconOnly ? "w-9" : "px-4"} items-center justify-center whitespace-nowrap rounded-full border-2 text-[10px] font-bold uppercase tracking-wider transition-colors sm:text-xs ${variantClasses[variant]} ${className}`}
     >
       {children}
     </Link>

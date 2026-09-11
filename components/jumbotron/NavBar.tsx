@@ -60,6 +60,7 @@ export default function NavBar() {
         href="/"
         variant={homeActive ? "gold" : "outline"}
         iconOnly
+        chaseRing={homeActive}
         ariaLabel="Home"
         ariaCurrent={homeActive ? "page" : undefined}
       >
@@ -74,6 +75,7 @@ export default function NavBar() {
               key={item.href}
               href={item.href}
               variant={active ? "gold" : "outline"}
+              chaseRing={active}
               ariaCurrent={active ? "page" : undefined}
             >
               {item.label}

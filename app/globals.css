@@ -492,3 +492,115 @@ body {
     transition: none;
   }
 }
+
+/*
+ * "Chase Ring" — a bright point of light that sweeps continuously
+ * around an element's own border, fading into a short trailing
+ * comet-tail behind it. Per the owner, adapted from a reference
+ * site's pill-badge border effect. Technique: a `::before` filled
+ * edge-to-edge with a `conic-gradient` that's transparent for most of
+ * the circle and only bright for the last ~15% of the arc, animated
+ * by rotating a registered custom property (`@property` is what
+ * makes a value inside a gradient animatable via keyframes at all —
+ * a plain custom property here would just silently not animate) so
+ * the bright point sweeps around. `padding` + the two-layer
+ * `mask`/`mask-composite: exclude` trick then clips that filled
+ * gradient down to a thin ring matching the padding thickness,
+ * instead of a filled shape — the standard CSS "gradient border"
+ * technique. `border-radius: inherit` on the pseudo-element is what
+ * lets ONE class work on a pill (`rounded-full`), a card
+ * (`rounded-lg`), or anything else without per-shape variants.
+ *
+ * Needs `position: relative` on the element itself (every call site
+ * already has this via `.gt-jumbotron-btn` or its own `relative`
+ * class) so the pseudo-element's `absolute` positioning is scoped to
+ * it, not some other ancestor.
+ */
+@property --gt-chase-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes gt-chase-spin {
+  to {
+    --gt-chase-angle: 360deg;
+  }
+}
+
+.gt-chase-ring {
+  position: relative;
+}
+
+.gt-chase-ring::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--gt-chase-angle),
+    transparent 0%,
+    transparent 80%,
+    rgba(179, 144, 81, 0.15) 86%,
+    rgba(179, 144, 81, 0.45) 92%,
+    rgba(179, 144, 81, 0.85) 97%,
+    #b39051 100%,
+    transparent 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box exclude,
+    linear-gradient(#fff 0 0) exclude;
+  mask:
+    linear-gradient(#fff 0 0) content-box exclude,
+    linear-gradient(#fff 0 0) exclude;
+  animation: gt-chase-spin 2.5s linear infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-chase-ring::before {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/*
+ * "Spark Float" — small glyphs that drift upward and fade, like
+ * sparks or data particles rising off a lit display. Per the owner,
+ * adapted from the same reference site (there: green "heal" symbols
+ * floating off one badge; here: an ambient background layer behind
+ * whatever's displayed on a given screen, gold/white to match the
+ * board's own palette, not tied to any single element). Each
+ * particle is a fixed position/size/delay so the whole set repeats
+ * cleanly forever without any JS driving it.
+ */
+@keyframes gt-spark-float {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.8);
+  }
+  15% {
+    opacity: 0.8;
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-90px) scale(1.1);
+  }
+}
+
+.gt-spark {
+  position: absolute;
+  pointer-events: none;
+  animation: gt-spark-float linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-spark {
+    animation: none;
+    opacity: 0;
+  }
+}
