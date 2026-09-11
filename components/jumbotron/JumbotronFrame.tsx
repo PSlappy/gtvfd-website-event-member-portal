@@ -44,7 +44,7 @@ export default function JumbotronFrame({
           {brand}
           <div
             aria-hidden
-            className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
+            className="gt-pixel-grid-screen pointer-events-none absolute inset-0 z-10 mix-blend-screen"
           />
         </div>
 
@@ -53,6 +53,34 @@ export default function JumbotronFrame({
           <div className="gt-no-scrollbar h-full overflow-y-auto overflow-x-hidden">
             {main}
           </div>
+          {/* Ambient glow orbs, behind the pixel grid — see gt-orb-glow
+              in globals.css for why these exist. mix-blend-screen is
+              load-bearing, not just stylistic: without it these paint
+              as solid-ish colored panels stacked above the (non-
+              positioned) content div — position:absolute content
+              always paints above non-positioned siblings regardless
+              of DOM order — and can fully obscure text depending on
+              where it happens to sit on a given page (confirmed: it
+              did exactly this on Contact's heading). Screen blend
+              keeps them additive light only, same as the scan-sweep
+              below, which never had this problem for the same
+              reason. */}
+          <div
+            aria-hidden
+            className="gt-orb-a pointer-events-none absolute -top-10 -right-10 h-56 w-56 rounded-full bg-gt-gold/10 blur-3xl mix-blend-screen"
+          />
+          <div
+            aria-hidden
+            className="gt-orb-b pointer-events-none absolute -bottom-12 -left-10 h-52 w-52 rounded-full bg-gt-gray-light/[0.07] blur-3xl mix-blend-screen"
+          />
+          <div
+            aria-hidden
+            className="gt-orb-c pointer-events-none absolute left-[-15%] top-1/3 h-36 w-36 rounded-full bg-gt-gold/[0.07] blur-3xl mix-blend-screen"
+          />
+          <div
+            aria-hidden
+            className="gt-orb-d pointer-events-none absolute bottom-1/4 right-[-12%] h-44 w-44 rounded-full bg-gt-gray-light/[0.06] blur-3xl mix-blend-screen"
+          />
           {/* slow scanning light sweep, like a video signal refreshing */}
           <div
             aria-hidden
@@ -60,7 +88,7 @@ export default function JumbotronFrame({
           />
           <div
             aria-hidden
-            className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
+            className="gt-pixel-grid-screen pointer-events-none absolute inset-0 z-10 mix-blend-screen"
           />
         </div>
 

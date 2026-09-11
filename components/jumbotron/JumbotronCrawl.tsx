@@ -75,7 +75,7 @@ function IconReplay() {
  */
 export default function JumbotronCrawl({
   children,
-  speed = 40,
+  speed = 48,
   startDelay = 900,
   onMutedChange,
 }: {

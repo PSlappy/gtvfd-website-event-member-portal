@@ -42,13 +42,40 @@ body {
  * main screen, and a soft glow bleeding off the frame edges — sold as
  * "a real video board is on", not just a styled rectangle.
  */
+/*
+ * Sharper, less regular than a smooth sine fade on purpose — a real
+ * LED wall's flicker reads as quick brightness dips, not a slow
+ * breathing pulse. Irregular keyframe spacing (not evenly every 25%)
+ * avoids an obviously metronomic feel.
+ */
 @keyframes gt-led-flicker {
   0%,
   100% {
+    opacity: 0.85;
+  }
+  4% {
     opacity: 0.3;
   }
-  50% {
-    opacity: 0.7;
+  7% {
+    opacity: 0.9;
+  }
+  19% {
+    opacity: 0.45;
+  }
+  23% {
+    opacity: 0.85;
+  }
+  52% {
+    opacity: 0.25;
+  }
+  56% {
+    opacity: 0.9;
+  }
+  74% {
+    opacity: 0.4;
+  }
+  79% {
+    opacity: 0.85;
   }
 }
 
@@ -88,7 +115,75 @@ body {
   );
   background-size: 5px 5px;
   filter: blur(0.4px);
-  animation: gt-led-flicker 5s ease-in-out infinite;
+  animation: gt-led-flicker 3.5s linear infinite;
+}
+
+/*
+ * A second, much weaker grid for the two panels that are actually
+ * `bg-black` (brand strip, main screen) rather than navy — real bug,
+ * documented at length further down this file: `mix-blend-mode:
+ * overlay` mathematically cannot lighten a pure black backdrop, so
+ * `.gt-pixel-grid` (tuned for overlay on navy) was always invisible
+ * there. `mix-blend-screen` *can* lighten black, but a straight swap
+ * tried earlier reused overlay's dot alpha values, which is a lot of
+ * light being added uniformly with no threshold — the whole site
+ * washed out into a milky haze, not just the black panels. This is
+ * the "tune the gradient specifically for screen blend, don't just
+ * swap the blend mode" fix that note called for: alpha low enough
+ * that screen-blending it stays a faint sparkle rather than a wash.
+ * Used with `mix-blend-screen` at the two black-panel call sites only
+ * — navy panels keep `.gt-pixel-grid` + `mix-blend-overlay`, which
+ * already looks right there and shouldn't be touched.
+ */
+.gt-pixel-grid-screen {
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.09) 0.4px,
+    rgba(255, 255, 255, 0.03) 1.1px,
+    rgba(255, 255, 255, 0) 2px
+  );
+  background-size: 5px 5px;
+  filter: blur(0.2px);
+  animation: gt-led-flicker 3.5s linear infinite;
+}
+
+/*
+ * Ambient glow "orbs" behind the pixel grid on the main screen: soft
+ * blurred blobs that drift in brightness, giving pools of light for
+ * the screen-blend grid above to actually catch (screen blend still
+ * needs *some* backdrop luminance to lighten — these supply it
+ * locally instead of brightening the whole black panel uniformly,
+ * which would fight the "black screen" look). Per the owner, copied
+ * from a reference site's hero-section glow blobs and adapted to the
+ * GT palette (gold + off-white in place of that site's orange/blue).
+ */
+@keyframes gt-orb-glow {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.12);
+  }
+}
+
+/* Four named variants (rather than Tailwind's arbitrary-value
+   animate-[...] syntax) so each orb can have its own duration/
+   direction while reduced-motion can still target all four with one
+   plain class selector below. */
+.gt-orb-a {
+  animation: gt-orb-glow 8s ease-in-out infinite;
+}
+.gt-orb-b {
+  animation: gt-orb-glow 11s ease-in-out infinite reverse;
+}
+.gt-orb-c {
+  animation: gt-orb-glow 9.5s ease-in-out infinite;
+}
+.gt-orb-d {
+  animation: gt-orb-glow 13s ease-in-out infinite reverse;
 }
 
 .gt-glow {
@@ -204,10 +299,15 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .gt-pixel-grid,
+  .gt-pixel-grid-screen,
   .gt-glow,
   .gt-scan-sweep,
   .gt-display-in,
-  .gt-cut-flash {
+  .gt-cut-flash,
+  .gt-orb-a,
+  .gt-orb-b,
+  .gt-orb-c,
+  .gt-orb-d {
     animation: none;
   }
 }

@@ -46,7 +46,7 @@ const SEQUENCE_GAP_MS = 220;
 export default function Typewriter({
   text,
   className = "",
-  speed = 55,
+  speed = 42,
   startDelay = 0,
 }: {
   text: string;
