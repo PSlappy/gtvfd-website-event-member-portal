@@ -108,17 +108,30 @@ body {
  * `animation` shorthand doesn't merge across classes — the later rule
  * wins outright, silently dropping the other).
  */
+/*
+ * Each also carries one crisp, unblurred offset layer (the last one
+ * listed) for depth rather than just glow: a soft blurred shadow
+ * alone would be invisible against the site's black/navy
+ * backgrounds (a dark blur has nothing to contrast against on a dark
+ * background), but a hard-edged offset shadow lands inside the glow
+ * halo the other layers already threw outward, reading as the
+ * character catching a shadow on the lit panel behind it rather than
+ * a flat printed letter. Per the owner: text and headers should have
+ * the same "rendered 3D object" depth the buttons and cards do.
+ */
 .gt-led-text-gold {
   text-shadow:
     0 0 4px rgba(179, 144, 81, 0.8),
     0 0 16px rgba(179, 144, 81, 0.5),
-    0 0 32px rgba(179, 144, 81, 0.25);
+    0 0 32px rgba(179, 144, 81, 0.25),
+    2px 3px 0 rgba(0, 0, 0, 0.6);
 }
 
 .gt-led-text-white {
   text-shadow:
     0 0 3px rgba(255, 255, 255, 0.65),
-    0 0 12px rgba(255, 255, 255, 0.35);
+    0 0 12px rgba(255, 255, 255, 0.35),
+    2px 3px 0 rgba(0, 0, 0, 0.6);
 }
 
 /*
@@ -126,11 +139,13 @@ body {
  * board should read as lit, not just headings, but a full-strength
  * glow on paragraph-length text turns it into a blurry mess. This is
  * the toned-down version for anything meant to stay easily readable.
+ * Depth offset is smaller too, to match.
  */
 .gt-led-text-dim {
   text-shadow:
     0 0 2px rgba(255, 255, 255, 0.3),
-    0 0 6px rgba(255, 255, 255, 0.12);
+    0 0 6px rgba(255, 255, 255, 0.12),
+    1px 1.5px 0 rgba(0, 0, 0, 0.5);
 }
 
 /* Same idea for gold borders: a card outline should look like it's
@@ -222,6 +237,22 @@ body {
     0 2px 6px rgba(0, 0, 0, 0.45);
 }
 
+/*
+ * Hides a scrollable element's native scrollbar while leaving actual
+ * scrolling untouched — used on the main screen's own scroll
+ * container and JumbotronCrawl's, so the board reads as a sealed
+ * video panel rather than a webpage with a visible OS scrollbar
+ * running down it.
+ */
+.gt-no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.gt-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .gt-depth-recessed {
   box-shadow:
     0 2px 5px rgba(0, 0, 0, 0.55) inset,
@@ -263,10 +294,15 @@ body {
 
 /*
  * Jumbotron button — a glossy, beveled CG-rendered scoreboard graphic:
- * pops in from small on mount, pulses gently in place once settled,
- * lifts toward the viewer on hover, and presses back on click. The
- * glossy top-to-bottom highlight (`background-image`) is what sells
- * "rendered 3D object" rather than a flat colored rectangle.
+ * pops in from small on mount, lifts toward the viewer on hover, and
+ * presses back on click. The glossy top-to-bottom highlight
+ * (`background-image`) is what sells "rendered 3D object" rather
+ * than a flat colored rectangle.
+ *
+ * No continuous pulse, on purpose (there used to be one, reserved for
+ * Sign-Up/Full Schedule as an "act now" cue) — see JumbotronButton.tsx
+ * for why that got removed. Every button just does the one-time
+ * pop-in and then stays still.
  *
  * `position: relative` + `z-index` + `isolation: isolate` +
  * `mix-blend-mode: normal` fixes a real visual bug: the per-panel
@@ -277,8 +313,8 @@ body {
  * context (and explicitly resetting its own blend mode, belt and
  * braces) keeps the grid from ever painting over it.
  *
- * The pop-in/pulse animation and the hover/active box-shadow both
- * target `transform`/`box-shadow`, so hover pauses the animation
+ * The pop-in animation and the hover/active box-shadow both target
+ * `transform`/`box-shadow`, so hover pauses the animation
  * (`animation-play-state`) rather than letting the two fight over the
  * same properties every frame. box-shadow here also folds in the gold
  * glow that `.gt-led-border-gold` provides elsewhere: both classes
@@ -305,16 +341,6 @@ body {
   }
 }
 
-@keyframes gt-btn-pulse {
-  0%,
-  100% {
-    transform: perspective(500px) scale(1);
-  }
-  50% {
-    transform: perspective(500px) scale(1.045);
-  }
-}
-
 .gt-jumbotron-btn {
   position: relative;
   z-index: 20;
@@ -335,22 +361,6 @@ body {
     0 5px 10px rgba(0, 0, 0, 0.45),
     0 0 5px rgba(179, 144, 81, 0.5),
     0 0 10px rgba(179, 144, 81, 0.2);
-}
-
-/*
- * Continuous pulse is reserved for the two actual calls to action
- * (Sign-Up, Full Schedule) — everything else that shares the base
- * button look (Mute/Replay, the About page's Featured In cards,
- * form submit buttons) gets the pop-in entrance but stays still once
- * settled, so the pulse reads as "act now" rather than becoming
- * background noise every button on the page does forever. Compound
- * selector (not just a second class) so this reliably overrides the
- * base animation regardless of the two rules' order in this file.
- */
-.gt-jumbotron-btn.gt-jumbotron-btn-cta {
-  animation:
-    gt-btn-pop-in 550ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
-    gt-btn-pulse 2.4s ease-in-out 600ms infinite;
 }
 
 .gt-jumbotron-btn:hover,
@@ -377,8 +387,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gt-jumbotron-btn,
-  .gt-jumbotron-btn.gt-jumbotron-btn-cta {
+  .gt-jumbotron-btn {
     animation: none;
     transition: none;
   }

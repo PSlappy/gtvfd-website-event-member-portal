@@ -46,19 +46,19 @@ export default function AboutPage() {
         <div className="gt-led-text-dim gt-display-in max-w-2xl space-y-4 text-balance text-center text-zinc-300 [animation-delay:80ms]">
           <p>
             <Typewriter
-              speed={21}
+              speed={38}
               text="The tailgate tradition dates back to 2008. In 2014, Georgia Tech alumni Sam Huffman and Christian Shea found a 1977 Ford fire engine listed on eBay out of Indiana and bought it for $2,800. They spent the offseason turning it into a rolling tailgate rig: a working keg, a sound system, and a deck welded onto the bed, then started driving it to games as “the Grant Field Volunteer Fire Department,” a nod to Georgia Tech’s engineering reputation."
             />
           </p>
           <p>
             <Typewriter
-              speed={21}
+              speed={38}
               text="As the years went on, the original owners got older, started families, and had less time to manage tailgates and keep the truck running, so they started looking to pass it down. Patrick Shea, Christian’s younger brother, had grown up around the group of GT alumni who owned and supported the tailgate, and had been attending with Harry Rizvi, his best friend since they were five years old, since the tradition began. When Patrick and Harry said they wanted to keep it in the family, Sam sold them the truck for $1,000 in October 2021, and they spent that offseason getting it ready for the 2022 season."
             />
           </p>
           <p>
             <Typewriter
-              speed={21}
+              speed={38}
               text="Since taking over, Patrick and Harry have kept upgrading it: a new stereo system, three TVs, turf on the upper deck, 1996 Atlanta Olympic Stadium seats in place of the old bench seating, retractable awnings, and a steady stream of mechanical maintenance to keep a 50 year old fire engine road ready."
             />
           </p>
@@ -66,7 +66,7 @@ export default function AboutPage() {
 
         <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:160ms]">
           <p className="text-sm uppercase tracking-[0.3em] text-gt-gold">
-            <Typewriter text="Current Owners" speed={45} />
+            <Typewriter text="Current Owners" speed={78} />
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <PlayerCard firstName="Patrick" lastName="Shea" role="Owner" />
@@ -76,7 +76,7 @@ export default function AboutPage() {
 
         <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:240ms]">
           <p className="text-sm uppercase tracking-[0.3em] text-gt-gold">
-            <Typewriter text="Founders, Previous Owners & Donors" speed={45} />
+            <Typewriter text="Founders, Previous Owners & Donors" speed={78} />
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <PlayerCard firstName="Sam" lastName="Huffman" role="Founder" />
@@ -90,7 +90,7 @@ export default function AboutPage() {
 
         <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:320ms]">
           <p className="text-sm uppercase tracking-[0.3em] text-gt-gold">
-            <Typewriter text="Featured In" speed={45} />
+            <Typewriter text="Featured In" speed={78} />
           </p>
           <div className="grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-2">
             {sourceArticles.map((article) => (

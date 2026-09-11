@@ -23,22 +23,30 @@ const variantClasses = {
  * Used for every button and nav link on the site so they all read as
  * the same family of on-screen graphic, not a mix of button styles.
  *
- * `pulse` (default on) adds the continuous "act now" breathing
- * animation (`.gt-jumbotron-btn-cta`) — reserved for actual calls to
- * action (Sign-Up, Full Schedule, form submit buttons). Pass `false`
- * for anything that shouldn't pulse forever, like nav links.
+ * No continuous pulse on any variant, on purpose: an earlier pass
+ * reserved a breathing animation for Sign-Up/Full Schedule as an
+ * "act now" cue, but sitting next to the site's other static buttons
+ * it just read as inconsistent — those two looked like a different
+ * button style, not more urgent. Every button now stays still once
+ * its one-time pop-in entrance settles.
+ *
+ * `iconOnly` swaps the horizontal pill padding for a square-ish
+ * `w-9` box matching Mute's circular icon button, for a nav item
+ * whose content is an icon rather than a text label.
  */
 export default function JumbotronButton({
   href,
   variant = "gold",
-  pulse = true,
+  iconOnly = false,
+  ariaLabel,
   ariaCurrent,
   className = "",
   children,
 }: {
   href: string;
   variant?: keyof typeof variantClasses;
-  pulse?: boolean;
+  iconOnly?: boolean;
+  ariaLabel?: string;
   ariaCurrent?: "page";
   className?: string;
   children: ReactNode;
@@ -46,8 +54,9 @@ export default function JumbotronButton({
   return (
     <Link
       href={href}
+      aria-label={ariaLabel}
       aria-current={ariaCurrent}
-      className={`gt-jumbotron-btn ${pulse ? "gt-jumbotron-btn-cta" : ""} inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full border-2 px-4 text-[10px] font-bold uppercase tracking-wider transition-colors sm:text-xs ${variantClasses[variant]} ${className}`}
+      className={`gt-jumbotron-btn inline-flex h-9 ${iconOnly ? "w-9" : "px-4"} items-center justify-center whitespace-nowrap rounded-full border-2 text-[10px] font-bold uppercase tracking-wider transition-colors sm:text-xs ${variantClasses[variant]} ${className}`}
     >
       {children}
     </Link>

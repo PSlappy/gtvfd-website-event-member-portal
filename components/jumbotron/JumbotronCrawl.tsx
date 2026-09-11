@@ -199,7 +199,7 @@ export default function JumbotronCrawl({
       <div
         ref={scrollRef}
         tabIndex={0}
-        className="h-full w-full overflow-y-auto overflow-x-hidden outline-none"
+        className="gt-no-scrollbar h-full w-full overflow-y-auto overflow-x-hidden outline-none"
       >
         <TypingCoordinationProvider value={coordination}>
           {children}

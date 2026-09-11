@@ -33,14 +33,20 @@ const SEQUENCE_GAP_MS = 220;
  *    no-op outside a crawl) to pause, so the crawl can never scroll a
  *    caption out of view mid-type.
  *
- * The full string is always in the DOM for screen readers via
- * `aria-label`; the animated partial string underneath is
- * `aria-hidden` so it isn't read out character by character.
+ * The full string is always in the DOM, laid out at its final width
+ * from the very first render — only the not-yet-typed tail is made
+ * invisible (`visibility: hidden`, which still occupies its layout
+ * space, unlike `display: none`). That's deliberate: rendering just
+ * `text.slice(0, visibleChars)` instead would re-wrap the paragraph
+ * on every keystroke as it grows, so words visibly jump between lines
+ * while typing instead of each line holding its own fixed set of
+ * words. Screen readers get the full string via `aria-label` on the
+ * wrapper either way; both inner spans are `aria-hidden`.
  */
 export default function Typewriter({
   text,
   className = "",
-  speed = 33,
+  speed = 55,
   startDelay = 0,
 }: {
   text: string;
@@ -149,6 +155,9 @@ export default function Typewriter({
   return (
     <span ref={ref} className={className} aria-label={text}>
       <span aria-hidden="true">{text.slice(0, visibleChars)}</span>
+      <span aria-hidden="true" className="invisible">
+        {text.slice(visibleChars)}
+      </span>
     </span>
   );
 }

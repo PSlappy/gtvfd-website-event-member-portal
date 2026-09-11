@@ -53,7 +53,7 @@ export default function ContactPage() {
       <p className="gt-led-text-dim gt-display-in max-w-md text-balance text-center text-sm text-zinc-400 [animation-delay:80ms]">
         <Typewriter
           text="General questions, sponsor and partner inquiries, anything else, send it here."
-          speed={27}
+          speed={46}
         />
       </p>
 
@@ -145,7 +145,7 @@ export default function ContactPage() {
 
         <button
           type="submit"
-          className="gt-jumbotron-btn gt-jumbotron-btn-cta flex h-11 w-full items-center justify-center rounded-full border-2 border-gt-gold bg-gt-gold text-[10px] font-bold uppercase tracking-wider text-black sm:text-xs"
+          className="gt-jumbotron-btn flex h-11 w-full items-center justify-center rounded-full border-2 border-gt-gold bg-gt-gold text-[10px] font-bold uppercase tracking-wider text-black sm:text-xs"
         >
           Send
         </button>

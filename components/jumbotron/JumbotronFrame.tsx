@@ -50,7 +50,7 @@ export default function JumbotronFrame({
 
         {/* main screen */}
         <div className="relative flex-1 overflow-hidden bg-black">
-          <div className="h-full overflow-y-auto overflow-x-hidden">
+          <div className="gt-no-scrollbar h-full overflow-y-auto overflow-x-hidden">
             {main}
           </div>
           {/* slow scanning light sweep, like a video signal refreshing */}

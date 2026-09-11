@@ -9,7 +9,7 @@ export default function Home() {
       <p className="gt-display-in max-w-lg text-balance text-zinc-400 [animation-delay:80ms]">
         <Typewriter
           text="Waiting on Instagram Graph API credentials before building this out. Instagram’s public embed widget only works for the profile card, not individual posts, so the real per-post carousel needs a proper API connection instead."
-          speed={24}
+          speed={42}
         />
       </p>
     </div>

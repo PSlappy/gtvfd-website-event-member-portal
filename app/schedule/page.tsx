@@ -21,7 +21,7 @@ export default function SchedulePage() {
       <p className="gt-led-text-dim gt-display-in max-w-lg text-balance text-center text-sm text-zinc-400 [animation-delay:80ms]">
         <Typewriter
           text="Home games only, since those are the only ones with a crew tailgate. Kickoff times show as TBD until the conference announces them. Sign-Up will appear once the admin portal has a tailgate event created for that game."
-          speed={24}
+          speed={42}
         />
       </p>
 
