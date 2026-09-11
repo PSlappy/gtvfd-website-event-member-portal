@@ -8,6 +8,12 @@ import JumbotronCrawl from "@/components/jumbotron/JumbotronCrawl";
  * of the actual NavBar only ever showing one combo per page, one at a
  * time. Delete this whole route once a direction is picked; nothing
  * else in the app depends on it.
+ *
+ * Also doubles as the preview spot for two more test-only effects,
+ * per the owner — see globals.css for both: "Shine" (a diagonal light
+ * sweep on every button here, bottom-left to upper-right) and
+ * "Refresh Sweep" (a faint background scan, gated to just this route
+ * inside JumbotronFrame.tsx). Neither is used anywhere else yet.
  */
 
 type ColorKey = "navy" | "white" | "gold";
@@ -39,6 +45,11 @@ const CHASE_CLASS: Record<ColorKey, string> = {
  * added there just for a comparison page. Rendered as a plain `span`
  * (not a link) since these aren't meant to navigate anywhere, only to
  * be looked at.
+ *
+ * Also carries the test-only "Shine" sweep (`.gt-shine`, a nested
+ * span rather than a pseudo-element — Chase Ring already uses both
+ * `::before` and `::after` on this same element, and a given element
+ * can't have a third generated pseudo-element).
  */
 function Swatch({
   label,
@@ -56,6 +67,7 @@ function Swatch({
       className={`gt-jumbotron-btn gt-chase-ring ${CHASE_CLASS[chase]} inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full border-2 border-gt-gold px-4 text-[10px] font-bold uppercase tracking-wider sm:text-xs ${BG_CLASS[bg]} ${TEXT_CLASS[text]}`}
     >
       {label}
+      <span aria-hidden className="gt-shine" />
     </span>
   );
 }
@@ -165,6 +177,7 @@ export default function NavColorTestPage() {
               chaseColor="gold"
             >
               About
+              <span aria-hidden className="gt-shine" />
             </JumbotronButton>
             <JumbotronButton
               href="/nav-color-test"
@@ -173,6 +186,7 @@ export default function NavColorTestPage() {
               chaseColor="white"
             >
               Schedule
+              <span aria-hidden className="gt-shine" />
             </JumbotronButton>
             <JumbotronButton
               href="/nav-color-test"
@@ -181,6 +195,7 @@ export default function NavColorTestPage() {
               chaseColor="navy"
             >
               Donations
+              <span aria-hidden className="gt-shine" />
             </JumbotronButton>
             <JumbotronButton
               href="/nav-color-test"
@@ -189,6 +204,7 @@ export default function NavColorTestPage() {
               chaseColor="gold"
             >
               Book Us
+              <span aria-hidden className="gt-shine" />
             </JumbotronButton>
           </div>
         </div>

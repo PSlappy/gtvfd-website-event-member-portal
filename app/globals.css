@@ -653,3 +653,88 @@ body {
     opacity: 0;
   }
 }
+
+/*
+ * TEST-ONLY EFFECTS — both scoped to /nav-color-test for now, not
+ * used anywhere else in the app yet. Per the owner: preview these
+ * before deciding whether they belong on real buttons/screens
+ * site-wide. Kept as their own classes (not folded into
+ * `.gt-jumbotron-btn` or `JumbotronFrame`'s real scan-sweep) so nothing
+ * here affects production until that decision is made.
+ */
+
+/*
+ * "Shine" — a soft diagonal light reflection sweeping from the
+ * bottom-left corner to the upper-right, like a glint of light
+ * reflecting off a glossy surface. `.gt-shine` is a plain absolutely-
+ * positioned span placed *inside* a button (see Swatch in
+ * app/nav-color-test/page.tsx) — deliberately its own element rather
+ * than a pseudo-element on the button itself, since Chase Ring
+ * already uses both `::before` and `::after` on the same host and a
+ * given element can't have a third. `overflow: hidden` on `.gt-shine`
+ * clips the sweep to the button's own rounded shape without touching
+ * the parent's `overflow` (which has to stay visible for Chase Ring's
+ * ring to extend outside the button as designed).
+ */
+@keyframes gt-shine-sweep {
+  0%,
+  10% {
+    transform: translate(-45%, 45%);
+  }
+  55% {
+    transform: translate(45%, -45%);
+  }
+  100% {
+    transform: translate(45%, -45%);
+  }
+}
+
+.gt-shine {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.gt-shine::before {
+  content: "";
+  position: absolute;
+  inset: -60%;
+  background: linear-gradient(
+    35deg,
+    transparent 44%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 56%
+  );
+  animation: gt-shine-sweep 3.2s ease-in-out infinite;
+}
+
+/*
+ * "Refresh Sweep" — a faint horizontal band drifting down the
+ * screen on a quick, continuous loop, meant to read as a barely-
+ * noticeable display refresh rather than the main screen's existing
+ * `.gt-scan-sweep` (a single slow, more dramatic light beam). A
+ * genuinely different effect, not a retune of the existing one, so
+ * both can be compared independently.
+ */
+@keyframes gt-refresh-sweep {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.gt-refresh-sweep {
+  animation: gt-refresh-sweep 2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-shine::before,
+  .gt-refresh-sweep {
+    animation: none;
+    opacity: 0;
+  }
+}

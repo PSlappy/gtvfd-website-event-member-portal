@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import SnakeTrail from "./SnakeTrail";
 
@@ -9,6 +12,11 @@ import SnakeTrail from "./SnakeTrail";
  * main screen scrolls internally, while the frame, nav bar, brand
  * strip, and bottom bar stay fixed. `bottomBar` is expected to be
  * `NextEventTicker`, which owns its own three-panel layout.
+ *
+ * "use client" + `usePathname` exist only to gate the test-only
+ * Refresh Sweep effect below to `/nav-color-test` — remove both (and
+ * that block) if this component doesn't need route-awareness for
+ * anything else once that test page is gone.
  */
 export default function JumbotronFrame({
   nav,
@@ -21,6 +29,9 @@ export default function JumbotronFrame({
   main: ReactNode;
   bottomBar: ReactNode;
 }) {
+  const pathname = usePathname();
+  const showRefreshSweepTest = pathname === "/nav-color-test";
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black p-2 sm:p-4">
       {/* ambient light bleeding off the video board onto the dark room */}
@@ -191,6 +202,17 @@ export default function JumbotronFrame({
             aria-hidden
             className="gt-scan-sweep pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-transparent via-white/[0.05] to-transparent mix-blend-screen"
           />
+          {/* TEST ONLY, /nav-color-test — "Refresh Sweep": a faint,
+              fast, continuous band, meant to read as a barely-
+              noticeable display refresh rather than the more dramatic
+              scan-sweep above. See globals.css for why it's a
+              separate effect rather than a retune of that one. */}
+          {showRefreshSweepTest && (
+            <div
+              aria-hidden
+              className="gt-refresh-sweep pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-transparent via-white/[0.06] to-transparent mix-blend-screen"
+            />
+          )}
           <div
             aria-hidden
             className="gt-pixel-grid-screen pointer-events-none absolute inset-0 z-10 mix-blend-screen"
