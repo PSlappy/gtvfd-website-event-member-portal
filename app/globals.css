@@ -695,6 +695,19 @@ body {
   overflow: hidden;
   border-radius: inherit;
   pointer-events: none;
+  /* White by default. `.gt-shine-gold`/`.gt-shine-navy` (combined
+     alongside this class) override the variable to run the same
+     sweep in a different color — same pattern as Chase Ring's
+     `--gt-chase-color`. */
+  --gt-shine-color: 255, 255, 255;
+}
+
+.gt-shine-gold {
+  --gt-shine-color: 179, 144, 81;
+}
+
+.gt-shine-navy {
+  --gt-shine-color: 94, 138, 196;
 }
 
 .gt-shine::before {
@@ -704,7 +717,7 @@ body {
   background: linear-gradient(
     35deg,
     transparent 44%,
-    rgba(255, 255, 255, 0.55) 50%,
+    rgba(var(--gt-shine-color), 0.55) 50%,
     transparent 56%
   );
   animation: gt-shine-sweep 3.2s ease-in-out infinite;

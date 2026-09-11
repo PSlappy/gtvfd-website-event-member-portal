@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import JumbotronButton from "@/components/jumbotron/JumbotronButton";
 import JumbotronCrawl from "@/components/jumbotron/JumbotronCrawl";
 
@@ -36,6 +37,12 @@ const CHASE_CLASS: Record<ColorKey, string> = {
   gold: "", // .gt-chase-ring is gold by default, no modifier needed
 };
 
+const SHINE_CLASS: Record<ColorKey, string> = {
+  navy: "gt-shine-navy",
+  gold: "gt-shine-gold",
+  white: "", // .gt-shine is white by default, no modifier needed
+};
+
 /**
  * A standalone swatch matching `.gt-jumbotron-btn` + Chase Ring's
  * real markup/classes, but with `bg`/`text`/`chase` picked
@@ -49,25 +56,28 @@ const CHASE_CLASS: Record<ColorKey, string> = {
  * Also carries the test-only "Shine" sweep (`.gt-shine`, a nested
  * span rather than a pseudo-element — Chase Ring already uses both
  * `::before` and `::after` on this same element, and a given element
- * can't have a third generated pseudo-element).
+ * can't have a third generated pseudo-element). `shine` defaults to
+ * white if not given.
  */
 function Swatch({
   label,
   bg,
   text,
   chase,
+  shine = "white",
 }: {
   label: string;
   bg: ColorKey;
   text: ColorKey;
   chase: ColorKey;
+  shine?: ColorKey;
 }) {
   return (
     <span
       className={`gt-jumbotron-btn gt-chase-ring ${CHASE_CLASS[chase]} inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full border-2 border-gt-gold px-4 text-[10px] font-bold uppercase tracking-wider sm:text-xs ${BG_CLASS[bg]} ${TEXT_CLASS[text]}`}
     >
       {label}
-      <span aria-hidden className="gt-shine" />
+      <span aria-hidden className={`gt-shine ${SHINE_CLASS[shine]}`} />
     </span>
   );
 }
@@ -77,6 +87,7 @@ type RowCombo = {
   bg: ColorKey;
   text: ColorKey;
   chase: ColorKey;
+  shine?: ColorKey;
 };
 
 type Row = {
@@ -84,23 +95,63 @@ type Row = {
   combos: RowCombo[];
 };
 
+// `shine` per the owner's latest round: Row 1's Donations/Book Us and
+// Row 2's About/Schedule run gold; Row 2's Donations/Book Us and Row
+// 3's Donations/Book Us run navy. Everything else not mentioned stays
+// the default white.
 const rows: Row[] = [
   {
     title: "Row 1: Navy buttons",
     combos: [
       { label: "About", bg: "navy", text: "white", chase: "white" },
       { label: "Schedule", bg: "navy", text: "gold", chase: "gold" },
-      { label: "Donations", bg: "navy", text: "white", chase: "gold" },
-      { label: "Book Us", bg: "navy", text: "gold", chase: "white" },
+      {
+        label: "Donations",
+        bg: "navy",
+        text: "white",
+        chase: "gold",
+        shine: "gold",
+      },
+      {
+        label: "Book Us",
+        bg: "navy",
+        text: "gold",
+        chase: "white",
+        shine: "gold",
+      },
     ],
   },
   {
     title: "Row 2: White buttons",
     combos: [
-      { label: "About", bg: "white", text: "gold", chase: "gold" },
-      { label: "Schedule", bg: "white", text: "navy", chase: "navy" },
-      { label: "Donations", bg: "white", text: "gold", chase: "navy" },
-      { label: "Book Us", bg: "white", text: "navy", chase: "gold" },
+      {
+        label: "About",
+        bg: "white",
+        text: "gold",
+        chase: "gold",
+        shine: "gold",
+      },
+      {
+        label: "Schedule",
+        bg: "white",
+        text: "navy",
+        chase: "navy",
+        shine: "gold",
+      },
+      {
+        label: "Donations",
+        bg: "white",
+        text: "gold",
+        chase: "navy",
+        shine: "navy",
+      },
+      {
+        label: "Book Us",
+        bg: "white",
+        text: "navy",
+        chase: "gold",
+        shine: "navy",
+      },
     ],
   },
   {
@@ -108,9 +159,63 @@ const rows: Row[] = [
     combos: [
       { label: "About", bg: "gold", text: "white", chase: "white" },
       { label: "Schedule", bg: "gold", text: "navy", chase: "navy" },
-      { label: "Donations", bg: "gold", text: "white", chase: "navy" },
-      { label: "Book Us", bg: "gold", text: "navy", chase: "white" },
+      {
+        label: "Donations",
+        bg: "gold",
+        text: "white",
+        chase: "navy",
+        shine: "navy",
+      },
+      {
+        label: "Book Us",
+        bg: "gold",
+        text: "navy",
+        chase: "white",
+        shine: "navy",
+      },
     ],
+  },
+];
+
+/**
+ * Georgia Tech's official brand guide lists Tech Gold in three forms
+ * — fetched fresh from ramblinwreck.com/georgia-tech-athletics-brand-
+ * guidelines rather than assumed, since getting this wrong would be
+ * misleading in exactly the context (a brand color reference) where
+ * it matters most. PMS 118C, its CMYK equivalent, and the digital
+ * HEX/RGB are all *the same color* (HEX #B39051 converts to exactly
+ * RGB 179,144,81, matching the PMS 118C entry) — shown as three
+ * swatches anyway per the owner's request, since the guide documents
+ * them as three separate line items even though two render
+ * identically on screen. Metallic Tech Gold (PMS 10126 C) is the
+ * exception: the guide gives it no RGB/CMYK/HEX at all, explicitly
+ * because it's "for offset printing" only — a spot metallic ink, not
+ * something RGB can reproduce. Rather than invent a number the guide
+ * doesn't provide, that swatch uses a banded gold gradient to suggest
+ * a metallic sheen and says plainly that no digital value exists.
+ */
+const goldSwatches: {
+  title: string;
+  caption: string;
+  style: CSSProperties;
+}[] = [
+  {
+    title: "Tech Gold (Metallic)",
+    caption: "PMS 10126 C — no RGB/CMYK/HEX given (offset print only)",
+    style: {
+      backgroundImage:
+        "linear-gradient(135deg, #b39051 0%, #ddc38a 22%, #8a7350 45%, #ddc38a 68%, #b39051 100%)",
+    },
+  },
+  {
+    title: "Tech Gold",
+    caption: "PMS 118C · RGB 179, 144, 81 · CMYK 0, 19, 54, 29",
+    style: { backgroundColor: "#b39051" },
+  },
+  {
+    title: "Tech Gold",
+    caption: "HEX #B39051 · RGB 179, 144, 81",
+    style: { backgroundColor: "#b39051" },
   },
 ];
 
@@ -153,6 +258,30 @@ export default function NavColorTestPage() {
             </div>
           </div>
         ))}
+
+        <div className="flex w-full max-w-2xl flex-col gap-3">
+          <p className="gt-led-text-dim text-center text-[10px] uppercase tracking-[0.25em] text-gt-gray-light/60 sm:text-xs">
+            Row: Tech Gold — the three brand guide variants
+          </p>
+          <div className="flex flex-wrap items-start justify-center gap-6">
+            {goldSwatches.map((swatch, i) => (
+              <div
+                key={`${swatch.title}-${i}`}
+                className="flex flex-col items-center gap-2"
+              >
+                <span
+                  style={swatch.style}
+                  className="gt-jumbotron-btn inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full border-2 border-gt-gold px-4 text-[10px] font-bold uppercase tracking-wider text-black sm:text-xs"
+                >
+                  {swatch.title}
+                </span>
+                <p className="gt-led-text-dim max-w-[10rem] text-center text-[9px] uppercase tracking-wider text-gt-gray-light/60">
+                  {swatch.caption}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <div className="flex w-full max-w-2xl flex-col gap-3">
           <p className="gt-led-text-dim text-center text-[10px] uppercase tracking-[0.25em] text-gt-gray-light/60 sm:text-xs">
