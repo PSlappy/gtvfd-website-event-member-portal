@@ -403,7 +403,36 @@ backgrounds — same color `SnakeTrail` already uses for its navy
 dots), alongside the existing gold default and `.gt-chase-white`.
 **This whole route is temporary — delete it once the owner picks a
 direction**, along with reverting the note above the moment `NavBar`
-actually changes for real.
+actually changes for real. (Explicitly confirmed still wanted as of
+the next round of feedback — don't delete unprompted just because
+some time has passed.)
+
+**The page later became the preview spot for two more test-only
+effects too, per the owner — explicitly asked to be previewed only
+here for now, not rolled out anywhere else yet:**
+- **"Shine"** (`.gt-shine` in globals.css): a soft diagonal light
+  reflection sweeping from a button's bottom-left corner to its
+  upper-right, like a glint off a glossy surface. A real nested
+  `<span>` inside each button (not a pseudo-element on the button
+  itself) — Chase Ring already occupies both `::before` and `::after`
+  on the same host, and an element can't have a third. Added to every
+  button on this page (the `Swatch` component, plus the outline-style
+  reference row's real `JumbotronButton`s). Confirmed each button's
+  sweep animates independently since they mount at slightly different
+  times as the crawl scrolls them into view — reads as a natural
+  desynchronized twinkle, not everything flashing in unison.
+- **"Refresh Sweep"** (`.gt-refresh-sweep`): a faint, fast, continuous
+  band drifting down the main screen, meant to read as a
+  barely-noticeable display refresh — a genuinely different effect
+  from the existing slower, more dramatic `.gt-scan-sweep` already
+  live on every page (see the design-concept bullets near the top of
+  this file), not a retune of it, so the two can be compared
+  independently. This one required making `JumbotronFrame.tsx` a
+  client component (`usePathname`) specifically to gate it to only
+  render when the current route is `/nav-color-test` — if that
+  component needs route-awareness for something else after this test
+  page is gone, keep the client-component change; if not, both can be
+  reverted together.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
