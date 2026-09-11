@@ -148,7 +148,12 @@ Don't create these yet — add them when that phase of work begins.
 - **Main display** (rest of frame): content swaps based on nav selection,
   with a broadcast-style transition. If a page's content doesn't fit the
   visible frame, scrolling reveals more content *inside* the frame — the
-  outer viewport itself never scrolls.
+  outer viewport itself never scrolls. Its scroll container (and
+  `JumbotronCrawl`'s) has the native scrollbar hidden via `.gt-no-scrollbar`
+  (`scrollbar-width: none` + the `-webkit-scrollbar` equivalent) per
+  the owner, so the board reads as a sealed video panel instead of a
+  webpage with a visible OS scrollbar — scrolling itself still works
+  identically, only the visible track/thumb is gone.
 - **Home / default state:** Instagram video carousel (pulled from
   @ramblin_wrekd). Left/right arrow buttons for manual navigation. Also
   advances on scroll while on this view. Does NOT auto-play/auto-advance
@@ -183,19 +188,34 @@ Don't create these yet — add them when that phase of work begins.
   after the first from its turn. Any similar "assign a stable id from
   a shared counter" pattern needs to live in a ref-guarded `useEffect`,
   not a lazy initializer or the render body itself.
-  Default typing speed is 33ms/character (every page's explicit
-  `speed` override scaled the same way) after the owner asked for the
-  effect to run 50% slower than the first pass. About's three history
-  paragraphs are also center-aligned now, matching every other
-  typewriter block on the site instead of reading as left-aligned
-  prose.
+  Default typing speed is 55ms/character now (every page's explicit
+  `speed` override scaled the same way each time) after two rounds of
+  "still too fast" from the owner. About's three history paragraphs
+  are also center-aligned now, matching every other typewriter block
+  on the site instead of reading as left-aligned prose.
+  **Real layout bug fixed, also worth remembering:** it originally
+  rendered `text.slice(0, visibleChars)`, so the paragraph's own word
+  wrap recalculated on every character as the string grew, visibly
+  shifting words to different lines mid-type instead of each line
+  holding a fixed set of words. Fixed by always rendering the full
+  string and making only the untyped tail `invisible` (not `display:
+  none` — `visibility: hidden` still occupies its layout space), so
+  line breaks are fixed from the very first render and typing only
+  ever reveals characters within them.
 - **Everything on screen should read as lit**, not just headings: the
   LED pixel-grid overlay (`gt-pixel-grid`) and `gt-led-text-gold` /
   `gt-led-text-white` (strong glow, headings and key labels) /
   `gt-led-text-dim` (soft glow, body copy and secondary text) /
   `gt-led-border-gold` (glowing card outlines) are the building blocks
-  for it. Apply these to new text/graphics by default going forward —
-  About and the nav got a full pass, other existing pages haven't been
+  for it. All three `gt-led-text-*` classes also carry one crisp,
+  unblurred offset shadow layer for depth (on top of the blurred glow
+  layers) — a soft dark blur alone has nothing to contrast against on
+  the site's black/navy backgrounds, but a hard offset lands inside
+  the glow halo the other layers already threw outward, reading as
+  the character catching a shadow on the panel behind it rather than
+  a flat printed letter. Apply these to new text/graphics by default
+  going forward — About and the nav got a full pass, other existing
+  pages haven't been
   retrofitted yet.
 - **Gold = physical bezel, not a screen.** The pixel grid is applied
   per-panel (nav bar, brand strip, main screen, and each of
@@ -329,12 +349,30 @@ renders each item through `JumbotronButton` too. `JumbotronButton`
 gained an `outline` variant (dim, mostly-transparent border/fill) for
 inactive nav links — a filled gold or navy pill per item would either
 turn the whole bar gold or vanish into the nav bar's own navy
-background — and a `pulse` prop (default on) so nav links and anything
-else that shouldn't breathe forever can opt out; `gt-jumbotron-btn-cta`
-is only applied when `pulse` is true. Contact and Book Us's submit
-buttons were resized to match the same text size/tracking as
-everything else and now pulse too, since each is that page's one
-actual call to action.
+background. Contact and Book Us's submit buttons were resized to match
+the same text size/tracking as everything else.
+
+**Then the continuous pulse was removed from every button entirely,
+also per the owner** ("Sign-Up and Full Schedule still don't look like
+all the other buttons"): it had been reserved for Sign-Up/Full
+Schedule/submit buttons as an "act now" cue, but next to the site's
+other static buttons it just read as a different, inconsistent button
+style rather than more urgent — diffing Sign-Up's and a static nav
+button's computed styles showed the pulse's live scale transform was
+the *only* difference. `.gt-btn-pulse` and `.gt-jumbotron-btn-cta`
+(and `JumbotronButton`'s `pulse` prop) were removed outright rather
+than left unused, since nothing calls for them anymore.
+
+**Nav bar overhaul, also per the owner:** Home is now a hand-drawn SVG
+firetruck icon (`iconOnly` prop on `JumbotronButton`, no icon library
+is installed) pinned to the nav bar's left edge via its own flex item
+outside the centered group of the rest, rather than a text label that
+wrapped in with everything else. Sign Up was dropped from the nav
+entirely — it's already reachable from the bottom ticker and every
+tailgate row on the schedule table, so a nav link for it was
+redundant (the route itself, `/signup`, still exists and those links
+still point to it). The remaining items are now ordered About,
+Schedule, Donations, Book Us, Contact.
 
 **Persistent 3D depth was added on top of all this, per the owner:
 "everything on the [main and bottom] screens" should read as a
@@ -414,11 +452,16 @@ tier.
   build. Prioritize proving these interactions work early (stages 1–3).
 
 ## Site structure / nav
-Home · Schedule/Events · About/History · Donations · Contact · Book Us
+Home (firetruck icon, pinned to the nav bar's left edge, not a text
+label) · About/History · Schedule/Events · Donations · Book Us
 (bringing the firetruck to weddings/parades/other paid events —
-separate page, was called "Rental" until stage 7) · Sign Up/Register/
-Member Login (portal). Partnerships/Sponsors is a section on Home, not
-a separate page.
+separate page, was called "Rental" until stage 7) · Contact ·
+Sign Up/Register/Member Login (portal — reachable from the bottom
+ticker and the schedule table, deliberately not its own nav link).
+Partnerships/Sponsors is a section on Home, not a separate page. This
+is the actual `NavBar` order (About before Schedule, Book Us before
+Contact) per the owner — don't assume alphabetical or "build order"
+matches nav order elsewhere in this doc.
 
 ### Home page sections
 1. Landing / high-level intro
