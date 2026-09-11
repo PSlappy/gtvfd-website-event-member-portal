@@ -306,13 +306,22 @@ Don't create these yet — add them when that phase of work begins.
   time: an outer `<div className="gt-chase-ring relative ... rounded-*">`
   with no overflow rule of its own, wrapping the original element
   (which keeps its own `overflow-hidden`/`rounded-*` unchanged).
-  Currently applied to: whichever nav item is the current page,
-  Sign-Up (the ticker button and every schedule table row), Full
-  Schedule, both `PlayerCard`s, the schedule table, and all four
-  About page source cards — the owner's ask was "essentially anything
-  displayed on the video monitors," scoped in practice to buttons and
-  card-shaped content rather than literally every element, since a
-  border-chase effect needs a defined box to trace.
+  Currently applied to: whichever nav item is the current page (well,
+  currently the nav color test below overrides this — see there),
+  Sign-Up (the ticker button and every schedule table row), both
+  `PlayerCard`s, the schedule table, and all four About page source
+  cards — the owner's ask was "essentially anything displayed on the
+  video monitors," scoped in practice to buttons and card-shaped
+  content rather than literally every element, since a border-chase
+  effect needs a defined box to trace. **Not** on Full Schedule
+  anymore — the owner tested it side by side with Sign-Up and
+  preferred it off there; Full Schedule's text is gold now too
+  (was black).
+  Color is a CSS custom property (`--gt-chase-color`, gold by
+  default) rather than hardcoded into the gradient, with a
+  `.gt-chase-white` modifier — added for the nav color test below, so
+  the ring can run in either color per call site via
+  `JumbotronButton`'s `chaseColor` prop.
   **Fixed: the first version was too subtle to actually notice**
   ("I do not see the Chase Ring anywhere") despite rendering
   correctly — confirmed it really was there (computed styles checked
@@ -339,12 +348,21 @@ Don't create these yet — add them when that phase of work begins.
   over a static dot-grid background; same idea here). Built as a
   canvas rather than DOM nodes per dot since it's genuinely a step
   interval (140ms ticks), not a smooth CSS animation — canvas is the
-  natural fit for that. Steps in 20px increments, a multiple of
-  `.gt-pixel-grid`'s own 5px spacing, so every position still lands on
-  a real grid dot rather than an imperceptible 5px nudge. Deliberately
-  left with no explicit z-index so it inherits the main screen
-  content wrapper's `z-10` guarantee (see the glow-orb entry above)
-  and can never paint over real text.
+  natural fit for that. Deliberately left with no explicit z-index so
+  it inherits the main screen content wrapper's `z-10` guarantee (see
+  the glow-orb entry above) and can never paint over real text.
+  **Retuned per the owner** ("smaller dots, closer together, more
+  transparent"): step size 20px -> 10px (still a multiple of
+  `.gt-pixel-grid`'s own 5px spacing, so positions still land on real
+  grid dots), dot radius and peak alpha both roughly halved. Also
+  gained a color per snake (gold / white / a brightened navy blue,
+  chosen at spawn) instead of one fixed gold — and dropped
+  `mix-blend-screen` to make that work: screen blend can only add
+  brightness, it can't make a dark navy dot read as a distinct hue
+  against this panel's black background. Verified after tuning that
+  all three colors were actually present by sampling the canvas's own
+  pixel data directly (`getImageData`), not just eyeballing a
+  screenshot.
 
 **"Chase Ring," "Spark Float," and "Snake Trail" are the owner's own
 reference names for these three effects going forward** (not the
@@ -352,6 +370,28 @@ reference site's internal class/variable names, which were
 `beam-pill`/`beam-spin`, `heal-float`, and an unnamed `<canvas>`) —
 use these names, not a re-description, when any of them comes up
 again in later conversations.
+
+**Temporary nav color A/B test, per the owner — not a final
+decision, revisit once they've picked one:** `NavBar`'s
+About/Schedule/Donations/Book Us items currently each show a fixed
+navy-filled combo (different text color and Chase Ring color per
+item) regardless of which page is actually current, specifically so
+all four render side by side in one screenshot for comparison instead
+of only the current page showing its "active" color at a time.
+Contact is untouched and still uses the normal active-page-is-gold /
+otherwise-outline behavior every other nav item on the site uses.
+The four combos (`navItems` in `NavBar.tsx`): About = navy bg, white
+text, white ring; Schedule = navy bg, gold text, gold ring;
+Donations = navy bg, white text, gold ring; Book Us = navy bg, gold
+text, white ring. Two supporting additions to `JumbotronButton`:
+`navyWhite`/`navyGold` variants (temporary, just for this test — a
+filled navy pill on the nav bar's own navy background is exactly the
+"vanishes into the background" problem the `outline` variant exists
+to avoid, so don't treat these as a real pattern to reuse elsewhere)
+and the `chaseColor` prop. Once the owner picks a direction, replace
+this whole `test` mechanism with whatever the real nav styling should
+be — don't leave the A/B scaffolding in place as the permanent
+implementation.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
