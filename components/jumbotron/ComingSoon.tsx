@@ -19,7 +19,7 @@ export default function ComingSoon({
   return (
     <JumbotronCrawl>
       <div className="flex min-h-full flex-col items-center justify-center gap-4 px-6 py-16">
-        <h2 className="gt-led-text-gold gt-display-in text-center text-2xl font-black uppercase tracking-widest text-gt-gold sm:text-4xl">
+        <h2 className="gt-font-header gt-led-text-gold gt-display-in text-center text-2xl font-black uppercase tracking-widest text-gt-gold sm:text-4xl">
           <Typewriter text={title} startDelay={700} />
         </h2>
         <p className="gt-display-in max-w-md text-left text-balance text-zinc-400 [animation-delay:80ms]">

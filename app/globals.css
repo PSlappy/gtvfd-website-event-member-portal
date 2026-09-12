@@ -13,6 +13,22 @@
   --gt-navy: #051e39;
   --gt-gray-dark: #545454;
   --gt-gray-light: #e5e5e5;
+
+  /*
+   * GT Athletics' brand typefaces: Proxima Nova for body copy, Zuume
+   * Cut for headers/call-outs. Both are commercial fonts with no
+   * license or font files sourced yet, so they're named FIRST in
+   * each stack on purpose — inert today since virtually no visitor
+   * has either installed locally, but the moment real files are
+   * self-hosted (or an Adobe Fonts kit is added) under these exact
+   * family names, every page picks them up automatically with no
+   * further code changes. Until then, the free Google Fonts loaded
+   * in `layout.tsx` (Work Sans, Bebas Neue) carry the actual weight.
+   * TODO(owner): source licensed Proxima Nova + Zuume Cut files (or
+   * an Adobe Fonts kit) and this upgrades itself — see CLAUDE.md.
+   */
+  --font-body: "Proxima Nova", var(--font-work-sans), sans-serif;
+  --font-header: "Zuume Cut", var(--font-bebas-neue), sans-serif;
 }
 
 @theme inline {
@@ -22,7 +38,7 @@
   --color-gt-navy: var(--gt-navy);
   --color-gt-gray-dark: var(--gt-gray-dark);
   --color-gt-gray-light: var(--gt-gray-light);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-body);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -34,6 +50,20 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/*
+ * GT Athletics' header/call-out typeface (see the `--font-header`
+ * note above) — applied to actual page headings (the brand strip
+ * title, each page's top `<h2>`) for now, not every bold/uppercase
+ * label site-wide (nav, buttons, card text). The brand guide only
+ * says Zuume Cut *can* be the header font, not that it has to replace
+ * every piece of UI chrome, so this starts scoped to unambiguous
+ * "headers" — expand it to nav/buttons/card titles too if the owner
+ * wants the look to go further once the real font is in place.
+ */
+.gt-font-header {
+  font-family: var(--font-header);
 }
 
 /*

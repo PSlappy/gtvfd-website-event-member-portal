@@ -26,7 +26,7 @@ export default function ContactPage() {
     return (
       <JumbotronCrawl>
         <div className="flex min-h-full flex-col items-center justify-center gap-4 px-6 py-16">
-          <h2 className="gt-led-text-gold gt-display-in text-center text-2xl font-black uppercase tracking-widest text-gt-gold sm:text-4xl">
+          <h2 className="gt-font-header gt-led-text-gold gt-display-in text-center text-2xl font-black uppercase tracking-widest text-gt-gold sm:text-4xl">
             Thanks
           </h2>
           <p className="gt-display-in max-w-md text-left text-balance text-zinc-400 [animation-delay:80ms]">
@@ -50,7 +50,7 @@ export default function ContactPage() {
   return (
     <JumbotronCrawl>
       <div className="flex min-h-full flex-col items-center gap-6 px-4 py-10 sm:px-8">
-        <h2 className="gt-led-text-gold gt-display-in text-2xl font-black uppercase tracking-widest text-gt-gold sm:text-4xl">
+        <h2 className="gt-font-header gt-led-text-gold gt-display-in text-2xl font-black uppercase tracking-widest text-gt-gold sm:text-4xl">
           <Typewriter text="Contact" startDelay={700} />
         </h2>
         <p className="gt-led-text-dim gt-display-in max-w-md text-balance text-left text-sm text-zinc-400 [animation-delay:80ms]">
