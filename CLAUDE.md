@@ -683,6 +683,75 @@ black and navy panels, tuned differently for each** — the "blooms
 uniformly across black and navy alike" line earlier in this section
 was aspirational when written and is accurate now.
 
+**Nav bar rebuilt again, per the owner: it's no longer the pill-button
+row described above — it's a six-segment "scoreboard strip."** The
+nav bar (only the nav bar — every other button on the site still uses
+the pill-shaped `JumbotronButton` unchanged) now divides its full
+width into six equal rectangles, edge to edge, no gaps, closer to a
+real stadium video board's divided panels than a row of floating
+buttons. Home is one of the six segments now instead of a separately
+pinned icon button off to the left. New component,
+`components/jumbotron/NavBarButton.tsx`, not a `JumbotronButton`
+variant — the shape, text treatment, and state colors are different
+enough that folding it into the shared component would've meant more
+branching than shared code. No Chase Ring on these, for the moment.
+
+Four states, per the owner's exact spec:
+- **Rest:** navy background (`--gt-navy`). Text fill is a "metallic
+  gold" banded gradient (reuses the exact gradient from
+  `.gt-jumbotron-btn.gt-metallic-gold` above) clipped to the glyphs
+  via `background-clip: text` rather than filling a box, with a white
+  `-webkit-text-stroke` outline for bold scoreboard-style lettering.
+  Border is gold for Home/Schedule/Book Us, white for
+  About/Donations/Contact — the owner's exact split, not alternating
+  or alphabetical.
+- **Hover:** background goes white, text stays the same metallic
+  gold, the stroke *and* the button's own border both switch to navy
+  (the owner's spec grouped "text outline/border color" as one value
+  for this state, unlike Rest where they're independently colored).
+- **Click (`:active`):** background goes light gray (`#e5e5e5`,
+  `--gt-gray-light`) rather than white, otherwise the same metallic
+  gold text and navy outline/border as hover, plus a brief
+  brightness-flash keyframe on the text/icon specifically as the
+  "click effect" the owner asked for.
+- **Current page:** a completely different treatment, not a variant
+  of the other three — the button itself fills with the metallic gold
+  gradient, text goes solid white (no gradient), outline/border goes
+  navy. Held static through hover and active via compound-selector
+  overrides (`.gt-nav-current:hover`, `.gt-nav-current:active`) rather
+  than also switching to the hover/click look on top of being current
+  — a judgment call, not explicitly spec'd either way: you don't need
+  rollover feedback on the page you're already on, and the old nav's
+  gold "current" variant never had a distinct hover treatment either.
+  Revisit if the owner wants the current segment to still visibly
+  react to hover/click.
+
+**Real bug caught while building this:** the first pass never passed
+an `icon` prop down from `NavBar.tsx` to `NavBarButton`, so Home's
+firetruck SVG got wrapped in the same `background-clip: text` span as
+the text labels — which sets `color: transparent`, and the icon's own
+paths use `fill="currentColor"`, so the truck body rendered fully
+invisible (only the wheels stayed visible, since their circles have a
+hardcoded `fill="#000"` and only their *ring* used `currentColor`).
+Confirmed via the DOM (`className` showed `gt-nav-scoreboard-text`
+instead of `gt-nav-scoreboard-icon` on the Home link) before fixing it
+by actually passing `icon={item.icon}` through. The icon itself uses a
+flat gold via `currentColor` rather than the gradient-clip trick,
+since that trick only applies to real text glyphs — same "no official
+digital metallic value, so flat gold is the honest approximation"
+reasoning used everywhere else metallic gold shows up on this site.
+
+**Colors verified via computed styles, not just a screenshot** (the
+metallic-gold text against a white hover background in particular is
+subtle in a screenshot) — `getComputedStyle` on the button
+(`backgroundColor`, `borderColor`) and the text span
+(`backgroundImage`, `webkitTextStrokeColor`) for Rest, Hover, and
+Current on every segment; Click was confirmed the same way via a
+temporary debug-only inline-style stand-in (a live `:active` press
+can't be held for a screenshot, and a synthetic `mousedown` doesn't
+trigger `:active` in this browser tool), then reverted immediately
+after confirming the color values.
+
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no
 audio yet. Concept: an announcer-style voice reading each page's
