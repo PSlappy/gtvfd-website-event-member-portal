@@ -3,86 +3,26 @@
 import { useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { TypingCoordinationProvider } from "./TypingCoordinationContext";
-
-// A person's head/shoulders plus sound-wave arcs, distinct from the
-// plain speaker-cone icon (see MusicPlayer.tsx) used for the site's
-// background music — this one is specifically the "someone is
-// speaking" icon for a page's voiceover narration.
-function IconVoice() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-      <circle cx="9" cy="7" r="2.6" fill="currentColor" />
-      <path
-        d="M4.5 18c0-3 2-5 4.5-5s4.5 2 4.5 5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M15.5 9a4 4 0 0 1 0 6"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M18 7a7 7 0 0 1 0 10"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function IconVoiceMuted() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-      <circle cx="9" cy="7" r="2.6" fill="currentColor" />
-      <path
-        d="M4.5 18c0-3 2-5 4.5-5s4.5 2 4.5 5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M15 9 20 14M20 9 15 14"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function IconReplay() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-      <path
-        d="M4 12a8 8 0 1 1 2.5 5.8"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M4 17v-5h5"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+import { useVoiceControls } from "./VoiceControlsContext";
 
 /**
  * Wraps page content in a jumbotron-style auto-scrolling crawl, like a
  * Star Wars opening or a broadcast teleprompter: on arrival it scrolls
  * itself top to bottom at a steady pace, pauses instantly the moment a
  * visitor scrolls manually (their input always wins). The autoscroll
- * itself always runs, on every page — `showVoiceControls` only gates
- * the Voice/Replay button row, per the owner: those only belong on
- * pages that actually have (or will have) voiceover narration, About
- * for now, not every page the crawl wraps.
+ * itself always runs, on every page — `showVoiceControls` only governs
+ * whether this page's Voice-mute/Replay controls exist at all, per the
+ * owner: those only belong on pages that actually have (or will have)
+ * voiceover narration, About for now, not every page the crawl wraps.
+ *
+ * Doesn't render its own Voice/Replay buttons anymore — per the owner,
+ * those now live in the single persistent media-controls row alongside
+ * the music player (`MusicPlayer.tsx`, mounted in `JumbotronFrame`).
+ * Since that row lives outside this page's own part of the component
+ * tree, this registers `muted`/`toggleMuted`/`replay` into
+ * `VoiceControlsContext` instead (via `registerVoiceControls`) whenever
+ * `showVoiceControls` is on, and `MusicPlayer` renders the actual
+ * buttons from whatever's currently registered there.
  *
  * Voice-mute doesn't do anything audible yet, there's no narration
  * audio recorded (see the Typography-adjacent TODO in CLAUDE.md for
@@ -115,6 +55,7 @@ export default function JumbotronCrawl({
   const activeTypersRef = useRef(0);
   const [muted, setMuted] = useState(false);
   const reduceMotion = useReducedMotion();
+  const { registerVoiceControls } = useVoiceControls();
 
   // Stable across renders so it can be handed to context without
   // retriggering consumers. Any Typewriter inside the crawl that's
@@ -217,6 +158,22 @@ export default function JumbotronCrawl({
     });
   }
 
+  // Registers this page's Voice/Replay controls into the shared
+  // context so MusicPlayer can render them — re-runs on `muted`
+  // changes too, so the registered value stays fresh rather than a
+  // stale closure from mount. Unregisters on unmount or the moment
+  // `showVoiceControls` turns off, so MusicPlayer stops showing these
+  // buttons the instant a non-voice page mounts.
+  useEffect(() => {
+    if (!showVoiceControls) {
+      registerVoiceControls(null);
+      return;
+    }
+    registerVoiceControls({ muted, toggleMuted, replay });
+    return () => registerVoiceControls(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showVoiceControls, muted]);
+
   return (
     <div className="relative h-full w-full overflow-hidden">
       <div
@@ -228,40 +185,6 @@ export default function JumbotronCrawl({
           {children}
         </TypingCoordinationProvider>
       </div>
-
-      {showVoiceControls && (
-        <>
-          {/* fade the crawl to black before it reaches the control row, so
-              text doesn't clip abruptly behind the buttons. Taller than
-              before (h-32, was h-20) since this row now sits higher, to
-              clear MusicPlayer's own row pinned at bottom-3. */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-32 bg-gradient-to-t from-black via-black/70 to-transparent" />
-
-          {/* bottom-16, not bottom-3 — MusicPlayer (JumbotronFrame.tsx)
-              now occupies bottom-3/center on every page, per the owner,
-              so this page-scoped row stacks just above it instead of
-              overlapping when both are visible (About, for now). */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-16 z-40 flex justify-center gap-3 px-4">
-            <button
-              type="button"
-              onClick={toggleMuted}
-              aria-label={muted ? "Unmute narration" : "Mute narration"}
-              aria-pressed={muted}
-              className="gt-jumbotron-btn pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border-2 border-gt-gold bg-gt-navy text-gt-gold"
-            >
-              {muted ? <IconVoiceMuted /> : <IconVoice />}
-            </button>
-            <button
-              type="button"
-              onClick={replay}
-              aria-label="Replay the crawl from the top"
-              className="gt-jumbotron-btn pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border-2 border-gt-gold bg-gt-gold text-black"
-            >
-              <IconReplay />
-            </button>
-          </div>
-        </>
-      )}
     </div>
   );
 }
