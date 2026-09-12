@@ -764,15 +764,15 @@ updated closer to each game):
 | Nov. 28 | Georgia | Away |
 
 ### About/History page (DONE — see status above; `/about`)
-- Background/history text, full story confirmed by the owner (Make is
-  a **Ford** — "Pierce" in some early press refers to the apparatus
-  body builder, not a competing make claim, so the page doesn't need
-  to explain that nuance, it just states Ford):
+- Background/history text, full story now confirmed by the owner:
   - 2008: the tailgate tradition itself starts.
   - 2014: GT alumni Sam Huffman and Christian Shea buy a 1977 Ford fire
     engine on eBay (Indiana) for $2,800, convert it (keg, sound system,
     deck), and start driving it to games as "the Grant Field Volunteer
-    Fire Department."
+    Fire Department." Make is a **Ford** — "Pierce" in some early press
+    refers to the apparatus body builder, not a competing make claim,
+    so the page doesn't need to explain that nuance, it just states
+    Ford.
   - As the founders aged, started families, and had less time for
     tailgate/truck upkeep, they looked to pass it down. Patrick Shea
     (Christian's younger brother, grown up around the tailgate's GT
@@ -783,44 +783,19 @@ updated closer to each game):
   - Since taking over: new stereo system, three TVs, turf on the upper
     deck, 1996 Atlanta Olympic Stadium seats (replacing the old bench
     seating), retractable awnings, ongoing mechanical maintenance.
-
-  **Restructured, per the owner: this story is now split three ways
-  across the page instead of living as one flowing block up top.**
-  Only what's truly generalized about the firetruck/tailgate/story as
-  a whole (the 2008 start, and the general "owners aged out, looked to
-  pass it down" bridge) stays in the top intro block. The 2014
-  founding/build details (the eBay purchase, the keg/stereo/deck
-  build, the "Grant Field Volunteer Fire Department" name) moved into
-  a center text column that sits between Christian's and Sam's
-  `PlayerCard`s specifically, since that's their part of the story.
-  The 2021 handoff (Sam selling it to Patrick and Harry) and everything
-  upgraded since moved the same way into a center column between
-  Patrick's and Harry's cards. A small local `PersonPairSection`
-  component in `app/about/page.tsx` (not a shared component, just used
-  twice in this one file) renders each of these as
-  card-left / text-center / card-right, stacking vertically on narrow
-  screens (still DOM-ordered so the text reads as "between" the two
-  people even stacked) and going side by side at `sm+`.
 - Link-preview cards (not reproduced text) for the ramblinwreck.com,
   AJC, and two WSJ source articles — real URLs, all four live on the
   page, each with a small monogram "logo" badge (RW / AJC / WSJ) since
   using the outlets' actual trademarked logo art wasn't pursued.
-- **Section order is Founders before Current Owners** (was the
-  reverse), per the owner, so the page reads chronologically: founders
-  first, then who has it now. Within each section, per the owner's
-  explicit left/right pairing: Founders row is Christian Shea (left),
-  Sam Huffman (right); Current Owners row is Patrick Shea (left),
-  Harry Rizvi (right) — pairing the two people on each side of the
-  "passed down to" line up visually as their own left/right column
-  down the page, not left-to-right by whichever name was listed first.
-  Both sections still say "for now" on the founders/donors framing per
-  the owner — a dedicated donors list may expand this later.
-  `PlayerCard` (`components/jumbotron/PlayerCard.tsx`) is a roster-tile
-  design (photo/initials-monogram fills the card, dark name plate
-  across the bottom: first name small, last name bold, role beneath)
-  modeled on an owner-supplied GT All-ACC roster graphic, **square**
-  now (`aspect-square`, was `aspect-[3/4]`) per the owner. No real
-  photos yet; pass `photoSrc` once available.
+- Current Owners section (player-card style): Patrick Shea, Harry
+  Rizvi. Founders/Previous Owners/Donors section: Sam Huffman,
+  Christian Shea (both "for now" per the owner — a dedicated donors
+  list may expand this later). `PlayerCard`
+  (`components/jumbotron/PlayerCard.tsx`) is a roster-tile design
+  (photo/initials-monogram fills the card, dark name plate across the
+  bottom: first name small, last name bold, role beneath) modeled on
+  an owner-supplied GT All-ACC roster graphic. No real photos yet;
+  pass `photoSrc` once available.
 
 ### Donations page
 Placeholder content — payment collection method not yet decided.
