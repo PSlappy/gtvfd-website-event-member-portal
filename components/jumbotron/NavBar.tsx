@@ -15,34 +15,23 @@ const navItems = [
   { href: "/contact", label: "Contact", icon: false },
 ] as const;
 
-function IconFiretruck() {
+// The crew's own "Grant Field VFD" badge — a full-color logo, not a
+// single-color glyph, so it can't use the currentColor trick the old
+// hand-drawn firetruck icon used to pick up the button's state color.
+// It renders exactly as-is across every state instead (see
+// NavBarButton's `icon` prop). Source: owner-supplied EPS, decoded
+// locally (its embedded preview was a palette+alpha TIFF that both
+// `sips` and Preview misread as plain RGB, producing a garbled image —
+// reading the actual TIFF tags and looking values up through the real
+// color map fixed it) and cropped to the badge's own bounding box.
+function IconGrantFieldBadge() {
   return (
-    <svg viewBox="0 0 24 24" className="h-full w-full">
-      <path
-        fill="currentColor"
-        d="M2 8.5a1 1 0 0 1 1-1h9v6.5H2.8a.8.8 0 0 1-.8-.8V8.5Z"
-      />
-      <path
-        fill="currentColor"
-        d="M13 9h4.8a1 1 0 0 1 .8.4l2 2.6a1 1 0 0 1 .2.6v1.4a.8.8 0 0 1-.8.8H13V9Z"
-      />
-      <circle
-        cx="6.5"
-        cy="16"
-        r="1.9"
-        fill="#000"
-        stroke="currentColor"
-        strokeWidth="1.4"
-      />
-      <circle
-        cx="17.5"
-        cy="16"
-        r="1.9"
-        fill="#000"
-        stroke="currentColor"
-        strokeWidth="1.4"
-      />
-    </svg>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/grant-field-vfd-badge.png"
+      alt="Home"
+      className="h-full w-full object-contain"
+    />
   );
 }
 
@@ -59,10 +48,14 @@ export default function NavBar() {
             href={item.href}
             active={active}
             icon={item.icon}
+            // TEST ONLY, per the owner: preview a gold-bg/navy-text/
+            // white-outline combo on About specifically. Remove once
+            // they've seen it — see NavBarButton's doc comment.
+            colorPreview={item.href === "/about"}
             ariaLabel={item.icon ? item.label : undefined}
             ariaCurrent={active ? "page" : undefined}
           >
-            {item.icon ? <IconFiretruck /> : item.label}
+            {item.icon ? <IconGrantFieldBadge /> : item.label}
           </NavBarButton>
         );
       })}
