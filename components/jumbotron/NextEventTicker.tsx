@@ -32,7 +32,7 @@ export default function NextEventTicker() {
 
   return (
     <div className="grid grid-cols-3 bg-gt-navy">
-      <div className="gt-depth-panel relative flex items-center justify-center border-r-[3px] border-gt-gold px-3 py-3 sm:border-r-4 sm:py-4">
+      <div className="gt-depth-panel relative flex items-center justify-center border-r-[1px] border-gt-gray-light px-3 py-3 sm:border-r-2 sm:py-4">
         <span className="gt-led-text-gold gt-display-in text-xs font-bold uppercase tracking-[0.2em] text-gt-gold sm:text-base">
           GT
         </span>
@@ -42,23 +42,34 @@ export default function NextEventTicker() {
         />
       </div>
 
-      <div className="gt-depth-panel relative flex flex-col items-center justify-center gap-1 border-r-[3px] border-gt-gold px-2 py-2 text-center sm:border-r-4 sm:py-3">
-        {/* Row 1: day, date */}
+      <div className="gt-depth-panel relative flex flex-col items-center justify-center gap-1.5 border-r-[1px] border-gt-gray-light px-2 py-2 text-center sm:border-r-2 sm:py-3">
+        {/* Row 1: date, spans the full column */}
         <span className="gt-led-text-white gt-display-in text-xs font-bold text-white sm:text-sm">
           {formatGameDate(game.date)}
         </span>
-        {/* Row 2: kickoff time or TBD */}
-        <span className="gt-led-text-dim gt-display-in text-[9px] uppercase tracking-[0.15em] text-gt-gray-light/70 [animation-delay:80ms] sm:text-[10px]">
-          Kickoff {game.kickoff}
-        </span>
-        {/* Row 3: tailgate time, or no tailgate — set by the admin
-            portal once an event exists for this game (stage 8) */}
-        <span className="gt-led-text-dim gt-display-in text-[9px] uppercase tracking-[0.15em] text-gt-gray-light/70 [animation-delay:160ms] sm:text-[10px]">
-          {game.tailgate ? `Tailgate ${game.tailgateStart}` : "No Tailgate"}
-        </span>
-        {/* Row 4: sign-up — only if a tailgate event exists for this game */}
+        {/* Row 2: two columns, Tailgate and Kickoff, each with its
+            label above its value */}
+        <div className="gt-display-in grid grid-cols-2 gap-3 [animation-delay:80ms] sm:gap-4">
+          <div className="flex flex-col items-center">
+            <span className="gt-led-text-dim text-[9px] uppercase tracking-[0.15em] text-gt-gray-light/70 sm:text-[10px]">
+              Tailgate
+            </span>
+            <span className="gt-led-text-white text-[10px] font-bold text-white sm:text-xs">
+              {game.tailgate ? game.tailgateStart : "N/A"}
+            </span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="gt-led-text-dim text-[9px] uppercase tracking-[0.15em] text-gt-gray-light/70 sm:text-[10px]">
+              Kickoff
+            </span>
+            <span className="gt-led-text-white text-[10px] font-bold text-white sm:text-xs">
+              {game.kickoff}
+            </span>
+          </div>
+        </div>
+        {/* Row 3: sign-up — only if a tailgate event exists for this game */}
         {game.tailgate && (
-          <div className="gt-display-in [animation-delay:240ms]">
+          <div className="gt-display-in [animation-delay:160ms]">
             <JumbotronButton href="/signup" variant="gold" chaseRing>
               Sign-Up
             </JumbotronButton>

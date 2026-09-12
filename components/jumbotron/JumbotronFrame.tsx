@@ -40,10 +40,12 @@ export default function JumbotronFrame({
         className="gt-glow pointer-events-none absolute inset-2 -z-10 rounded-md bg-gt-gold/35 blur-[90px] sm:inset-4"
       />
 
-      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-md border-[3px] border-gt-gold bg-black sm:border-4">
-        {/* nav bar — its own screen behind the gold bezel, not shared
-            with its neighbors */}
-        <div className="relative flex shrink-0 items-center justify-center border-b-[3px] border-gt-gold bg-gt-navy px-4 py-3 sm:border-b-4 sm:py-4">
+      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-md border-[1px] border-gt-gray-light bg-black sm:border-2">
+        {/* nav bar — its own screen behind the bezel, not shared with
+            its neighbors. No padding here on purpose, per the owner —
+            the six nav segments should fill this strip edge to edge,
+            not sit inset within it. */}
+        <div className="relative flex shrink-0 items-stretch border-b-[1px] border-gt-gray-light bg-gt-navy sm:border-b-2">
           {nav}
           <div
             aria-hidden
@@ -52,7 +54,7 @@ export default function JumbotronFrame({
         </div>
 
         {/* home-team brand strip */}
-        <div className="relative flex shrink-0 items-center justify-center border-b-[3px] border-gt-gold bg-black px-4 py-4 sm:border-b-4 sm:py-6">
+        <div className="relative flex shrink-0 items-center justify-center border-b-[1px] border-gt-gray-light bg-black px-4 py-4 sm:border-b-2 sm:py-6">
           {brand}
           <div
             aria-hidden
@@ -226,7 +228,7 @@ export default function JumbotronFrame({
 
         {/* bottom info bar — NextEventTicker applies its own per-panel
             pixel grid, since it owns three separate columns */}
-        <div className="shrink-0 border-t-[3px] border-gt-gold sm:border-t-4">
+        <div className="shrink-0 border-t-[1px] border-gt-gray-light sm:border-t-2">
           {bottomBar}
         </div>
       </div>
