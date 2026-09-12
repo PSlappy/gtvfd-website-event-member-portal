@@ -3,19 +3,20 @@
 import { usePathname } from "next/navigation";
 import NavBarButton from "./NavBarButton";
 
-// Home moved to the right end and is a fixed square now (not a
-// flex-1 segment like the rest), per the owner — frees up the
-// remaining five to split the nav strip's full width among
-// themselves instead of sharing it six ways, so each gets more room
-// (and more room for its text) on wider screens. Order otherwise
-// unchanged: About before Schedule, Book Us before Contact.
+// Home is a fixed square (not a flex-1 segment like the rest), back
+// on the left end where it originally was — a brief move to the right
+// end was a mistake, per the owner, corrected here. Squareness itself
+// stays: frees up the remaining five to split the nav strip's full
+// width among themselves instead of sharing it six ways, so each gets
+// more room (and more room for its text) on wider screens. Order
+// otherwise unchanged: About before Schedule, Book Us before Contact.
 const navItems = [
+  { href: "/", label: "Home", icon: true, square: true },
   { href: "/about", label: "About", icon: false, square: false },
   { href: "/schedule", label: "Schedule", icon: false, square: false },
   { href: "/donations", label: "Donations", icon: false, square: false },
   { href: "/booking", label: "Book Us", icon: false, square: false },
   { href: "/contact", label: "Contact", icon: false, square: false },
-  { href: "/", label: "Home", icon: true, square: true },
 ] as const;
 
 // The crew's own "Grant Field VFD" badge — a full-color logo, not a

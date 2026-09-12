@@ -80,6 +80,15 @@ function textStyle(
  * Rest/Hover/Click/Current states — this page needs combinations that
  * don't correspond to any single real state. Plain `span`s, not real
  * links, since these aren't meant to navigate anywhere.
+ *
+ * `relative z-20` is load-bearing, not decorative: the row wrapper's
+ * `.gt-pixel-grid` overlay is `position: absolute` with its own
+ * `z-10`, which paints above any non-positioned sibling regardless of
+ * DOM order — the exact bug documented repeatedly elsewhere in this
+ * codebase (`.gt-jumbotron-btn`'s own `z-index: 20` exists for the
+ * same reason). Without it, these swatches read as washed-out/
+ * translucent instead of solid, since the dot overlay was painting
+ * directly on top of them.
  */
 function TestNavButton({
   label,
@@ -96,7 +105,7 @@ function TestNavButton({
 }) {
   return (
     <span
-      className="flex h-12 flex-1 items-center justify-center border-2 px-1 text-center sm:h-14"
+      className="relative z-20 flex h-12 flex-1 items-center justify-center border-2 px-1 text-center sm:h-14"
       style={{
         ...backgroundStyle(background),
         borderColor: FLAT_VALUE[border],
@@ -128,6 +137,9 @@ const LABELS = ["ABOUT", "SCHEDULE", "DONATIONS", "CONTACT"];
 // Exactly the owner's table, column by column.
 const rows: TestRow[] = [
   {
+    // Schedule's swatch was removed from this row entirely, per the
+    // owner ("I don't like that design") — Row 1 is three buttons now,
+    // not four.
     heading: "Row 1 Test Buttons",
     buttons: [
       {
@@ -136,13 +148,6 @@ const rows: TestRow[] = [
         fontColor: "metallicGold",
         fontOutline: "navy",
         border: "metallicGold",
-      },
-      {
-        label: LABELS[1],
-        background: "grey",
-        fontColor: "navy",
-        fontOutline: "metallicGold",
-        border: "navy",
       },
       {
         // Corrected per the owner: Donations' border is Navy, not
