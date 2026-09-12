@@ -19,7 +19,7 @@ import JumbotronCrawl from "@/components/jumbotron/JumbotronCrawl";
  * the four color properties in the owner's spec.
  */
 
-type ColorToken = "grey" | "navy" | "white" | "metallicGold";
+type ColorToken = "grey" | "navy" | "white" | "metallicGold" | "black";
 
 const METALLIC_GOLD_GRADIENT =
   "linear-gradient(135deg, #b39051 0%, #ddc38a 22%, #8a7350 45%, #ddc38a 68%, #b39051 100%)";
@@ -34,6 +34,7 @@ const FLAT_VALUE: Record<ColorToken, string> = {
   navy: "#051e39",
   white: "#ffffff",
   metallicGold: "#b39051",
+  black: "#000000",
 };
 
 function backgroundStyle(token: ColorToken): CSSProperties {
@@ -123,6 +124,11 @@ function TestNavButton({
 
 type TestRow = {
   heading: string;
+  // The strip's own panel background (mimics the real nav bar's navy
+  // backdrop) — independent of each button's own `background` below.
+  // Always navy except for the "duplicate Row 1 on other nav
+  // backgrounds" rows the owner asked for.
+  panelBackground: ColorToken;
   buttons: {
     label: string;
     background: ColorToken;
@@ -134,41 +140,71 @@ type TestRow = {
 
 const LABELS = ["ABOUT", "SCHEDULE", "DONATIONS", "CONTACT"];
 
+// Row 1's three-button pattern, reused as-is across the four
+// "duplicate Row 1 on other nav backgrounds" rows below — only the
+// panel background changes between them, not the buttons themselves.
+// Schedule's swatch was removed entirely, per the owner ("I don't
+// like that design"). Contact's colors were corrected, also per the
+// owner: Metallic Gold font, Navy font outline, White button border.
+const row1Buttons: TestRow["buttons"] = [
+  {
+    label: LABELS[0],
+    background: "grey",
+    fontColor: "metallicGold",
+    fontOutline: "navy",
+    border: "metallicGold",
+  },
+  {
+    // Corrected per the owner: Donations' border is Navy, not
+    // Metallic Gold — an error in the original table.
+    label: LABELS[2],
+    background: "grey",
+    fontColor: "metallicGold",
+    fontOutline: "navy",
+    border: "navy",
+  },
+  {
+    label: LABELS[3],
+    background: "grey",
+    fontColor: "metallicGold",
+    fontOutline: "navy",
+    border: "white",
+  },
+];
+
 // Exactly the owner's table, column by column.
 const rows: TestRow[] = [
   {
-    // Schedule's swatch was removed from this row entirely, per the
-    // owner ("I don't like that design") — Row 1 is three buttons now,
-    // not four.
     heading: "Row 1 Test Buttons",
-    buttons: [
-      {
-        label: LABELS[0],
-        background: "grey",
-        fontColor: "metallicGold",
-        fontOutline: "navy",
-        border: "metallicGold",
-      },
-      {
-        // Corrected per the owner: Donations' border is Navy, not
-        // Metallic Gold — an error in the original table.
-        label: LABELS[2],
-        background: "grey",
-        fontColor: "metallicGold",
-        fontOutline: "navy",
-        border: "navy",
-      },
-      {
-        label: LABELS[3],
-        background: "grey",
-        fontColor: "navy",
-        fontOutline: "metallicGold",
-        border: "metallicGold",
-      },
-    ],
+    panelBackground: "navy",
+    buttons: row1Buttons,
+  },
+  // Four duplicates of Row 1, per the owner, each on a different nav
+  // (panel) background — the buttons themselves are identical to Row
+  // 1 above, only the strip behind them changes.
+  {
+    heading: "Row 1 — Grey Nav Background",
+    panelBackground: "grey",
+    buttons: row1Buttons,
+  },
+  {
+    heading: "Row 1 — Metallic Gold Nav Background",
+    panelBackground: "metallicGold",
+    buttons: row1Buttons,
+  },
+  {
+    heading: "Row 1 — Navy Nav Background",
+    panelBackground: "navy",
+    buttons: row1Buttons,
+  },
+  {
+    heading: "Row 1 — Black Nav Background",
+    panelBackground: "black",
+    buttons: row1Buttons,
   },
   {
     heading: "Row 2 Test Buttons",
+    panelBackground: "navy",
     buttons: [
       {
         label: LABELS[0],
@@ -202,6 +238,7 @@ const rows: TestRow[] = [
   },
   {
     heading: "Row 3 Test Buttons",
+    panelBackground: "navy",
     buttons: [
       {
         label: LABELS[0],
@@ -263,14 +300,21 @@ export default function NavColorTestPage() {
             <p className="gt-led-text-dim text-center text-[10px] uppercase tracking-[0.25em] text-gt-gray-light/60 sm:text-xs">
               {row.heading}
             </p>
-            {/* Matches the real nav bar's wrapper exactly (navy panel,
-                thin light-gray border, pixel-grid overlay) — per the
-                owner, so these swatches read as "on an actual nav
-                bar," not floating on the plain black main-screen
-                background. border-y here (not the real nav's border-b
-                only) since this is a standalone strip, not nested
-                inside the outer frame's own border. */}
-            <div className="relative flex w-full items-stretch border-y-[1px] border-gt-gray-light bg-gt-navy sm:border-y-2">
+            {/* Matches the real nav bar's wrapper exactly (thin
+                light-gray border, pixel-grid overlay) — per the owner,
+                so these swatches read as "on an actual nav bar," not
+                floating on the plain black main-screen background.
+                border-y here (not the real nav's border-b only) since
+                this is a standalone strip, not nested inside the outer
+                frame's own border. Panel background is per-row now
+                (navy normally, matching the real nav bar — varied for
+                the "duplicate Row 1" rows below), so it's an inline
+                style rather than the earlier hardcoded bg-gt-navy
+                class. */}
+            <div
+              className="relative flex w-full items-stretch border-y-[1px] border-gt-gray-light sm:border-y-2"
+              style={backgroundStyle(row.panelBackground)}
+            >
               {row.buttons.map((button, i) => (
                 <TestNavButton key={`${row.heading}-${i}`} {...button} />
               ))}
