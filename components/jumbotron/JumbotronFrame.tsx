@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import MusicPlayer from "./MusicPlayer";
 import SnakeTrail from "./SnakeTrail";
 
 /**
@@ -224,6 +225,12 @@ export default function JumbotronFrame({
               it's a canvas rather than DOM nodes, and why it's
               deliberately left without a z-index. */}
           <SnakeTrail />
+          {/* Site-wide background music — mounted here (not inside a
+              page) so it never remounts/restarts on navigation, same
+              reasoning as NavBar/NextEventTicker living in the root
+              layout. Deliberately separate from JumbotronCrawl's
+              per-page Voice/Replay controls. */}
+          <MusicPlayer />
         </div>
 
         {/* bottom info bar — NextEventTicker applies its own per-panel

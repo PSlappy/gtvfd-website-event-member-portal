@@ -37,7 +37,7 @@ const sourceArticles = [
 
 export default function AboutPage() {
   return (
-    <JumbotronCrawl>
+    <JumbotronCrawl showVoiceControls>
       <div className="flex flex-col items-center gap-10 px-4 pb-24 pt-10 sm:px-8">
         <h2 className="gt-font-header gt-led-text-gold gt-display-in text-2xl font-black uppercase tracking-widest text-gt-gold sm:text-4xl">
           <Typewriter text="About & History" startDelay={700} />
