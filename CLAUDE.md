@@ -786,6 +786,63 @@ above.**
   `:hover` styling to a property another interaction state relies on
   cascading past untouched.
 
+**Follow-up, per the owner: colors flipped again.** Rest is now what
+used to be Click-only — light gray background, metallic-gold text,
+**white** outline/border (not navy — a genuine new value for Rest, not
+inherited from the old Click state, which had a navy border). Hover:
+navy background, and this time the text *fill* goes navy too (not just
+the outline), so the glyphs read as hollow letters carried entirely by
+a metallic-gold outline against the navy panel — a deliberate look,
+confirmed intentional by the phrasing ("switch font color to Navy...
+outline to Metallic Gold" as its own explicit pair), not a legibility
+regression. Border goes gold on hover to match the outline. Click's
+own rule still explicitly restores its gray-background/gold-fill/
+navy-outline look rather than relying on inheriting it from Rest (which
+now happens to match) — the one thing still making a click feel
+distinct from resting is the brightness-flash keyframe. Home's icon
+color rules were deleted outright (see the badge-logo note below —
+nothing consumes `currentColor` there anymore).
+
+**One-off color test added, per the owner: the About segment is locked
+into gold-background/navy-text/white-outline regardless of route or
+hover/click**, via a new `colorPreview` prop on `NavBarButton` and a
+`.gt-nav-color-preview` class in globals.css (compounded with
+`.gt-nav-current` too, so it still wins if About is ever the active
+route while this is in place) — purely so the owner can see the
+combination in context next to the real nav. **Not a real variant —
+remove the prop usage in `NavBar.tsx` and the CSS block once the owner
+has seen it and decided.**
+
+**Home's icon is now the crew's real "Grant Field VFD" badge**, per
+the owner — the hand-drawn SVG firetruck is gone.
+`public/grant-field-vfd-badge.png` (real transparent-background logo:
+a fire-department badge shape in gold/white with a GT Yellow Jacket
+mascot wearing a firefighter helmet, reading "GRANT FIELD VFD /
+GEORGIA TECH / EST. 2008" — matching the site's own founding-year lore
+exactly). Source was an owner-supplied EPS file.
+**Real bug worth remembering:** the EPS's embedded legacy preview
+image was a palette-color TIFF with an alpha channel (2 samples per
+pixel: a palette index + alpha, per its own IFD tags), but both
+`sips -s format png/jpeg` and macOS's own TIFF handling read it as if
+it were plain 3-channel RGB — producing a systematically garbled,
+venetian-blind-striped image (confirmed by decoding the IFD tags
+manually: `PhotometricInterpretation` was `3` = palette color,
+`SamplesPerPixel` was `2`, not the `3`/`RGB` sips itself reported back
+when asked). Fixed by manually parsing the TIFF's IFD tags (Python,
+`struct`), reading the actual index+alpha byte pairs, and resolving
+each index through the embedded 256-entry ColorMap to get real RGB —
+at that point the image was a clean, correctly-transparent 1500x1500
+PNG. If a similar embedded-preview situation comes up again (another
+raw EPS/PSD without a clean export), don't trust an image tool's own
+metadata report (`samplesPerPixel`, `space`) at face value if the
+output looks wrong — check the source format's own internal tags
+directly. `IconGrantFieldBadge` in `NavBar.tsx` renders it as a plain
+`<img>` (matching the established convention elsewhere on the site —
+see `PlayerCard`'s `photoSrc` — rather than introducing `next/image`
+for the first time just for this one icon) at `h-8 w-8 sm:h-10
+sm:w-10`, sized up from the old icon's `h-5 w-5 sm:h-6 sm:w-6` since a
+detailed badge reads better a bit larger than a simple line icon did.
+
 **Nav bar now fills its strip completely, per the owner.** The
 padding that used to wrap `{nav}` in `JumbotronFrame.tsx`
 (`px-4 py-3 sm:py-4`) is gone — the six scoreboard segments now sit
