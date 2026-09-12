@@ -752,6 +752,40 @@ can't be held for a screenshot, and a synthetic `mousedown` doesn't
 trigger `:active` in this browser tool), then reverted immediately
 after confirming the color values.
 
+**Follow-up, per the owner: legibility fixes, border unified to white,
+and Hover's colors flipped — supersedes some of the Rest/Hover bullets
+above.**
+- Text bumped 9px/11px → 10px/12px, tracking `wider` → `widest`, and
+  the `-webkit-text-stroke` outline thinned 1px → 0.5px — the owner
+  offered "larger font, more letter-spacing, or a thinner outline,"
+  and rather than guess which single lever would fix it, all three
+  landed together. Applies to every state (Rest/Hover/Click/Current)
+  for consistency.
+- **Rest border is now white for every segment**, not the gold-for-
+  Home/Schedule/Book-Us split described above — the owner asked to
+  unify it. `NavBarButton` no longer takes a `borderFamily` prop at
+  all; `border-color` is set once in the base `.gt-nav-scoreboard-btn`
+  rule instead of per-item via an inline Tailwind class.
+- **Hover now inverts the text treatment instead of just re-coloring
+  the outline:** fill goes solid navy (previously stayed the metallic
+  gradient), outline/border go gold (previously navy) — the reverse of
+  Rest's gold-fill/white-outline. "Metallic gold" for the hover
+  outline and the hover/Rest border is the flat `--gt-gold`, same
+  reasoning as Home's icon: a sub-1px stroke or a 2px border is too
+  thin a surface for gradient banding to read as metallic, unlike the
+  text *fill*, which has a whole glyph's area for it.
+- **Real bug caught while wiring the flip up:** a real mouse click is
+  also a hover the whole time it's held down, and `:hover`/`:active`
+  carry equal CSS specificity — so the new `:hover` rule's navy fill
+  would have silently overridden Click's own metallic-gold fill on
+  every actual click (Click's rule never used to need to touch fill at
+  all, since Hover used to leave it alone). Fixed by having
+  `:active .gt-nav-scoreboard-text` explicitly restore the gradient
+  fill, so Click's look stays correct regardless of Hover also being
+  true underneath it. Worth remembering for any future state that adds
+  `:hover` styling to a property another interaction state relies on
+  cascading past untouched.
+
 **Nav bar now fills its strip completely, per the owner.** The
 padding that used to wrap `{nav}` in `JumbotronFrame.tsx`
 (`px-4 py-3 sm:py-4`) is gone — the six scoreboard segments now sit
@@ -785,6 +819,21 @@ inline; then Sign-Up stays as its own row below that, same conditional
 the Tailgate column's value reads "N/A" now instead of the old row's
 "No Tailgate" sentence, to fit the label-above-value shape of the new
 layout.
+
+**Follow-up, per the owner: simplified back to three rows, supersedes
+the two-column layout above.** Row 1 is now date and kickoff time
+combined on one line ("Sat, Sep 12 • Kickoff TBD"), in a larger font
+than before; Row 2 is "Tailgate: {time or N/A}" as one inline label:
+value line, not the stacked label-above-value tile from the two-column
+version; Row 3 stays Sign-Up, same conditional. Row 1 and Row 2 share
+the exact same font size on purpose ("equal size fonts," per the
+owner) — Sign-Up's own text size wasn't touched, since that's
+`JumbotronButton`'s fixed sizing shared by every button on the site,
+not something to change just for this one panel. The column switched
+from `justify-center` to `justify-between` so the three rows spread
+across the panel's full height instead of clustering together in the
+middle, matching the owner's "should essentially fill the center
+section vertically."
 
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no
