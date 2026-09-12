@@ -752,6 +752,40 @@ can't be held for a screenshot, and a synthetic `mousedown` doesn't
 trigger `:active` in this browser tool), then reverted immediately
 after confirming the color values.
 
+**Nav bar now fills its strip completely, per the owner.** The
+padding that used to wrap `{nav}` in `JumbotronFrame.tsx`
+(`px-4 py-3 sm:py-4`) is gone — the six scoreboard segments now sit
+flush against the frame's own border on all sides instead of being
+inset within it. Verified via `getComputedStyle` (`padding: 0px` on
+the nav panel, and the Home button's own bounding box sitting exactly
+at the panel's edge, offset only by the *outer frame's* border width,
+not any nav-specific inset).
+
+**Structural "bezel" borders switched from gold to light gray
+(`#e5e5e5`) and thinned down, per the owner** — scoped specifically to
+the borders that separate the jumbotron's physical panels from each
+other, not every border on the site: the outer frame border, the
+nav-bar/brand-strip and brand-strip/main-screen dividers, the bottom
+bar's top border (all in `JumbotronFrame.tsx`), and
+`NextEventTicker`'s two column dividers. Went from `3px`/`4px` (base/
+`sm`) to `1px`/`2px`. Button borders, card borders (`PlayerCard`, the
+About page's source cards), and the schedule table's border all stay
+gold, untouched — those read as content sitting *on* a screen, not as
+the bezel *between* screens, so the owner's "borders between
+sections" phrasing didn't extend to them. Revisit if the owner meant
+it more broadly than that.
+
+**`NextEventTicker`'s center column restructured, per the owner.**
+Was three stacked rows (date, "Kickoff {time}", "Tailgate {time}" or
+"No Tailgate") plus Sign-Up. Now: the date spans its own top row: a
+new two-column row underneath (`grid-cols-2`) shows Tailgate and
+Kickoff side by side, each with its label above its value instead of
+inline; then Sign-Up stays as its own row below that, same conditional
+(`game.tailgate`) as before. When there's no tailgate for the game,
+the Tailgate column's value reads "N/A" now instead of the old row's
+"No Tailgate" sentence, to fit the label-above-value shape of the new
+layout.
+
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no
 audio yet. Concept: an announcer-style voice reading each page's
