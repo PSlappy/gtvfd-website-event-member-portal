@@ -1129,6 +1129,49 @@ allows Zuume Cut as a header/call-out font more broadly than that; ask
 the owner whether it should extend to those too before doing it
 unprompted.
 
+## Music & Voiceover — TODO: source real audio
+Two separate, deliberately independent audio systems, per the owner:
+
+- **Site-wide background music** (`components/jumbotron/MusicPlayer.tsx`):
+  Previous/Play-Pause/Next/Mute, icon-only, no text. Mounted once inside
+  `JumbotronFrame`'s main screen (top-right corner) rather than inside
+  any individual page, so its React state and the underlying `<audio>`
+  element never remount or restart on navigation — same reasoning
+  `NavBar`/`NextEventTicker` already live in the root layout for. Plays
+  across every page regardless of whether that page also has a
+  voiceover playing (the two are independent, per the owner, not
+  mutually exclusive).
+- **Per-page voiceover narration** (`JumbotronCrawl`'s existing Mute/
+  Replay pair, now icon-only, no "Replay" text label anymore): the Mute
+  button's icon changed to a new hand-drawn "person speaking" glyph
+  (head/shoulders + sound-wave arcs) specifically, distinct from the
+  music player's plain speaker-cone icon, since these two mutes control
+  two unrelated things. Replay restarts the page's typewriter/scroll
+  now, and will also restart the voiceover once that exists. Gated
+  behind a new `showVoiceControls` prop (default `false`) — the
+  autoscroll itself still runs on every page unchanged, only the
+  button row is opt-in now, since per the owner these controls only
+  belong on pages that actually have (or are planned to have)
+  voiceover content. Wired on for `/about` only, "for now" — extend to
+  other pages as their voiceover narration gets recorded.
+
+**Owner TODO, revisit when ready — there's no actual audio for either
+system yet:**
+- Background music: `MusicPlayer.tsx`'s `TRACKS` array points at
+  `/audio/music/track-1.mp3`, `-2.mp3`, `-3.mp3` — none of which exist.
+  Real music is copyrighted intellectual property the same way the real
+  fonts above are licensed property, so rather than pull in something
+  without knowing it's cleared to use, this ships fully wired up and
+  silent (`play()` rejections are caught so a missing file doesn't
+  throw) until real files land. Drop 2-3 royalty-free or licensed mp3s
+  into `public/audio/music/` with matching names (or edit `TRACKS` to
+  point wherever they end up) and playback works with no other changes.
+- Voiceover narration: still the same situation already noted in the
+  "Future: announcer narration audio" section above (blocked on page
+  copy being finalized, then generating audio via ElevenLabs or
+  similar) — the Voice-mute toggle is real UI now, it just has nothing
+  to actually mute yet.
+
 ## Privacy
 Site collects phone numbers, emails, and photos — needs a Privacy Policy
 page (static content) plus a required agreement checkbox at portal
