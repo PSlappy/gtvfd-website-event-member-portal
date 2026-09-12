@@ -932,6 +932,7 @@ body {
   isolation: isolate;
   mix-blend-mode: normal;
   background-color: var(--gt-navy);
+  border-color: #ffffff;
 }
 
 .gt-nav-scoreboard-text {
@@ -947,16 +948,25 @@ body {
   -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  -webkit-text-stroke: 1px #ffffff;
+  -webkit-text-stroke: 0.5px #ffffff;
 }
 
 .gt-nav-scoreboard-btn:hover {
   background-color: #ffffff;
-  border-color: var(--gt-navy);
+  border-color: var(--gt-gold);
 }
 
+/* Hover flips the text treatment rather than just re-coloring the
+   outline: fill goes solid navy (no more gradient) and the outline
+   goes gold, the reverse of Rest. "Metallic gold" here is the flat
+   `--gt-gold`, not the gradient — a 0.5px stroke is too thin a
+   surface for banding to read as metallic, unlike the fill above,
+   which has a whole glyph's worth of area for it. */
 .gt-nav-scoreboard-btn:hover .gt-nav-scoreboard-text {
-  -webkit-text-stroke: 1px var(--gt-navy);
+  background-image: none;
+  color: var(--gt-navy);
+  -webkit-text-fill-color: var(--gt-navy);
+  -webkit-text-stroke: 0.5px var(--gt-gold);
 }
 
 .gt-nav-scoreboard-btn:active {
@@ -964,8 +974,27 @@ body {
   border-color: var(--gt-navy);
 }
 
+/* A real click is also a hover (the pointer is still over the button
+   while pressed), so this has to explicitly restore the gradient fill
+   the `:hover` rule above just turned off — otherwise clicking would
+   silently inherit hover's navy fill instead of the click state's own
+   metallic-gold text, since `:hover` and `:active` carry equal
+   specificity and `:hover` sets fill-related properties `:active`
+   doesn't otherwise touch. */
 .gt-nav-scoreboard-btn:active .gt-nav-scoreboard-text {
-  -webkit-text-stroke: 1px var(--gt-navy);
+  background-image: linear-gradient(
+    135deg,
+    #b39051 0%,
+    #ddc38a 22%,
+    #8a7350 45%,
+    #ddc38a 68%,
+    #b39051 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 0.5px var(--gt-navy);
   animation: gt-nav-click-flash 260ms ease-out;
 }
 
@@ -1005,6 +1034,7 @@ body {
     #ddc38a 68%,
     #b39051 100%
   );
+  border-color: var(--gt-navy);
 }
 
 .gt-nav-scoreboard-btn.gt-nav-current .gt-nav-scoreboard-text,
@@ -1013,7 +1043,7 @@ body {
   background-image: none;
   color: #ffffff;
   -webkit-text-fill-color: #ffffff;
-  -webkit-text-stroke: 1px var(--gt-navy);
+  -webkit-text-stroke: 0.5px var(--gt-navy);
   animation: none;
 }
 

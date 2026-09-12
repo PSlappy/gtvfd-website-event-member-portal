@@ -5,22 +5,14 @@ import NavBarButton from "./NavBarButton";
 
 // Six equal segments, edge to edge, per the owner — Home included as
 // one of the six rather than pinned off to the side like the old pill
-// nav. `borderFamily` is the owner's exact gold/white split: Home,
-// Schedule, and Book Us get a gold border at rest; About, Donations,
-// and Contact get white. Order otherwise unchanged: About before
-// Schedule, Book Us before Contact.
+// nav. Order: About before Schedule, Book Us before Contact.
 const navItems = [
-  { href: "/", label: "Home", borderFamily: "gold", icon: true },
-  { href: "/about", label: "About", borderFamily: "white", icon: false },
-  { href: "/schedule", label: "Schedule", borderFamily: "gold", icon: false },
-  {
-    href: "/donations",
-    label: "Donations",
-    borderFamily: "white",
-    icon: false,
-  },
-  { href: "/booking", label: "Book Us", borderFamily: "gold", icon: false },
-  { href: "/contact", label: "Contact", borderFamily: "white", icon: false },
+  { href: "/", label: "Home", icon: true },
+  { href: "/about", label: "About", icon: false },
+  { href: "/schedule", label: "Schedule", icon: false },
+  { href: "/donations", label: "Donations", icon: false },
+  { href: "/booking", label: "Book Us", icon: false },
+  { href: "/contact", label: "Contact", icon: false },
 ] as const;
 
 function IconFiretruck() {
@@ -66,7 +58,6 @@ export default function NavBar() {
             key={item.href}
             href={item.href}
             active={active}
-            borderFamily={item.borderFamily}
             icon={item.icon}
             ariaLabel={item.icon ? item.label : undefined}
             ariaCurrent={active ? "page" : undefined}

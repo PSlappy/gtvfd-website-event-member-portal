@@ -42,31 +42,15 @@ export default function NextEventTicker() {
         />
       </div>
 
-      <div className="gt-depth-panel relative flex flex-col items-center justify-center gap-1.5 border-r-[1px] border-gt-gray-light px-2 py-2 text-center sm:border-r-2 sm:py-3">
-        {/* Row 1: date, spans the full column */}
+      <div className="gt-depth-panel relative flex h-full flex-col items-center justify-between border-r-[1px] border-gt-gray-light px-2 py-3 text-center sm:border-r-2 sm:py-4">
+        {/* Row 1: date and kickoff time together, larger font */}
         <span className="gt-led-text-white gt-display-in text-xs font-bold text-white sm:text-sm">
-          {formatGameDate(game.date)}
+          {formatGameDate(game.date)} &bull; Kickoff {game.kickoff}
         </span>
-        {/* Row 2: two columns, Tailgate and Kickoff, each with its
-            label above its value */}
-        <div className="gt-display-in grid grid-cols-2 gap-3 [animation-delay:80ms] sm:gap-4">
-          <div className="flex flex-col items-center">
-            <span className="gt-led-text-dim text-[9px] uppercase tracking-[0.15em] text-gt-gray-light/70 sm:text-[10px]">
-              Tailgate
-            </span>
-            <span className="gt-led-text-white text-[10px] font-bold text-white sm:text-xs">
-              {game.tailgate ? game.tailgateStart : "N/A"}
-            </span>
-          </div>
-          <div className="flex flex-col items-center">
-            <span className="gt-led-text-dim text-[9px] uppercase tracking-[0.15em] text-gt-gray-light/70 sm:text-[10px]">
-              Kickoff
-            </span>
-            <span className="gt-led-text-white text-[10px] font-bold text-white sm:text-xs">
-              {game.kickoff}
-            </span>
-          </div>
-        </div>
+        {/* Row 2: tailgate label and time, same size as row 1 */}
+        <span className="gt-led-text-white gt-display-in text-xs font-bold text-white [animation-delay:80ms] sm:text-sm">
+          Tailgate: {game.tailgate ? game.tailgateStart : "N/A"}
+        </span>
         {/* Row 3: sign-up — only if a tailgate event exists for this game */}
         {game.tailgate && (
           <div className="gt-display-in [animation-delay:160ms]">
