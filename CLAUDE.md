@@ -994,6 +994,35 @@ manually via Venmo request, as the crew has traditionally done. No
 in-site payment collection is being built yet — revisit once the rest of
 the app is functional.
 
+## Typography — TODO: source the real GT Athletics fonts
+Per GT Athletics' brand guide: **Proxima Nova** is the digital body-copy
+typeface, **Zuume Cut** is the header/call-out typeface. Both are
+commercial fonts (not on Google Fonts) and there's no license or font
+files for either one yet. Per the owner's call, the site ships with free
+Google Fonts standing in for now rather than blocking on licensing:
+**Work Sans** for Proxima Nova, **Bebas Neue** for Zuume Cut. See the
+layout/globals.css note in the "Design concept" section above for how
+this is wired.
+
+**Owner TODO, revisit when ready:** source actual Proxima Nova + Zuume
+Cut font files (a purchased license from the foundry — Mark Simonson
+Studio for Proxima Nova, Yellow Design Studio for Zuume — or an Adobe
+Fonts/Typekit kit if Proxima Nova specifically is covered by an existing
+Creative Cloud subscription). Once real files are self-hosted (or an
+Adobe Fonts kit embedded) under the exact family names `"Proxima Nova"`
+and `"Zuume Cut"`, the whole site picks them up automatically — the
+`--font-body`/`--font-header` CSS variables in `globals.css` already
+name those families first in their stacks, so no other code needs to
+change when this happens.
+
+Also worth a follow-up decision once the real fonts are in: right now
+`.gt-font-header` (the header typeface) only applies to actual page
+headings (the brand strip title, each page's top `<h2>`) — nav links,
+buttons, and card text all still use the body typeface. The brand guide
+allows Zuume Cut as a header/call-out font more broadly than that; ask
+the owner whether it should extend to those too before doing it
+unprompted.
+
 ## Privacy
 Site collects phone numbers, emails, and photos — needs a Privacy Policy
 page (static content) plus a required agreement checkbox at portal
