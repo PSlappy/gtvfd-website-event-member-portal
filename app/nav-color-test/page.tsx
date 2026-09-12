@@ -129,6 +129,15 @@ type TestRow = {
   // Always navy except for the "duplicate Row 1 on other nav
   // backgrounds" rows the owner asked for.
   panelBackground: ColorToken;
+  // The buttons are flex-1 and tile the strip edge to edge with zero
+  // gap (matching the real nav bar exactly) — which means the panel
+  // background above is completely covered and never actually visible
+  // no matter what it's set to. True adds a gap + padding so the
+  // panel color shows through around/between the buttons; only the
+  // "duplicate Row 1" rows below need this, since comparing panel
+  // colors is their whole point — Row 1/2/3 stay flush, unchanged,
+  // matching the real nav bar's own look.
+  showPanelPadding?: boolean;
   buttons: {
     label: string;
     background: ColorToken;
@@ -181,25 +190,30 @@ const rows: TestRow[] = [
   },
   // Four duplicates of Row 1, per the owner, each on a different nav
   // (panel) background — the buttons themselves are identical to Row
-  // 1 above, only the strip behind them changes.
+  // 1 above, only the strip behind them changes. showPanelPadding so
+  // that background is actually visible (see the field's own comment).
   {
     heading: "Row 1 — Grey Nav Background",
     panelBackground: "grey",
+    showPanelPadding: true,
     buttons: row1Buttons,
   },
   {
     heading: "Row 1 — Metallic Gold Nav Background",
     panelBackground: "metallicGold",
+    showPanelPadding: true,
     buttons: row1Buttons,
   },
   {
     heading: "Row 1 — Navy Nav Background",
     panelBackground: "navy",
+    showPanelPadding: true,
     buttons: row1Buttons,
   },
   {
     heading: "Row 1 — Black Nav Background",
     panelBackground: "black",
+    showPanelPadding: true,
     buttons: row1Buttons,
   },
   {
@@ -310,9 +324,15 @@ export default function NavColorTestPage() {
                 (navy normally, matching the real nav bar — varied for
                 the "duplicate Row 1" rows below), so it's an inline
                 style rather than the earlier hardcoded bg-gt-navy
-                class. */}
+                class. showPanelPadding rows get a gap + padding so
+                that background is actually visible — real bug fixed
+                here: flex-1 buttons with zero gap tile the strip
+                completely, so the panel color was set correctly but
+                never actually showed through underneath them. */}
             <div
-              className="relative flex w-full items-stretch border-y-[1px] border-gt-gray-light sm:border-y-2"
+              className={`relative flex w-full items-stretch border-y-[1px] border-gt-gray-light sm:border-y-2 ${
+                row.showPanelPadding ? "gap-2 p-3" : ""
+              }`}
               style={backgroundStyle(row.panelBackground)}
             >
               {row.buttons.map((button, i) => (

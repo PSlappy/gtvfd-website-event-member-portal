@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import MusicPlayer from "./MusicPlayer";
@@ -254,6 +255,29 @@ export default function JumbotronFrame({
               controls, if any, via VoiceControlsContext — see
               MusicPlayer.tsx. */}
               <MusicPlayer />
+              {/* TEMPORARY, per the owner: quick jump to the nav/button
+              color-test page from anywhere on the site, bottom-right
+              so it doesn't collide with MusicPlayer's centered row.
+              Hidden on the test page itself (no point linking to where
+              you already are). Remove once /nav-color-test is gone.
+              Positioning lives on this plain wrapper, not the Link
+              itself — `.gt-jumbotron-btn` hardcodes `position:
+              relative` (needed elsewhere to lift buttons above the
+              pixel-grid overlay) and, since it's defined later in
+              globals.css than Tailwind's utilities, silently wins over
+              an `absolute` class on the same element at equal
+              specificity. Same reason MusicPlayer's row above keeps
+              its own positioning on an outer div too. */}
+              {!showRefreshSweepTest && (
+                <div className="pointer-events-none absolute bottom-3 right-3 z-40">
+                  <Link
+                    href="/nav-color-test"
+                    className="gt-jumbotron-btn pointer-events-auto flex h-6 items-center rounded-full border-2 border-gt-gold bg-gt-navy px-2.5 text-[8px] font-bold uppercase tracking-wider text-gt-gold sm:h-7 sm:px-3 sm:text-[9px]"
+                  >
+                    Button Test
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* bottom info bar — NextEventTicker applies its own per-panel
