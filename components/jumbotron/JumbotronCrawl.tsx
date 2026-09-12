@@ -232,10 +232,16 @@ export default function JumbotronCrawl({
       {showVoiceControls && (
         <>
           {/* fade the crawl to black before it reaches the control row, so
-              text doesn't clip abruptly behind the buttons */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-20 bg-gradient-to-t from-black via-black/70 to-transparent" />
+              text doesn't clip abruptly behind the buttons. Taller than
+              before (h-32, was h-20) since this row now sits higher, to
+              clear MusicPlayer's own row pinned at bottom-3. */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-32 bg-gradient-to-t from-black via-black/70 to-transparent" />
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-3 z-40 flex justify-center gap-3 px-4">
+          {/* bottom-16, not bottom-3 — MusicPlayer (JumbotronFrame.tsx)
+              now occupies bottom-3/center on every page, per the owner,
+              so this page-scoped row stacks just above it instead of
+              overlapping when both are visible (About, for now). */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-16 z-40 flex justify-center gap-3 px-4">
             <button
               type="button"
               onClick={toggleMuted}

@@ -1,285 +1,222 @@
 import type { CSSProperties } from "react";
-import JumbotronButton from "@/components/jumbotron/JumbotronButton";
 import JumbotronCrawl from "@/components/jumbotron/JumbotronCrawl";
 
 /**
  * TEMPORARY page, not linked from the real nav — visit it directly at
- * /nav-color-test. Built so the owner can compare nav button color
- * combos side by side (several full rows on screen at once) instead
- * of the actual NavBar only ever showing one combo per page, one at a
- * time. Delete this whole route once a direction is picked; nothing
- * else in the app depends on it.
+ * /nav-color-test. Built so the owner can compare nav-button color
+ * combos side by side instead of the real NavBar only ever showing
+ * one combo per segment at a time. Delete this whole route once a
+ * direction is picked; nothing else in the app depends on it.
  *
- * Also doubles as the preview spot for two more test-only effects,
- * per the owner — see globals.css for both: "Shine" (a diagonal light
- * sweep on every button here, bottom-left to upper-right) and
- * "Refresh Sweep" (a faint background scan, gated to just this route
- * inside JumbotronFrame.tsx). Neither is used anywhere else yet.
- *
- * Also has a current-vs-metallic fill comparison (gold/navy/white),
- * requested before committing to any site-wide color replacement —
- * see the `metallicComparisons` array and `.gt-metallic-*` in
- * globals.css.
+ * Rebuilt from scratch per the owner: every earlier test row (Chase
+ * Ring/Shine swatches, the Tech Gold reference row, the metallic-vs-
+ * current comparison) is gone — this page now shows exactly the three
+ * rows of four color-combo swatches the owner specified, styled as
+ * exact copies of the real six-segment nav bar's box model/typography
+ * (`NavBarButton`'s shape and text treatment) rather than the old
+ * pill-shaped `Swatch`. No Chase Ring or Shine on any of these, same
+ * as the earlier metallic-comparison row — the only variable here is
+ * the four color properties in the owner's spec.
  */
 
-type ColorKey = "navy" | "white" | "gold";
+type ColorToken = "grey" | "navy" | "white" | "metallicGold";
 
-const BG_CLASS: Record<ColorKey, string> = {
-  navy: "bg-gt-navy",
-  white: "bg-gt-gray-light",
-  gold: "bg-gt-gold",
+const METALLIC_GOLD_GRADIENT =
+  "linear-gradient(135deg, #b39051 0%, #ddc38a 22%, #8a7350 45%, #ddc38a 68%, #b39051 100%)";
+
+// Flat stand-in for "Metallic Gold" wherever a gradient isn't
+// practical (a 2px border, a 0.5px text stroke) — same reasoning
+// documented in globals.css for the real nav bar: there's no official
+// digital value for the metallic ink anyway, and a hairline is too
+// thin a surface for banding to read as metallic.
+const FLAT_VALUE: Record<ColorToken, string> = {
+  grey: "#e5e5e5",
+  navy: "#051e39",
+  white: "#ffffff",
+  metallicGold: "#b39051",
 };
 
-const TEXT_CLASS: Record<ColorKey, string> = {
-  navy: "text-gt-navy",
-  white: "text-gt-gray-light",
-  gold: "text-gt-gold",
-};
+function backgroundStyle(token: ColorToken): CSSProperties {
+  if (token === "metallicGold") {
+    return { backgroundImage: METALLIC_GOLD_GRADIENT, backgroundColor: "transparent" };
+  }
+  return { backgroundColor: FLAT_VALUE[token], backgroundImage: "none" };
+}
 
-const CHASE_CLASS: Record<ColorKey, string> = {
-  navy: "gt-chase-navy",
-  white: "gt-chase-white",
-  gold: "", // .gt-chase-ring is gold by default, no modifier needed
-};
-
-const SHINE_CLASS: Record<ColorKey, string> = {
-  navy: "gt-shine-navy",
-  gold: "gt-shine-gold",
-  white: "", // .gt-shine is white by default, no modifier needed
-};
+function textStyle(fontColor: ColorToken, fontOutline: ColorToken): CSSProperties {
+  const stroke: CSSProperties = {
+    WebkitTextStroke: `0.5px ${FLAT_VALUE[fontOutline]}`,
+  };
+  if (fontColor === "metallicGold") {
+    return {
+      ...stroke,
+      backgroundImage: METALLIC_GOLD_GRADIENT,
+      WebkitBackgroundClip: "text",
+      backgroundClip: "text",
+      color: "transparent",
+      WebkitTextFillColor: "transparent",
+    };
+  }
+  return {
+    ...stroke,
+    backgroundImage: "none",
+    color: FLAT_VALUE[fontColor],
+    WebkitTextFillColor: FLAT_VALUE[fontColor],
+  };
+}
 
 /**
- * A standalone swatch matching `.gt-jumbotron-btn` + Chase Ring's
- * real markup/classes, but with `bg`/`text`/`chase` picked
- * independently rather than through `JumbotronButton`'s fixed
- * variants — this page needs combinations (e.g. gold background with
- * navy text) that don't exist as real site variants and shouldn't be
- * added there just for a comparison page. Rendered as a plain `span`
- * (not a link) since these aren't meant to navigate anywhere, only to
- * be looked at.
- *
- * Also carries the test-only "Shine" sweep (`.gt-shine`, a nested
- * span rather than a pseudo-element — Chase Ring already uses both
- * `::before` and `::after` on this same element, and a given element
- * can't have a third generated pseudo-element). `shine` defaults to
- * white if not given.
+ * One swatch, styled as an exact copy of `NavBarButton`'s box model
+ * and text treatment (same classes, same `background-clip: text`
+ * gradient technique for a "Metallic Gold" fill) but with
+ * background/font-color/font-outline/border picked independently via
+ * inline styles rather than through the real component's fixed
+ * Rest/Hover/Click/Current states — this page needs combinations that
+ * don't correspond to any single real state. Plain `span`s, not real
+ * links, since these aren't meant to navigate anywhere.
  */
-function Swatch({
+function TestNavButton({
   label,
-  bg,
-  text,
-  chase,
-  shine = "white",
+  background,
+  fontColor,
+  fontOutline,
+  border,
 }: {
   label: string;
-  bg: ColorKey;
-  text: ColorKey;
-  chase: ColorKey;
-  shine?: ColorKey;
+  background: ColorToken;
+  fontColor: ColorToken;
+  fontOutline: ColorToken;
+  border: ColorToken;
 }) {
   return (
     <span
-      className={`gt-jumbotron-btn gt-chase-ring ${CHASE_CLASS[chase]} inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full border-2 border-gt-gold px-4 text-[10px] font-bold uppercase tracking-wider sm:text-xs ${BG_CLASS[bg]} ${TEXT_CLASS[text]}`}
+      className="flex h-12 flex-1 items-center justify-center border-2 px-1 text-center sm:h-14"
+      style={{ ...backgroundStyle(background), borderColor: FLAT_VALUE[border] }}
     >
-      {label}
-      <span aria-hidden className={`gt-shine ${SHINE_CLASS[shine]}`} />
+      <span
+        className="pointer-events-none text-[10px] font-black uppercase leading-none tracking-widest sm:text-xs"
+        style={textStyle(fontColor, fontOutline)}
+      >
+        {label}
+      </span>
     </span>
   );
 }
 
-type RowCombo = {
-  label: string;
-  bg: ColorKey;
-  text: ColorKey;
-  chase: ColorKey;
-  shine?: ColorKey;
+type TestRow = {
+  heading: string;
+  buttons: {
+    label: string;
+    background: ColorToken;
+    fontColor: ColorToken;
+    fontOutline: ColorToken;
+    border: ColorToken;
+  }[];
 };
 
-type Row = {
-  title: string;
-  combos: RowCombo[];
-};
+const LABELS = ["ABOUT", "SCHEDULE", "DONATIONS", "CONTACT"];
 
-// `shine` per the owner's latest round: Row 1's Donations/Book Us and
-// Row 2's About/Schedule run gold; Row 2's Donations/Book Us and Row
-// 3's Donations/Book Us run navy. Everything else not mentioned stays
-// the default white.
-const rows: Row[] = [
+// Exactly the owner's table, column by column.
+const rows: TestRow[] = [
   {
-    title: "Row 1: Navy buttons",
-    combos: [
-      { label: "About", bg: "navy", text: "white", chase: "white" },
-      { label: "Schedule", bg: "navy", text: "gold", chase: "gold" },
+    heading: "Row 1 Test Buttons",
+    buttons: [
       {
-        label: "Donations",
-        bg: "navy",
-        text: "white",
-        chase: "gold",
-        shine: "gold",
+        label: LABELS[0],
+        background: "grey",
+        fontColor: "metallicGold",
+        fontOutline: "navy",
+        border: "metallicGold",
       },
       {
-        label: "Book Us",
-        bg: "navy",
-        text: "gold",
-        chase: "white",
-        shine: "gold",
+        label: LABELS[1],
+        background: "grey",
+        fontColor: "navy",
+        fontOutline: "metallicGold",
+        border: "navy",
+      },
+      {
+        label: LABELS[2],
+        background: "grey",
+        fontColor: "metallicGold",
+        fontOutline: "navy",
+        border: "metallicGold",
+      },
+      {
+        label: LABELS[3],
+        background: "grey",
+        fontColor: "navy",
+        fontOutline: "metallicGold",
+        border: "metallicGold",
       },
     ],
   },
   {
-    title: "Row 2: White buttons",
-    combos: [
+    heading: "Row 2 Test Buttons",
+    buttons: [
       {
-        label: "About",
-        bg: "white",
-        text: "gold",
-        chase: "gold",
-        shine: "gold",
+        label: LABELS[0],
+        background: "metallicGold",
+        fontColor: "white",
+        fontOutline: "navy",
+        border: "white",
       },
       {
-        label: "Schedule",
-        bg: "white",
-        text: "navy",
-        chase: "navy",
-        shine: "gold",
+        label: LABELS[1],
+        background: "metallicGold",
+        fontColor: "navy",
+        fontOutline: "white",
+        border: "navy",
       },
       {
-        label: "Donations",
-        bg: "white",
-        text: "gold",
-        chase: "navy",
-        shine: "navy",
+        label: LABELS[2],
+        background: "metallicGold",
+        fontColor: "navy",
+        fontOutline: "white",
+        border: "white",
       },
       {
-        label: "Book Us",
-        bg: "white",
-        text: "navy",
-        chase: "gold",
-        shine: "navy",
-      },
-    ],
-  },
-  {
-    title: "Row 3: Gold buttons",
-    combos: [
-      { label: "About", bg: "gold", text: "white", chase: "white" },
-      { label: "Schedule", bg: "gold", text: "navy", chase: "navy" },
-      {
-        label: "Donations",
-        bg: "gold",
-        text: "white",
-        chase: "navy",
-        shine: "navy",
-      },
-      {
-        label: "Book Us",
-        bg: "gold",
-        text: "navy",
-        chase: "white",
-        shine: "navy",
+        label: LABELS[3],
+        background: "metallicGold",
+        fontColor: "white",
+        fontOutline: "navy",
+        border: "navy",
       },
     ],
   },
-];
-
-/**
- * Georgia Tech's official brand guide lists Tech Gold in three forms
- * — fetched fresh from ramblinwreck.com/georgia-tech-athletics-brand-
- * guidelines rather than assumed, since getting this wrong would be
- * misleading in exactly the context (a brand color reference) where
- * it matters most. PMS 118C, its CMYK equivalent, and the digital
- * HEX/RGB are all *the same color* (HEX #B39051 converts to exactly
- * RGB 179,144,81, matching the PMS 118C entry) — shown as three
- * swatches anyway per the owner's request, since the guide documents
- * them as three separate line items even though two render
- * identically on screen. Metallic Tech Gold (PMS 10126 C) is the
- * exception: the guide gives it no RGB/CMYK/HEX at all, explicitly
- * because it's "for offset printing" only — a spot metallic ink, not
- * something RGB can reproduce. Rather than invent a number the guide
- * doesn't provide, that swatch uses a banded gold gradient to suggest
- * a metallic sheen and says plainly that no digital value exists.
- */
-const goldSwatches: {
-  title: string;
-  caption: string;
-  style: CSSProperties;
-}[] = [
   {
-    title: "Tech Gold (Metallic)",
-    caption: "PMS 10126 C — no RGB/CMYK/HEX given (offset print only)",
-    style: {
-      backgroundImage:
-        "linear-gradient(135deg, #b39051 0%, #ddc38a 22%, #8a7350 45%, #ddc38a 68%, #b39051 100%)",
-    },
+    heading: "Row 3 Test Buttons",
+    buttons: [
+      {
+        label: LABELS[0],
+        background: "navy",
+        fontColor: "white",
+        fontOutline: "metallicGold",
+        border: "white",
+      },
+      {
+        label: LABELS[1],
+        background: "navy",
+        fontColor: "metallicGold",
+        fontOutline: "white",
+        border: "metallicGold",
+      },
+      {
+        label: LABELS[2],
+        background: "navy",
+        fontColor: "metallicGold",
+        fontOutline: "white",
+        border: "white",
+      },
+      {
+        label: LABELS[3],
+        background: "navy",
+        fontColor: "white",
+        fontOutline: "metallicGold",
+        border: "metallicGold",
+      },
+    ],
   },
-  {
-    title: "Tech Gold",
-    caption: "PMS 118C · RGB 179, 144, 81 · CMYK 0, 19, 54, 29",
-    style: { backgroundColor: "#b39051" },
-  },
-  {
-    title: "Tech Gold",
-    caption: "HEX #B39051 · RGB 179, 144, 81",
-    style: { backgroundColor: "#b39051" },
-  },
-];
-
-/**
- * Current-vs-metallic comparison, per the owner, requested after
- * seeing the Tech Gold (Metallic) swatch above — same technique
- * (banded gradient) extended to navy and white too. Deliberately no
- * Chase Ring or Shine on any of these six (owner's request: "the
- * other effects can be left off" for this comparison), so the only
- * variable being compared is the fill itself. Also renders with
- * `.gt-solid-fill` (see globals.css), which strips the button's
- * usual semi-transparent glossy overlay — per the owner, these six
- * specifically should be fully solid/opaque, not diluted by that
- * highlight layer.
- */
-const metallicComparisons: {
-  label: string;
-  className: string;
-  textClass: string;
-}[] = [
-  { label: "Gold (current)", className: "bg-gt-gold", textClass: "text-black" },
-  {
-    label: "Gold (metallic)",
-    className: "gt-metallic-gold",
-    textClass: "text-black",
-  },
-  {
-    label: "Navy (current)",
-    className: "bg-gt-navy",
-    textClass: "text-gt-gray-light",
-  },
-  {
-    label: "Navy (metallic)",
-    className: "gt-metallic-navy",
-    textClass: "text-gt-gray-light",
-  },
-  {
-    label: "White (current)",
-    className: "bg-gt-gray-light",
-    textClass: "text-gt-gold",
-  },
-  {
-    label: "White (metallic)",
-    className: "gt-metallic-white",
-    textClass: "text-gt-gold",
-  },
-];
-
-// Two extra rows, not requested but worth having next to the three
-// above: mixing which item gets which bg color (rows 1-3 give every
-// item in a row the same background; these vary it), and a version
-// using the site's actual current "outline" button (real
-// JumbotronButton, not a Swatch) as a baseline to compare all three
-// solid options against what's live today.
-const mixedBgCombos: (RowCombo & { bg: ColorKey })[] = [
-  { label: "About", bg: "navy", text: "white", chase: "gold" },
-  { label: "Schedule", bg: "gold", text: "navy", chase: "white" },
-  { label: "Donations", bg: "white", text: "navy", chase: "gold" },
-  { label: "Book Us", bg: "navy", text: "gold", chase: "navy" },
 ];
 
 export default function NavColorTestPage() {
@@ -297,112 +234,17 @@ export default function NavColorTestPage() {
         </div>
 
         {rows.map((row) => (
-          <div key={row.title} className="flex w-full max-w-2xl flex-col gap-3">
+          <div key={row.heading} className="flex w-full max-w-2xl flex-col gap-3">
             <p className="gt-led-text-dim text-center text-[10px] uppercase tracking-[0.25em] text-gt-gray-light/60 sm:text-xs">
-              {row.title}
+              {row.heading}
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              {row.combos.map((combo) => (
-                <Swatch key={combo.label} {...combo} />
+            <div className="flex w-full items-stretch border-y border-gt-gray-light/30 bg-gt-navy">
+              {row.buttons.map((button, i) => (
+                <TestNavButton key={`${row.heading}-${i}`} {...button} />
               ))}
             </div>
           </div>
         ))}
-
-        <div className="flex w-full max-w-2xl flex-col gap-3">
-          <p className="gt-led-text-dim text-center text-[10px] uppercase tracking-[0.25em] text-gt-gray-light/60 sm:text-xs">
-            Row: Tech Gold — the three brand guide variants
-          </p>
-          <div className="flex flex-wrap items-start justify-center gap-6">
-            {goldSwatches.map((swatch, i) => (
-              <div
-                key={`${swatch.title}-${i}`}
-                className="flex flex-col items-center gap-2"
-              >
-                <span
-                  style={swatch.style}
-                  className="gt-jumbotron-btn inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full border-2 border-gt-gold px-4 text-[10px] font-bold uppercase tracking-wider text-black sm:text-xs"
-                >
-                  {swatch.title}
-                </span>
-                <p className="gt-led-text-dim max-w-[10rem] text-center text-[9px] uppercase tracking-wider text-gt-gray-light/60">
-                  {swatch.caption}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex w-full max-w-2xl flex-col gap-3">
-          <p className="gt-led-text-dim text-center text-[10px] uppercase tracking-[0.25em] text-gt-gray-light/60 sm:text-xs">
-            Row: current vs. metallic (no Chase Ring / Shine, fill only)
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {metallicComparisons.map((item) => (
-              <span
-                key={item.label}
-                className={`gt-jumbotron-btn gt-solid-fill inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full border-2 border-gt-gold px-4 text-[10px] font-bold uppercase tracking-wider sm:text-xs ${item.className} ${item.textClass}`}
-              >
-                {item.label}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex w-full max-w-2xl flex-col gap-3">
-          <p className="gt-led-text-dim text-center text-[10px] uppercase tracking-[0.25em] text-gt-gray-light/60 sm:text-xs">
-            Row 4 (extra): mixed backgrounds within one row
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {mixedBgCombos.map((combo) => (
-              <Swatch key={combo.label} {...combo} />
-            ))}
-          </div>
-        </div>
-
-        <div className="flex w-full max-w-2xl flex-col gap-3">
-          <p className="gt-led-text-dim text-center text-[10px] uppercase tracking-[0.25em] text-gt-gray-light/60 sm:text-xs">
-            Row 5 (extra): today&rsquo;s live outline style, for reference
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <JumbotronButton
-              href="/nav-color-test"
-              variant="outline"
-              chaseRing
-              chaseColor="gold"
-            >
-              About
-              <span aria-hidden className="gt-shine" />
-            </JumbotronButton>
-            <JumbotronButton
-              href="/nav-color-test"
-              variant="outline"
-              chaseRing
-              chaseColor="white"
-            >
-              Schedule
-              <span aria-hidden className="gt-shine" />
-            </JumbotronButton>
-            <JumbotronButton
-              href="/nav-color-test"
-              variant="outline"
-              chaseRing
-              chaseColor="navy"
-            >
-              Donations
-              <span aria-hidden className="gt-shine" />
-            </JumbotronButton>
-            <JumbotronButton
-              href="/nav-color-test"
-              variant="outline"
-              chaseRing
-              chaseColor="gold"
-            >
-              Book Us
-              <span aria-hidden className="gt-shine" />
-            </JumbotronButton>
-          </div>
-        </div>
       </div>
     </JumbotronCrawl>
   );
