@@ -1,24 +1,31 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import JumbotronButton from "./JumbotronButton";
+import NavBarButton from "./NavBarButton";
 
-// About before Schedule, Book Us before Contact — order per the
-// owner. Sign Up is deliberately not a nav item: it's already
-// reachable from the bottom ticker and every tailgate row on the
-// schedule table, so a nav link for it was redundant. The route
-// itself (`/signup`) stays, those links still point to it.
+// Six equal segments, edge to edge, per the owner — Home included as
+// one of the six rather than pinned off to the side like the old pill
+// nav. `borderFamily` is the owner's exact gold/white split: Home,
+// Schedule, and Book Us get a gold border at rest; About, Donations,
+// and Contact get white. Order otherwise unchanged: About before
+// Schedule, Book Us before Contact.
 const navItems = [
-  { href: "/about", label: "About" },
-  { href: "/schedule", label: "Schedule" },
-  { href: "/donations", label: "Donations" },
-  { href: "/booking", label: "Book Us" },
-  { href: "/contact", label: "Contact" },
+  { href: "/", label: "Home", borderFamily: "gold", icon: true },
+  { href: "/about", label: "About", borderFamily: "white", icon: false },
+  { href: "/schedule", label: "Schedule", borderFamily: "gold", icon: false },
+  {
+    href: "/donations",
+    label: "Donations",
+    borderFamily: "white",
+    icon: false,
+  },
+  { href: "/booking", label: "Book Us", borderFamily: "gold", icon: false },
+  { href: "/contact", label: "Contact", borderFamily: "white", icon: false },
 ] as const;
 
 function IconFiretruck() {
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4">
+    <svg viewBox="0 0 24 24" className="h-full w-full">
       <path
         fill="currentColor"
         d="M2 8.5a1 1 0 0 1 1-1h9v6.5H2.8a.8.8 0 0 1-.8-.8V8.5Z"
@@ -49,40 +56,25 @@ function IconFiretruck() {
 
 export default function NavBar() {
   const pathname = usePathname();
-  const homeActive = pathname === "/";
 
   return (
-    <nav className="flex w-full items-center gap-2 sm:gap-3">
-      {/* Home stays pinned to the left edge, independent of however
-          the rest of the items wrap/center, and reads as a firetruck
-          icon instead of a text label. */}
-      <JumbotronButton
-        href="/"
-        variant={homeActive ? "gold" : "outline"}
-        iconOnly
-        chaseRing={homeActive}
-        ariaLabel="Home"
-        ariaCurrent={homeActive ? "page" : undefined}
-      >
-        <IconFiretruck />
-      </JumbotronButton>
-
-      <div className="flex flex-1 flex-wrap items-center justify-center gap-2 sm:gap-3">
-        {navItems.map((item) => {
-          const active = pathname === item.href;
-          return (
-            <JumbotronButton
-              key={item.href}
-              href={item.href}
-              variant={active ? "gold" : "outline"}
-              chaseRing={active}
-              ariaCurrent={active ? "page" : undefined}
-            >
-              {item.label}
-            </JumbotronButton>
-          );
-        })}
-      </div>
+    <nav className="flex w-full items-stretch">
+      {navItems.map((item) => {
+        const active = pathname === item.href;
+        return (
+          <NavBarButton
+            key={item.href}
+            href={item.href}
+            active={active}
+            borderFamily={item.borderFamily}
+            icon={item.icon}
+            ariaLabel={item.icon ? item.label : undefined}
+            ariaCurrent={active ? "page" : undefined}
+          >
+            {item.icon ? <IconFiretruck /> : item.label}
+          </NavBarButton>
+        );
+      })}
     </nav>
   );
 }

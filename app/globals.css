@@ -876,3 +876,141 @@ body {
     #e5e5e5 100%
   );
 }
+
+/*
+ * Nav bar "scoreboard segment" buttons, per the owner: the primary
+ * nav no longer uses the site's usual pill-shaped `JumbotronButton`
+ * (that style is unchanged everywhere else) — it's six equal-width
+ * rectangles filling the nav strip edge to edge, closer to a real
+ * stadium video board's divided panel segments. Lives entirely in
+ * `NavBarButton.tsx`, not `JumbotronButton`, since the shape, the
+ * text treatment, and the state colors are all different enough from
+ * every other button on the site that folding it into the shared
+ * component would mean more conditional branches than shared code.
+ *
+ * Text uses the same banded metallic-gold gradient as
+ * `.gt-metallic-gold` above, clipped to the glyphs themselves via
+ * `background-clip: text` instead of filling a box, plus a
+ * `-webkit-text-stroke` outline for bold "scoreboard lettering."
+ * Colors are plain classes rather than Tailwind's hover:/active:
+ * utilities since a gradient text fill and a text-stroke outline
+ * aren't expressible as Tailwind utilities.
+ */
+.gt-nav-scoreboard-btn {
+  position: relative;
+  z-index: 20;
+  isolation: isolate;
+  mix-blend-mode: normal;
+  background-color: var(--gt-navy);
+}
+
+.gt-nav-scoreboard-text {
+  background-image: linear-gradient(
+    135deg,
+    #b39051 0%,
+    #ddc38a 22%,
+    #8a7350 45%,
+    #ddc38a 68%,
+    #b39051 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px #ffffff;
+}
+
+.gt-nav-scoreboard-btn:hover {
+  background-color: #ffffff;
+  border-color: var(--gt-navy);
+}
+
+.gt-nav-scoreboard-btn:hover .gt-nav-scoreboard-text {
+  -webkit-text-stroke: 1px var(--gt-navy);
+}
+
+.gt-nav-scoreboard-btn:active {
+  background-color: var(--gt-gray-light);
+  border-color: var(--gt-navy);
+}
+
+.gt-nav-scoreboard-btn:active .gt-nav-scoreboard-text {
+  -webkit-text-stroke: 1px var(--gt-navy);
+  animation: gt-nav-click-flash 260ms ease-out;
+}
+
+@keyframes gt-nav-click-flash {
+  0% {
+    filter: brightness(1);
+  }
+  45% {
+    filter: brightness(1.9);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+/*
+ * Current-page segment: the button itself fills with the metallic
+ * gold gradient (not just the text), text goes solid white (no
+ * gradient), stroke goes navy — a distinctly different treatment from
+ * every other segment so "you are here" reads unambiguously against
+ * the rest of the divided strip. Kept static through hover/active on
+ * purpose (the compound `:hover`/`:active` overrides below reassert
+ * it) rather than also thrashing into the white-background hover
+ * look: you don't need rollover feedback on the page you're already
+ * on, and the old nav's gold "current" variant never had its own
+ * hover treatment either.
+ */
+.gt-nav-scoreboard-btn.gt-nav-current,
+.gt-nav-scoreboard-btn.gt-nav-current:hover,
+.gt-nav-scoreboard-btn.gt-nav-current:active {
+  background-color: transparent;
+  background-image: linear-gradient(
+    135deg,
+    #b39051 0%,
+    #ddc38a 22%,
+    #8a7350 45%,
+    #ddc38a 68%,
+    #b39051 100%
+  );
+}
+
+.gt-nav-scoreboard-btn.gt-nav-current .gt-nav-scoreboard-text,
+.gt-nav-scoreboard-btn.gt-nav-current:hover .gt-nav-scoreboard-text,
+.gt-nav-scoreboard-btn.gt-nav-current:active .gt-nav-scoreboard-text {
+  background-image: none;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+  -webkit-text-stroke: 1px var(--gt-navy);
+  animation: none;
+}
+
+/*
+ * Home's firetruck icon isn't text, so the gradient background-clip
+ * trick above doesn't apply to it — `currentColor` (already wired
+ * through `IconFiretruck`'s own fill/stroke) drives a flat gold
+ * instead, same approximation the rest of the site already makes for
+ * "metallic gold" wherever a gradient isn't practical (there's no
+ * official digital value for it to begin with — see the metallic
+ * swatches above). Mirrors the text treatment's state changes 1:1.
+ */
+.gt-nav-scoreboard-icon {
+  color: var(--gt-gold);
+}
+
+.gt-nav-scoreboard-btn:hover .gt-nav-scoreboard-icon {
+  color: var(--gt-navy);
+}
+
+.gt-nav-scoreboard-btn:active .gt-nav-scoreboard-icon {
+  color: var(--gt-navy);
+  animation: gt-nav-click-flash 260ms ease-out;
+}
+
+.gt-nav-scoreboard-btn.gt-nav-current .gt-nav-scoreboard-icon,
+.gt-nav-scoreboard-btn.gt-nav-current:hover .gt-nav-scoreboard-icon,
+.gt-nav-scoreboard-btn.gt-nav-current:active .gt-nav-scoreboard-icon {
+  color: #ffffff;
+}
