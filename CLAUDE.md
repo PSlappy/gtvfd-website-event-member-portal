@@ -344,6 +344,14 @@ Don't create these yet — add them when that phase of work begins.
   bug documented throughout this file. A second pseudo-element can't
   collide with the host's own box-shadow since it isn't touching that
   property.
+  **Now also on the site's entire outer frame border**, per the owner
+  — `JumbotronFrame.tsx`'s outermost bordered box (`overflow-hidden`,
+  which Chase Ring's `::before` can't tolerate — its ring extends
+  outside the element's own box by design) gets the usual non-
+  overflow-hidden wrapper (same pattern as PlayerCard/the schedule
+  table) rather than a new technique. Default gold, unmodified —
+  same class, same ring, just traced around the whole viewport now
+  instead of one button or card.
 - **"Snake Trail"** (`SnakeTrail.tsx`, on the main screen only): a
   handful of short dot-trails crawling across the LED grid on a
   discrete tick loop, game-of-Snake style — bright head, fading tail,
@@ -425,6 +433,38 @@ genuinely open** — the comparison UI that supported that decision no
 longer exists on this page, but `.gt-metallic-gold`/`-navy`/`-white`
 in globals.css are untouched and the actual site-wide swap still
 hasn't happened. Revisit once the owner wants to look at that again.
+
+**Follow-up fixes to the rebuilt three-row page, per the owner:**
+- Row 1's Donations swatch had the wrong border — Metallic Gold in the
+  original spec table, corrected to Navy (an error in the table
+  itself, not a build mistake).
+- Couldn't scroll far enough to see Row 3 fully: the page's own
+  `py-10` bottom padding wasn't enough clearance for the persistent
+  media-controls row + fade (`MusicPlayer`, fixed/absolute at the
+  bottom of the main screen, so it doesn't add to document-flow
+  height) — the crawl's max-scroll stopped short of the last row,
+  leaving it stuck partly hidden underneath. Fixed with `pb-32`.
+- Each row now sits inside a wrapper matching the real nav bar's own
+  chrome exactly — navy background, thin light-gray border (`border-y`
+  here since this is a standalone strip, not the real nav's `border-b`
+  nested inside the outer frame), and the same `.gt-pixel-grid`
+  overlay — instead of floating directly on the plain black main-
+  screen background. Per the owner: "I need to see what the buttons
+  look like on a nav bar."
+- Added a temporary "Button Test" quick-link (small pill,
+  `JumbotronFrame.tsx`, bottom-right of the main screen, hidden on
+  `/nav-color-test` itself) so this page is reachable from anywhere on
+  the site without typing the URL. **Real bug caught building it:**
+  `.gt-jumbotron-btn` hardcodes `position: relative` (needed elsewhere
+  to lift buttons above the pixel-grid overlay), and since it's
+  defined later in globals.css than Tailwind's utilities, it silently
+  won over an `absolute` class on the same element at equal
+  specificity — the link rendered inline and 642px wide instead of
+  pinned to the corner. Fixed by moving `absolute`/`bottom-3`/`right-3`
+  to a plain wrapper div around the link instead, the same pattern
+  `MusicPlayer`'s own row already uses for the identical reason.
+  Remove this link along with the rest of the route once a direction
+  is picked.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
@@ -774,6 +814,16 @@ for the first time just for this one icon) at `h-8 w-8 sm:h-10
 sm:w-10`, sized up from the old icon's `h-5 w-5 sm:h-6 sm:w-6` since a
 detailed badge reads better a bit larger than a simple line icon did.
 
+**Follow-up, per the owner: Home is a fixed square now, moved to the
+right end of the strip.** Was the leftmost segment, `flex-1` like
+every other item; now it's `flex-none` at a fixed `w-12 sm:w-14`
+(matching the row's own height, so it's always literally square) via
+a new `square` prop on `NavBarButton`, and `navItems` in `NavBar.tsx`
+reordered so it's last instead of first. The remaining five
+(About/Schedule/Donations/Book Us/Contact) now split the strip's full
+width among themselves via `flex-1`, instead of sharing it six ways
+with Home — more room each, especially on wider screens.
+
 **Nav bar now fills its strip completely, per the owner.** The
 padding that used to wrap `{nav}` in `JumbotronFrame.tsx`
 (`px-4 py-3 sm:py-4`) is gone — the six scoreboard segments now sit
@@ -822,6 +872,21 @@ from `justify-center` to `justify-between` so the three rows spread
 across the panel's full height instead of clustering together in the
 middle, matching the owner's "should essentially fill the center
 section vertically."
+
+**Follow-up, per the owner: separator and label tweaks, plus real
+placeholder times.** Row 2's "Tailgate: {time}" colon became a bullet
+("Tailgate • {time}"), matching Row 1's own date/kickoff separator.
+Row 1 now drops the "Kickoff" label entirely when there's no real time
+yet — "Kickoff TBD" read redundant, so an unspecified kickoff just
+shows a bare "TBD" now; once a real time is set it shows normally
+("Kickoff 7:00 PM"). `lib/schedule.ts` got placeholder kickoff/tailgate
+times for the Tennessee game specifically (7:00 PM / 3:00 PM, clearly
+commented as placeholder, not a real announced time) so there was
+actual non-TBD data to check the formatting against — every other game
+stays TBD. Time format is `"7:00 PM"` (space before, uppercase AM/PM)
+— the owner offered three options and left the choice to Claude; this
+one matches the uppercase-tracking-wide style already used for labels
+throughout the site.
 
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no
@@ -1108,6 +1173,11 @@ unconditional, since the row itself is universal.
 sm:w-8` → `h-3.5 w-3.5 sm:h-4 sm:w-4` (verified 16px at the `sm`
 breakpoint via `getBoundingClientRect`, exactly half the old 32px),
 icons scaled down to match.
+
+**Follow-up, per the owner: landed on a size between the two.** The
+50%-smaller pass read too small, the original read too big —
+`h-3.5 w-3.5 sm:h-4 sm:w-4` → `h-5 w-5 sm:h-6 sm:w-6`, icons bumped to
+match (`h-[10px]`/`h-3` for the two icon sizes, up from `h-[7px]`/`h-2`).
 
 **Owner TODO, revisit when ready — there's no actual audio for either
 system yet:**
