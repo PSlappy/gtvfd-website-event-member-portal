@@ -35,55 +35,6 @@ const sourceArticles = [
   },
 ];
 
-/**
- * One "pair" row: a square PlayerCard on each side with the info
- * specific to that pair of people in a center column between them —
- * used for both the Founders row (Christian left, Sam right) and the
- * Current Owners row (Patrick left, Harry right). Stacks card/text/
- * card vertically on narrow screens (still DOM-ordered so the text
- * reads as "between" the two people), goes side by side at sm+.
- */
-function PersonPairSection({
-  heading,
-  headingSpeed = 60,
-  animationDelayClass,
-  left,
-  right,
-  children,
-}: {
-  heading: string;
-  headingSpeed?: number;
-  animationDelayClass: string;
-  left: { firstName: string; lastName: string; role: string };
-  right: { firstName: string; lastName: string; role: string };
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      className={`gt-display-in flex flex-col items-center gap-6 ${animationDelayClass}`}
-    >
-      <p className="text-center text-sm uppercase tracking-[0.3em] text-gt-gold">
-        <Typewriter text={heading} speed={headingSpeed} />
-      </p>
-      <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-center sm:gap-8">
-        <PlayerCard
-          firstName={left.firstName}
-          lastName={left.lastName}
-          role={left.role}
-        />
-        <div className="gt-led-text-dim max-w-md space-y-3 text-balance text-left text-zinc-300 sm:px-2">
-          {children}
-        </div>
-        <PlayerCard
-          firstName={right.firstName}
-          lastName={right.lastName}
-          role={right.role}
-        />
-      </div>
-    </div>
-  );
-}
-
 export default function AboutPage() {
   return (
     <JumbotronCrawl>
@@ -96,35 +47,13 @@ export default function AboutPage() {
           <p>
             <Typewriter
               speed={29}
-              text="The tailgate tradition dates back to 2008, built around a converted firetruck that’s followed Georgia Tech home games ever since. As the years went on, the original owners got older, started families, and had less time to manage tailgates and keep the truck running, so they started looking to pass it down."
+              text="The tailgate tradition dates back to 2008. In 2014, Georgia Tech alumni Sam Huffman and Christian Shea found a 1977 Ford fire engine listed on eBay out of Indiana and bought it for $2,800. They spent the offseason turning it into a rolling tailgate rig: a working keg, a sound system, and a deck welded onto the bed, then started driving it to games as “the Grant Field Volunteer Fire Department,” a nod to Georgia Tech’s engineering reputation."
             />
           </p>
-        </div>
-
-        <PersonPairSection
-          heading="Founders, Previous Owners & Donors"
-          animationDelayClass="[animation-delay:160ms]"
-          left={{ firstName: "Christian", lastName: "Shea", role: "Founder" }}
-          right={{ firstName: "Sam", lastName: "Huffman", role: "Founder" }}
-        >
           <p>
             <Typewriter
               speed={29}
-              text="In 2014, Sam and Christian found a 1977 Ford fire engine listed on eBay out of Indiana and bought it for $2,800. They spent that offseason turning it into a rolling tailgate rig: a working keg, a sound system, and a deck welded onto the bed, then started driving it to games as “the Grant Field Volunteer Fire Department,” a nod to Georgia Tech’s engineering reputation."
-            />
-          </p>
-        </PersonPairSection>
-
-        <PersonPairSection
-          heading="Current Owners"
-          animationDelayClass="[animation-delay:240ms]"
-          left={{ firstName: "Patrick", lastName: "Shea", role: "Owner" }}
-          right={{ firstName: "Harry", lastName: "Rizvi", role: "Owner" }}
-        >
-          <p>
-            <Typewriter
-              speed={29}
-              text="Patrick Shea, Christian’s younger brother, had grown up around the group of GT alumni who owned and supported the tailgate, and had been attending with Harry Rizvi, his best friend since they were five years old, since the tradition began. When Patrick and Harry said they wanted to keep it in the family, Sam sold them the truck for $1,000 in October 2021, and they spent that offseason getting it ready for the 2022 season."
+              text="As the years went on, the original owners got older, started families, and had less time to manage tailgates and keep the truck running, so they started looking to pass it down. Patrick Shea, Christian’s younger brother, had grown up around the group of GT alumni who owned and supported the tailgate, and had been attending with Harry Rizvi, his best friend since they were five years old, since the tradition began. When Patrick and Harry said they wanted to keep it in the family, Sam sold them the truck for $1,000 in October 2021, and they spent that offseason getting it ready for the 2022 season."
             />
           </p>
           <p>
@@ -133,7 +62,31 @@ export default function AboutPage() {
               text="Since taking over, Patrick and Harry have kept upgrading it: a new stereo system, three TVs, turf on the upper deck, 1996 Atlanta Olympic Stadium seats in place of the old bench seating, retractable awnings, and a steady stream of mechanical maintenance to keep a 50 year old fire engine road ready."
             />
           </p>
-        </PersonPairSection>
+        </div>
+
+        <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:160ms]">
+          <p className="text-center text-sm uppercase tracking-[0.3em] text-gt-gold">
+            <Typewriter text="Current Owners" speed={60} />
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <PlayerCard firstName="Patrick" lastName="Shea" role="Owner" />
+            <PlayerCard firstName="Harry" lastName="Rizvi" role="Owner" />
+          </div>
+        </div>
+
+        <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:240ms]">
+          <p className="text-center text-sm uppercase tracking-[0.3em] text-gt-gold">
+            <Typewriter text="Founders, Previous Owners & Donors" speed={60} />
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <PlayerCard firstName="Sam" lastName="Huffman" role="Founder" />
+            <PlayerCard
+              firstName="Christian"
+              lastName="Shea"
+              role="Founder"
+            />
+          </div>
+        </div>
 
         <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:320ms]">
           <p className="text-center text-sm uppercase tracking-[0.3em] text-gt-gold">

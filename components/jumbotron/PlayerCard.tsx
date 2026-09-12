@@ -25,7 +25,7 @@ export default function PlayerCard({
     // card below keeps its own overflow-hidden to clip the photo to
     // its rounded corners.
     <div className="gt-chase-ring relative w-40 rounded-md sm:w-48">
-      <div className="gt-display-in gt-led-border-gold gt-depth-panel relative aspect-square overflow-hidden rounded-md border-2 border-gt-gold bg-black">
+      <div className="gt-display-in gt-led-border-gold gt-depth-panel relative aspect-[3/4] overflow-hidden rounded-md border-2 border-gt-gold bg-black">
         {photoSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
