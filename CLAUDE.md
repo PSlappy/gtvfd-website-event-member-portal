@@ -463,10 +463,12 @@ hasn't happened. Revisit once the owner wants to look at that again.
   pinned to the corner. Fixed by moving `absolute`/`bottom-3`/`right-3`
   to a plain wrapper div around the link instead, the same pattern
   `MusicPlayer`'s own row already uses for the identical reason.
-  **Removed again shortly after** ("I don't need a temp button to
-  navigate to the test button page anywhere") — gone from
-  `JumbotronFrame.tsx` entirely now, along with the now-unused `Link`
-  import there.
+  **Briefly removed, then restored the same turn it was flagged** — a
+  follow-up message ("I dont need a temp button to navigate to the
+  test button page anywhere?") was misread as a removal request, but
+  the owner meant the opposite: it was needed and hadn't actually been
+  visible/working for them yet. Back in `JumbotronFrame.tsx`
+  unchanged from the original description above.
 
 **Two more follow-up fixes on this page, per the owner:**
 - **Real bug:** the swatches read as washed-out/translucent instead of
@@ -496,6 +498,18 @@ into a new `panelBackground` field on `TestRow`, applied via
 `backgroundStyle()` (the same helper the buttons already use) as an
 inline style. A new `"black"` `ColorToken` was added for the last
 duplicate — pure `#000000`, matching the main screen's own background.
+
+**Real bug caught right after: the four duplicate rows' panel colors
+were set correctly but never actually visible** — the buttons are
+`flex-1` with zero gap between them (matching the real nav bar
+exactly), so they tile the strip completely and there's no gap left
+for the panel background to show through no matter what it's set to;
+every row just looked white/grey regardless. Fixed with a new
+`showPanelPadding` flag on `TestRow` (`gap-2 p-3` on the wrapper),
+applied only to the four duplicate rows, whose whole point is
+comparing panel colors — Row 1/2/3 themselves stay flush edge-to-edge,
+unchanged, since they're still meant to match the real nav bar's own
+look exactly.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
