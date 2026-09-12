@@ -385,115 +385,46 @@ exactly its normal state — current-page-is-gold, everything else
 `outline` — with no trace of the test left in it, and the temporary
 `navyWhite`/`navyGold` variants that only existed to support it were
 removed from `JumbotronButton`.
-**The comparison itself now lives at `/nav-color-test`**
+**The comparison itself lives at `/nav-color-test`**
 (`app/nav-color-test/page.tsx`) — **not linked from the real nav,
-visit it directly by URL.** Renders the three combos the owner asked
-for as full rows (Row 1 navy backgrounds, Row 2 white, Row 3 gold,
-each row testing About/Schedule/Donations/Book Us with a different
-text/Chase-Ring-color pairing per item — exact values are in the
-file's `rows` array), plus two rows added unprompted: one mixing
-background colors within a single row, one using today's actual live
-`outline` button as a reference point. Built with a small local
-`Swatch` component (plain non-navigating `span`s, not real links)
-rather than extending `JumbotronButton` with one-off variants, since
-the full navy/white/gold-background × navy/white/gold-text matrix
-here has combinations (gold background with navy text, for instance)
-that don't exist as real site variants and shouldn't be added there
-just to support a comparison page. Did need one real, permanent
-addition to `JumbotronButton` to make this possible: a third Chase
-Ring color, `.gt-chase-navy` (a brightened blue — the literal
-`--gt-navy` is nearly invisible against this site's own black/navy
-backgrounds — same color `SnakeTrail` already uses for its navy
-dots), alongside the existing gold default and `.gt-chase-white`.
-**This whole route is temporary — delete it once the owner picks a
-direction**, along with reverting the note above the moment `NavBar`
-actually changes for real. (Explicitly confirmed still wanted as of
-the next round of feedback — don't delete unprompted just because
-some time has passed.)
+visit it directly by URL. This whole route is temporary — delete it
+once the owner picks a direction**, along with reverting the note
+above the moment `NavBar` actually changes for real. (Explicitly
+confirmed still wanted as of a later round of feedback — don't delete
+unprompted just because some time has passed.) The original comparison
+needed one real, permanent addition to `JumbotronButton` that's stayed
+regardless of what this page currently shows: a third Chase Ring
+color, `.gt-chase-navy` (a brightened blue — the literal `--gt-navy`
+is nearly invisible against this site's own black/navy backgrounds —
+same color `SnakeTrail` uses for its navy dots), alongside the
+existing gold default and `.gt-chase-white`.
 
-**The page later became the preview spot for two more test-only
-effects too, per the owner — explicitly asked to be previewed only
-here for now, not rolled out anywhere else yet:**
-- **"Shine"** (`.gt-shine` in globals.css): a soft diagonal light
-  reflection sweeping from a button's bottom-left corner to its
-  upper-right, like a glint off a glossy surface. A real nested
-  `<span>` inside each button (not a pseudo-element on the button
-  itself) — Chase Ring already occupies both `::before` and `::after`
-  on the same host, and an element can't have a third. Added to every
-  button on this page (the `Swatch` component, plus the outline-style
-  reference row's real `JumbotronButton`s). Confirmed each button's
-  sweep animates independently since they mount at slightly different
-  times as the crawl scrolls them into view — reads as a natural
-  desynchronized twinkle, not everything flashing in unison.
-- **"Refresh Sweep"** (`.gt-refresh-sweep`): a faint, fast, continuous
-  band drifting down the main screen, meant to read as a
-  barely-noticeable display refresh — a genuinely different effect
-  from the existing slower, more dramatic `.gt-scan-sweep` already
-  live on every page (see the design-concept bullets near the top of
-  this file), not a retune of it, so the two can be compared
-  independently. This one required making `JumbotronFrame.tsx` a
-  client component (`usePathname`) specifically to gate it to only
-  render when the current route is `/nav-color-test` — if that
-  component needs route-awareness for something else after this test
-  page is gone, keep the client-component change; if not, both can be
-  reverted together.
-  Shine's color is a `--gt-shine-color` custom property (white by
-  default, same pattern as Chase Ring's `--gt-chase-color`) with
-  `.gt-shine-gold`/`.gt-shine-navy` modifiers — added so specific
-  buttons could run a different color per the owner's exact mapping:
-  Row 1's Donations/Book Us and Row 2's About/Schedule shine gold;
-  Row 2's Donations/Book Us and Row 3's Donations/Book Us shine navy;
-  everything else stays the white default. Verified per-button by
-  reading the actual class off each `.gt-shine` span in the DOM
-  afterward, not by eyeballing which streak looked which color in a
-  screenshot.
+**Rebuilt from scratch more than once since, per the owner — most
+recently, entirely replacing every prior row.** Earlier versions of
+this page carried, in order: the original navy/white/gold Chase-Ring
+comparison (a local `Swatch` component), a Shine/Refresh-Sweep preview
+row, a Tech Gold brand-guide reference row (real values fetched from
+ramblinwreck.com/georgia-tech-athletics-brand-guidelines — PMS 118C,
+its CMYK equivalent, and the digital HEX all convert to RGB 179, 144,
+81; Metallic Tech Gold PMS 10126 C has no official digital value at
+all, offset-print-only), and a current-vs-metallic fill comparison
+(`.gt-solid-fill` in globals.css, still there, strips the button
+gloss overlay for a clean comparison). **All of that is gone now** —
+the owner asked for every button removed and replaced with exactly
+three rows of four color-combo swatches (see the file for the live
+spec), styled as exact copies of the real nav bar's `NavBarButton` box
+model/text treatment rather than the old pill-shaped `Swatch`.
+`.gt-shine`/`.gt-refresh-sweep` in globals.css and the
+`showRefreshSweepTest` route gate in `JumbotronFrame.tsx` are left in
+place but currently unused by this page — nothing renders them right
+now; remove them too if this route's purpose keeps changing and they
+stay unused.
 
-**The page also grew a fourth content row: Georgia Tech's three
-official Tech Gold variants**, per the owner, fetched fresh from
-ramblinwreck.com/georgia-tech-athletics-brand-guidelines rather than
-assumed — getting a brand color reference wrong would be misleading
-in exactly the context where it matters most. PMS 118C, its CMYK
-equivalent, and the digital HEX all convert to the exact same RGB
-(179, 144, 81) — shown as three separate swatches anyway since the
-guide lists them as three line items, even though two render
-identically on screen. Metallic Tech Gold (PMS 10126 C) has **no**
-RGB/CMYK/HEX in the guide at all — it's explicitly for offset
-printing only, a spot metallic ink that RGB can't reproduce — so
-rather than invent a number, that swatch uses a banded gold gradient
-to suggest a metallic sheen and its caption states plainly that no
-digital value exists. If a real Tech Gold reference is ever needed
-elsewhere in the app, these are the values to reuse.
-
-**Pending decision, not yet acted on: the owner asked to replace every
-use of Gold on the site with Metallic Tech Gold, and whether metallic
-Navy/White versions were possible too.** Given the scale (Gold is used
-essentially everywhere — borders, text, backgrounds, glows, Chase
-Ring's default) and that Metallic Tech Gold has no official digital
-value at all (see above), a comparison was built first rather than
-doing the site-wide swap sight-unseen: `.gt-metallic-gold`/`-navy`/
-`-white` in globals.css (a banded diagonal gradient suggesting a
-brushed-metal sheen — gold reuses the Tech Gold swatch's exact
-banding; navy and white are equally invented, since the brand guide
-doesn't define a metallic version of either), shown on
-`/nav-color-test` as six buttons (current vs. metallic for all three
-colors), Chase Ring and Shine both deliberately off so the fill is the
-only variable. **The actual site-wide replacement has not happened —
-next step once the owner has seen this and picked a direction.**
-
-**Follow-up: the six comparison buttons were still visibly diluted,
-fixed with a new `.gt-solid-fill` class.** Every `.gt-jumbotron-btn`
-(and, redundantly, the top layer of each `.gt-metallic-*` gradient)
-carries its own semi-transparent glossy `background-image` overlay,
-which was washing out both the flat current-color fills and the
-metallic bands underneath it — not obvious until the owner asked for
-these six specifically to render fully solid/opaque, no transparency.
-`.gt-solid-fill` strips `background-image` to `none` outright, with
-three more compound overrides
-(`.gt-jumbotron-btn.gt-metallic-gold.gt-solid-fill` etc.) that redefine
-it as just the pure banded gradient for the metallic swatches, gloss
-layer excluded entirely. Applied only via the `gt-solid-fill` class on
-these six spans in `/nav-color-test` — every other button on the site
-keeps its normal glossy highlight, this wasn't a global change.
+**The Metallic Tech Gold site-wide replacement question is still
+genuinely open** — the comparison UI that supported that decision no
+longer exists on this page, but `.gt-metallic-gold`/`-navy`/`-white`
+in globals.css are untouched and the actual site-wide swap still
+hasn't happened. Revisit once the owner wants to look at that again.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
@@ -1134,13 +1065,16 @@ Two separate, deliberately independent audio systems, per the owner:
 
 - **Site-wide background music** (`components/jumbotron/MusicPlayer.tsx`):
   Previous/Play-Pause/Next/Mute, icon-only, no text. Mounted once inside
-  `JumbotronFrame`'s main screen (top-right corner) rather than inside
-  any individual page, so its React state and the underlying `<audio>`
-  element never remount or restart on navigation — same reasoning
-  `NavBar`/`NextEventTicker` already live in the root layout for. Plays
-  across every page regardless of whether that page also has a
-  voiceover playing (the two are independent, per the owner, not
-  mutually exclusive).
+  `JumbotronFrame`'s main screen rather than inside any individual page,
+  so its React state and the underlying `<audio>` element never remount
+  or restart on navigation — same reasoning `NavBar`/`NextEventTicker`
+  already live in the root layout for. Plays across every page
+  regardless of whether that page also has a voiceover playing (the two
+  are independent, per the owner, not mutually exclusive). **Moved to
+  bottom-center, per the owner** (was top-right) — the same spot the
+  Voice/Replay row used to universally occupy before it got gated to
+  voiceover-only pages, so this now reads as "the" persistent bottom
+  control row for the site as a whole.
 - **Per-page voiceover narration** (`JumbotronCrawl`'s existing Mute/
   Replay pair, now icon-only, no "Replay" text label anymore): the Mute
   button's icon changed to a new hand-drawn "person speaking" glyph
@@ -1153,7 +1087,12 @@ Two separate, deliberately independent audio systems, per the owner:
   button row is opt-in now, since per the owner these controls only
   belong on pages that actually have (or are planned to have)
   voiceover content. Wired on for `/about` only, "for now" — extend to
-  other pages as their voiceover narration gets recorded.
+  other pages as their voiceover narration gets recorded. **Repositioned
+  to `bottom-16` (was `bottom-3`), per the owner's MusicPlayer move
+  above** — the two rows now stack vertically instead of colliding on
+  pages where both are visible (About, for now); the fade-to-black
+  gradient behind them grew taller (`h-32`, was `h-20`) to still cover
+  both before the text reaches them.
 
 **Owner TODO, revisit when ready — there's no actual audio for either
 system yet:**
