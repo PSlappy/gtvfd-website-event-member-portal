@@ -1061,38 +1061,53 @@ the owner whether it should extend to those too before doing it
 unprompted.
 
 ## Music & Voiceover — TODO: source real audio
-Two separate, deliberately independent audio systems, per the owner:
+Two independent audio systems (separate state, separate purpose — music
+keeps playing regardless of whether a voiceover is also active) that
+now share **one persistent button row, bottom-center of the main
+screen**, per the owner — this was two separate rows in two positions
+for a stretch (top-right music, bottom-center-ish voice) before landing
+here; if older context mentions that layout, it's superseded.
 
 - **Site-wide background music** (`components/jumbotron/MusicPlayer.tsx`):
-  Previous/Play-Pause/Next/Mute, icon-only, no text. Mounted once inside
+  Back/Play-Pause/Forward/Mute, icon-only, no text. Mounted once inside
   `JumbotronFrame`'s main screen rather than inside any individual page,
   so its React state and the underlying `<audio>` element never remount
   or restart on navigation — same reasoning `NavBar`/`NextEventTicker`
-  already live in the root layout for. Plays across every page
-  regardless of whether that page also has a voiceover playing (the two
-  are independent, per the owner, not mutually exclusive). **Moved to
-  bottom-center, per the owner** (was top-right) — the same spot the
-  Voice/Replay row used to universally occupy before it got gated to
-  voiceover-only pages, so this now reads as "the" persistent bottom
-  control row for the site as a whole.
-- **Per-page voiceover narration** (`JumbotronCrawl`'s existing Mute/
-  Replay pair, now icon-only, no "Replay" text label anymore): the Mute
-  button's icon changed to a new hand-drawn "person speaking" glyph
-  (head/shoulders + sound-wave arcs) specifically, distinct from the
-  music player's plain speaker-cone icon, since these two mutes control
-  two unrelated things. Replay restarts the page's typewriter/scroll
-  now, and will also restart the voiceover once that exists. Gated
-  behind a new `showVoiceControls` prop (default `false`) — the
-  autoscroll itself still runs on every page unchanged, only the
-  button row is opt-in now, since per the owner these controls only
-  belong on pages that actually have (or are planned to have)
-  voiceover content. Wired on for `/about` only, "for now" — extend to
-  other pages as their voiceover narration gets recorded. **Repositioned
-  to `bottom-16` (was `bottom-3`), per the owner's MusicPlayer move
-  above** — the two rows now stack vertically instead of colliding on
-  pages where both are visible (About, for now); the fade-to-black
-  gradient behind them grew taller (`h-32`, was `h-20`) to still cover
-  both before the text reaches them.
+  already live in the root layout for.
+- **Per-page voiceover narration** (still driven by `JumbotronCrawl`,
+  gated behind its `showVoiceControls` prop, default `false`, wired on
+  for `/about` only "for now" — the autoscroll itself still runs on
+  every page unchanged, only these controls are opt-in): Voice-mute (a
+  hand-drawn "person speaking" icon — head/shoulders + sound-wave arcs
+  — distinct from the music player's plain speaker-cone icon, since
+  these two mutes control unrelated things) and Replay, which restarts
+  the page's typewriter/scroll now and will also restart the voiceover
+  once that exists.
+
+**Real architecture problem solved to combine them:** `JumbotronCrawl`
+is nested deep inside `main` (page-scoped, remounts every navigation);
+`MusicPlayer` is a sibling of `main` inside `JumbotronFrame` (frame-
+scoped, must never remount). Neither is an ancestor of the other, so
+they can't share state via ordinary props. Fixed with a small context,
+`components/jumbotron/VoiceControlsContext.tsx`, provided once around
+both `{main}` and `<MusicPlayer />` inside `JumbotronFrame`: when a page
+has `showVoiceControls` on, its `JumbotronCrawl` registers
+`{muted, toggleMuted, replay}` into the context (re-registering on every
+`muted` change, so the registered value doesn't go stale) instead of
+rendering its own buttons, and unregisters on unmount or the moment
+`showVoiceControls` goes false. `MusicPlayer` reads whatever's
+currently registered and renders those two buttons itself — right after
+its own four, in the owner's exact order (Back, Play, Forward, Mute,
+Voice, Replay) — only when something's actually there, so pages
+without voiceover just show four buttons, not six with two dead ones.
+The fade-to-black gradient behind the row lives in `JumbotronFrame` now
+(was inside `JumbotronCrawl`, gated to voice pages) and is
+unconditional, since the row itself is universal.
+
+**All six buttons are 50% smaller, per the owner** — `h-7 w-7 sm:h-8
+sm:w-8` → `h-3.5 w-3.5 sm:h-4 sm:w-4` (verified 16px at the `sm`
+breakpoint via `getBoundingClientRect`, exactly half the old 32px),
+icons scaled down to match.
 
 **Owner TODO, revisit when ready — there's no actual audio for either
 system yet:**
