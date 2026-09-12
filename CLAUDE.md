@@ -466,6 +466,18 @@ hasn't happened. Revisit once the owner wants to look at that again.
   Remove this link along with the rest of the route once a direction
   is picked.
 
+**Two more follow-up fixes on this page, per the owner:**
+- **Real bug:** the swatches read as washed-out/translucent instead of
+  solid right after the nav-bar-matching wrapper (with its
+  `.gt-pixel-grid` overlay) was added — the overlay is
+  `position: absolute` with its own `z-10`, which paints above any
+  non-positioned sibling regardless of DOM order, the exact bug
+  documented repeatedly elsewhere in this codebase
+  (`.gt-jumbotron-btn`'s own `z-index: 20` exists for the same
+  reason). Fixed the same way: `relative z-20` on `TestNavButton`.
+- Row 1's Schedule swatch removed entirely ("I don't like that
+  design") — that row is three buttons now, not four.
+
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
 Location, Kickoff, Tailgate, Sign-Up on tailgate rows); this pass
@@ -814,15 +826,19 @@ for the first time just for this one icon) at `h-8 w-8 sm:h-10
 sm:w-10`, sized up from the old icon's `h-5 w-5 sm:h-6 sm:w-6` since a
 detailed badge reads better a bit larger than a simple line icon did.
 
-**Follow-up, per the owner: Home is a fixed square now, moved to the
-right end of the strip.** Was the leftmost segment, `flex-1` like
-every other item; now it's `flex-none` at a fixed `w-12 sm:w-14`
-(matching the row's own height, so it's always literally square) via
-a new `square` prop on `NavBarButton`, and `navItems` in `NavBar.tsx`
-reordered so it's last instead of first. The remaining five
-(About/Schedule/Donations/Book Us/Contact) now split the strip's full
-width among themselves via `flex-1`, instead of sharing it six ways
-with Home — more room each, especially on wider screens.
+**Follow-up, per the owner: Home is a fixed square now.** Was the
+leftmost segment, `flex-1` like every other item; now it's
+`flex-none` at a fixed `w-12 sm:w-14` (matching the row's own height,
+so it's always literally square) via a new `square` prop on
+`NavBarButton`. The remaining five (About/Schedule/Donations/Book Us/
+Contact) split the strip's full width among themselves via `flex-1`,
+instead of sharing it six ways with Home — more room each, especially
+on wider screens. **Briefly moved to the right end of the strip, then
+moved back to the left — the right-end move was a mistake ("I meant
+the home page button should be on the left side"), corrected the same
+turn it was flagged.** `navItems` in `NavBar.tsx` has Home first
+again, matching where it's always been; only the squareness (not the
+position) was the actual lasting change here.
 
 **Nav bar now fills its strip completely, per the owner.** The
 padding that used to wrap `{nav}` in `JumbotronFrame.tsx`
@@ -887,6 +903,14 @@ stays TBD. Time format is `"7:00 PM"` (space before, uppercase AM/PM)
 — the owner offered three options and left the choice to Claude; this
 one matches the uppercase-tracking-wide style already used for labels
 throughout the site.
+
+**Follow-up, per the owner: "Kickoff" never appears at all now, not
+even conditionally.** The previous pass still showed "Kickoff 7:00 PM"
+once a real time existed — the owner clarified the word itself should
+never be on screen, only the time. Row 1 is just `{date} • {kickoff}`
+unconditionally now. Also added `mt-3` to the Sign-Up row specifically
+(on top of the column's existing `justify-between` spacing) for more
+clearance between it and the tailgate time above it.
 
 ### Future: announcer narration audio (not started)
 The jumbotron crawl's Mute button is wired up for this but there's no
