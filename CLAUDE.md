@@ -463,8 +463,10 @@ hasn't happened. Revisit once the owner wants to look at that again.
   pinned to the corner. Fixed by moving `absolute`/`bottom-3`/`right-3`
   to a plain wrapper div around the link instead, the same pattern
   `MusicPlayer`'s own row already uses for the identical reason.
-  Remove this link along with the rest of the route once a direction
-  is picked.
+  **Removed again shortly after** ("I don't need a temp button to
+  navigate to the test button page anywhere") — gone from
+  `JumbotronFrame.tsx` entirely now, along with the now-unused `Link`
+  import there.
 
 **Two more follow-up fixes on this page, per the owner:**
 - **Real bug:** the swatches read as washed-out/translucent instead of
@@ -477,6 +479,23 @@ hasn't happened. Revisit once the owner wants to look at that again.
   reason). Fixed the same way: `relative z-20` on `TestNavButton`.
 - Row 1's Schedule swatch removed entirely ("I don't like that
   design") — that row is three buttons now, not four.
+
+**Row 1 corrected again, then duplicated across four backgrounds, per
+the owner.** Contact's swatch was still wrong: Metallic Gold font,
+Navy font outline, White button border (was Navy font / Metallic Gold
+outline / Metallic Gold border) — the `row1Buttons` array is now
+shared/reused rather than redefined per row, so this fix (and any
+future one to Row 1's three buttons) automatically applies everywhere
+Row 1 appears. Four more rows were added directly under the original,
+each an exact duplicate of Row 1's three buttons, differing only in
+the *panel* (strip) background behind them: Grey, Metallic Gold, Navy,
+Black, in that order — not the individual buttons' own `background`
+field, which stays grey for all five. Required pulling the panel
+background out of the hardcoded `bg-gt-navy` class on the row wrapper
+into a new `panelBackground` field on `TestRow`, applied via
+`backgroundStyle()` (the same helper the buttons already use) as an
+inline style. A new `"black"` `ColorToken` was added for the last
+duplicate — pure `#000000`, matching the main screen's own background.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
