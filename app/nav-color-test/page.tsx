@@ -38,12 +38,18 @@ const FLAT_VALUE: Record<ColorToken, string> = {
 
 function backgroundStyle(token: ColorToken): CSSProperties {
   if (token === "metallicGold") {
-    return { backgroundImage: METALLIC_GOLD_GRADIENT, backgroundColor: "transparent" };
+    return {
+      backgroundImage: METALLIC_GOLD_GRADIENT,
+      backgroundColor: "transparent",
+    };
   }
   return { backgroundColor: FLAT_VALUE[token], backgroundImage: "none" };
 }
 
-function textStyle(fontColor: ColorToken, fontOutline: ColorToken): CSSProperties {
+function textStyle(
+  fontColor: ColorToken,
+  fontOutline: ColorToken,
+): CSSProperties {
   const stroke: CSSProperties = {
     WebkitTextStroke: `0.5px ${FLAT_VALUE[fontOutline]}`,
   };
@@ -91,7 +97,10 @@ function TestNavButton({
   return (
     <span
       className="flex h-12 flex-1 items-center justify-center border-2 px-1 text-center sm:h-14"
-      style={{ ...backgroundStyle(background), borderColor: FLAT_VALUE[border] }}
+      style={{
+        ...backgroundStyle(background),
+        borderColor: FLAT_VALUE[border],
+      }}
     >
       <span
         className="pointer-events-none text-[10px] font-black uppercase leading-none tracking-widest sm:text-xs"
@@ -136,11 +145,13 @@ const rows: TestRow[] = [
         border: "navy",
       },
       {
+        // Corrected per the owner: Donations' border is Navy, not
+        // Metallic Gold — an error in the original table.
         label: LABELS[2],
         background: "grey",
         fontColor: "metallicGold",
         fontOutline: "navy",
-        border: "metallicGold",
+        border: "navy",
       },
       {
         label: LABELS[3],
@@ -222,7 +233,13 @@ const rows: TestRow[] = [
 export default function NavColorTestPage() {
   return (
     <JumbotronCrawl>
-      <div className="flex min-h-full flex-col items-center gap-10 px-4 py-10 sm:px-8">
+      {/* pb-32 (not the usual py-10 all around), per the owner: the
+          persistent media-controls row + fade sit fixed over the
+          bottom of the main screen and don't take up document flow
+          height, so without extra clearance here the crawl's own
+          max-scroll stops short of the last row and it's stuck partly
+          hidden behind the overlay. */}
+      <div className="flex min-h-full flex-col items-center gap-10 px-4 pb-32 pt-10 sm:px-8">
         <div className="text-center">
           <h2 className="gt-led-text-gold gt-display-in text-2xl font-black uppercase tracking-widest text-gt-gold sm:text-4xl">
             Nav Color Test
@@ -234,14 +251,28 @@ export default function NavColorTestPage() {
         </div>
 
         {rows.map((row) => (
-          <div key={row.heading} className="flex w-full max-w-2xl flex-col gap-3">
+          <div
+            key={row.heading}
+            className="flex w-full max-w-2xl flex-col gap-3"
+          >
             <p className="gt-led-text-dim text-center text-[10px] uppercase tracking-[0.25em] text-gt-gray-light/60 sm:text-xs">
               {row.heading}
             </p>
-            <div className="flex w-full items-stretch border-y border-gt-gray-light/30 bg-gt-navy">
+            {/* Matches the real nav bar's wrapper exactly (navy panel,
+                thin light-gray border, pixel-grid overlay) — per the
+                owner, so these swatches read as "on an actual nav
+                bar," not floating on the plain black main-screen
+                background. border-y here (not the real nav's border-b
+                only) since this is a standalone strip, not nested
+                inside the outer frame's own border. */}
+            <div className="relative flex w-full items-stretch border-y-[1px] border-gt-gray-light bg-gt-navy sm:border-y-2">
               {row.buttons.map((button, i) => (
                 <TestNavButton key={`${row.heading}-${i}`} {...button} />
               ))}
+              <div
+                aria-hidden
+                className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
+              />
             </div>
           </div>
         ))}

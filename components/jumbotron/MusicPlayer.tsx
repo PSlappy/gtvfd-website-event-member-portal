@@ -37,12 +37,13 @@ const TRACKS = [
   { title: "Track 3", src: "/audio/music/track-3.mp3" },
 ];
 
-// Every icon here is sized to match the buttons' own 50%-smaller
-// dimensions (see the `h-3.5 w-3.5` button size below) — half of what
-// each one used to be before the owner's "50% smaller" request.
+// Every icon here is sized to match the buttons' own dimensions (see
+// `buttonClass` below) — landed between the original size and the
+// 50%-smaller size that followed, per the owner ("too small now, too
+// big previously — try a size in between").
 function IconPrevious() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-[7px] w-[7px]">
+    <svg viewBox="0 0 24 24" fill="none" className="h-[10px] w-[10px]">
       <path d="M6 5v14h2V5H6Z" fill="currentColor" />
       <path d="M19 5 10 12l9 7V5Z" fill="currentColor" />
     </svg>
@@ -51,7 +52,7 @@ function IconPrevious() {
 
 function IconNext() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-[7px] w-[7px]">
+    <svg viewBox="0 0 24 24" fill="none" className="h-[10px] w-[10px]">
       <path d="M16 5v14h2V5h-2Z" fill="currentColor" />
       <path d="M5 5l9 7-9 7V5Z" fill="currentColor" />
     </svg>
@@ -60,7 +61,7 @@ function IconNext() {
 
 function IconPlay() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-2 w-2">
+    <svg viewBox="0 0 24 24" fill="none" className="h-3 w-3">
       <path d="M7 4.5v15l13-7.5-13-7.5Z" fill="currentColor" />
     </svg>
   );
@@ -68,7 +69,7 @@ function IconPlay() {
 
 function IconPause() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-2 w-2">
+    <svg viewBox="0 0 24 24" fill="none" className="h-3 w-3">
       <path d="M6 4.5h4v15H6zM14 4.5h4v15h-4z" fill="currentColor" />
     </svg>
   );
@@ -76,7 +77,7 @@ function IconPause() {
 
 function IconSpeaker() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-[7px] w-[7px]">
+    <svg viewBox="0 0 24 24" fill="none" className="h-[10px] w-[10px]">
       <path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor" />
       <path
         d="M16.5 8.5a5 5 0 0 1 0 7"
@@ -96,7 +97,7 @@ function IconSpeaker() {
 
 function IconMuted() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-[7px] w-[7px]">
+    <svg viewBox="0 0 24 24" fill="none" className="h-[10px] w-[10px]">
       <path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor" />
       <path
         d="M16 9.5 20.5 14M20.5 9.5 16 14"
@@ -114,7 +115,7 @@ function IconMuted() {
 // voiceover narration.
 function IconVoice() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-2 w-2">
+    <svg viewBox="0 0 24 24" fill="none" className="h-3 w-3">
       <circle cx="9" cy="7" r="2.6" fill="currentColor" />
       <path
         d="M4.5 18c0-3 2-5 4.5-5s4.5 2 4.5 5"
@@ -140,7 +141,7 @@ function IconVoice() {
 
 function IconVoiceMuted() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-2 w-2">
+    <svg viewBox="0 0 24 24" fill="none" className="h-3 w-3">
       <circle cx="9" cy="7" r="2.6" fill="currentColor" />
       <path
         d="M4.5 18c0-3 2-5 4.5-5s4.5 2 4.5 5"
@@ -160,7 +161,7 @@ function IconVoiceMuted() {
 
 function IconReplay() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-2 w-2">
+    <svg viewBox="0 0 24 24" fill="none" className="h-3 w-3">
       <path
         d="M4 12a8 8 0 1 1 2.5 5.8"
         stroke="currentColor"
@@ -223,10 +224,11 @@ export default function MusicPlayer() {
     });
   }
 
-  // Buttons are 50% smaller across the board, per the owner (was
-  // h-7 w-7 sm:h-8 sm:w-8) — every button below shares this class.
+  // Went h-7/sm:h-8 → h-3.5/sm:h-4 (50% smaller) → h-5/sm:h-6, per the
+  // owner: the 50%-smaller pass read too small, the original read too
+  // big, this lands roughly halfway between the two.
   const buttonClass =
-    "gt-jumbotron-btn pointer-events-auto flex h-3.5 w-3.5 items-center justify-center rounded-full border-2 border-gt-gold sm:h-4 sm:w-4";
+    "gt-jumbotron-btn pointer-events-auto flex h-5 w-5 items-center justify-center rounded-full border-2 border-gt-gold sm:h-6 sm:w-6";
 
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-3 z-40 flex items-center justify-center gap-1.5">

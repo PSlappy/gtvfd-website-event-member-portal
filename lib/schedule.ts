@@ -36,13 +36,29 @@ export type ScheduleGame = RawGame & {
   address: string;
 };
 
-export const schedule2026: ScheduleGame[] = rawSchedule2026.map((game) => ({
-  ...game,
-  tailgate: game.location === "Home",
-  kickoff: "TBD",
-  tailgateStart: "TBD",
-  address: "TBD",
-}));
+export const schedule2026: ScheduleGame[] = rawSchedule2026.map((game) => {
+  // Placeholder kickoff/tailgate times for the Tennessee game
+  // specifically, per the owner — not real announced times, just
+  // something other than TBD to preview the ticker's time formatting
+  // against. Every other game stays TBD until the conference
+  // announces real kickoff times.
+  if (game.opponent === "Tennessee") {
+    return {
+      ...game,
+      tailgate: game.location === "Home",
+      kickoff: "7:00 PM",
+      tailgateStart: "3:00 PM",
+      address: "TBD",
+    };
+  }
+  return {
+    ...game,
+    tailgate: game.location === "Home",
+    kickoff: "TBD",
+    tailgateStart: "TBD",
+    address: "TBD",
+  };
+});
 
 /**
  * The bottom bar only ever shows the next home game — away games don't

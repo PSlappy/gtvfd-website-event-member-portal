@@ -43,13 +43,18 @@ export default function NextEventTicker() {
       </div>
 
       <div className="gt-depth-panel relative flex h-full flex-col items-center justify-between border-r-[1px] border-gt-gray-light px-2 py-3 text-center sm:border-r-2 sm:py-4">
-        {/* Row 1: date and kickoff time together, larger font */}
+        {/* Row 1: date and kickoff time together, larger font. Drops
+            the "Kickoff" label when there's no real time yet — "Kickoff
+            TBD" read redundant, a bare "TBD" doesn't. */}
         <span className="gt-led-text-white gt-display-in text-xs font-bold text-white sm:text-sm">
-          {formatGameDate(game.date)} &bull; Kickoff {game.kickoff}
+          {formatGameDate(game.date)} &bull;{" "}
+          {game.kickoff === "TBD" ? "TBD" : `Kickoff ${game.kickoff}`}
         </span>
-        {/* Row 2: tailgate label and time, same size as row 1 */}
+        {/* Row 2: tailgate label and time, same size as row 1. Bullet
+            separator, not a colon, matching row 1's date/kickoff
+            separator. */}
         <span className="gt-led-text-white gt-display-in text-xs font-bold text-white [animation-delay:80ms] sm:text-sm">
-          Tailgate: {game.tailgate ? game.tailgateStart : "N/A"}
+          Tailgate &bull; {game.tailgate ? game.tailgateStart : "N/A"}
         </span>
         {/* Row 3: sign-up — only if a tailgate event exists for this game */}
         {game.tailgate && (

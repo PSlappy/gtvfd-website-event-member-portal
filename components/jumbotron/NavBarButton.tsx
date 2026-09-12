@@ -23,12 +23,19 @@ import type { ReactNode } from "react";
  * it looks like in place next to the real nav — not a real variant.
  * See `.gt-nav-color-preview` in globals.css. Remove the prop (and the
  * CSS) once the owner has seen it and decided whether to keep it.
+ *
+ * `square` (Home, only) opts out of the `flex-1` equal-width sharing
+ * every other segment uses — a fixed `w-12 sm:w-14` square (same as
+ * the row's own height) instead, per the owner, so the remaining
+ * segments split the strip's full width among themselves rather than
+ * six ways.
  */
 export default function NavBarButton({
   href,
   active,
   icon = false,
   colorPreview = false,
+  square = false,
   ariaLabel,
   ariaCurrent,
   children,
@@ -37,6 +44,7 @@ export default function NavBarButton({
   active: boolean;
   icon?: boolean;
   colorPreview?: boolean;
+  square?: boolean;
   ariaLabel?: string;
   ariaCurrent?: "page";
   children: ReactNode;
@@ -46,7 +54,7 @@ export default function NavBarButton({
       href={href}
       aria-label={ariaLabel}
       aria-current={ariaCurrent}
-      className={`gt-nav-scoreboard-btn ${active ? "gt-nav-current" : ""} ${colorPreview ? "gt-nav-color-preview" : ""} flex h-12 flex-1 items-center justify-center border-2 px-1 text-center transition-colors sm:h-14`}
+      className={`gt-nav-scoreboard-btn ${active ? "gt-nav-current" : ""} ${colorPreview ? "gt-nav-color-preview" : ""} flex h-12 items-center justify-center border-2 px-1 text-center transition-colors sm:h-14 ${square ? "w-12 flex-none sm:w-14" : "flex-1"}`}
     >
       {icon ? (
         <span className="gt-nav-scoreboard-icon pointer-events-none flex h-8 w-8 items-center justify-center sm:h-10 sm:w-10">
