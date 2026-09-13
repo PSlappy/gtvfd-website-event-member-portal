@@ -511,6 +511,25 @@ comparing panel colors — Row 1/2/3 themselves stay flush edge-to-edge,
 unchanged, since they're still meant to match the real nav bar's own
 look exactly.
 
+**Then replaced entirely with the owner's exact five backgrounds, in
+this order: White, Grey, Metallic Gold, Navy Blue, Black.** Supersedes
+the "four duplicates on Grey/Metallic Gold/Navy/Black" set above —
+White is new, and there's only one Navy row now (not an original-plus-
+duplicate). Row 1's three buttons stay identical across all five;
+`showPanelPadding` carries over unchanged. Also added a `noOverlay`
+flag ("All of these Nav Bar Tests should have NO transparency to
+them") that skips the `.gt-pixel-grid` overlay on these five rows
+specifically — the dot-texture `mix-blend-overlay` was diluting the
+requested solid color even though each color value itself had no
+alpha. Row 2/3 keep the overlay, since they weren't part of this
+complaint and are still meant to match the real nav bar exactly.
+**"Grey" and "Navy Blue" are now standing color definitions, per the
+owner** — Grey always means Light Gray (`#E5E5E5`, RGB 229/229/229,
+already this page's existing `grey` token, unchanged), Navy Blue is
+the literal `--gt-navy` (`#051E39`, RGB 5/30/57). Worth remembering
+for any future request that just says "Grey" or "Navy Blue" without
+restating the values.
+
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
 Location, Kickoff, Tailgate, Sign-Up on tailgate rows); this pass
