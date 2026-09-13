@@ -1144,20 +1144,20 @@ allows Zuume Cut as a header/call-out font more broadly than that; ask
 the owner whether it should extend to those too before doing it
 unprompted.
 
-## Music & Voiceover — TODO: source real audio
+## Music & Voiceover
 Two independent audio systems (separate state, separate purpose — music
 keeps playing regardless of whether a voiceover is also active) that
-now share **one persistent button row, bottom-center of the main
-screen**, per the owner — this was two separate rows in two positions
-for a stretch (top-right music, bottom-center-ish voice) before landing
-here; if older context mentions that layout, it's superseded.
+share **one persistent button row, bottom-center of the main screen**,
+per the owner — this was two separate rows in two positions for a
+stretch (top-right music, bottom-center-ish voice) before landing here;
+if older context mentions that layout, it's superseded.
 
 - **Site-wide background music** (`components/jumbotron/MusicPlayer.tsx`):
-  Back/Play-Pause/Forward/Mute, icon-only, no text. Mounted once inside
-  `JumbotronFrame`'s main screen rather than inside any individual page,
-  so its React state and the underlying `<audio>` element never remount
-  or restart on navigation — same reasoning `NavBar`/`NextEventTicker`
-  already live in the root layout for.
+  Back/Play-Pause/Forward/Stop/Mute, icon-only, no text. Mounted once
+  inside `JumbotronFrame`'s main screen rather than inside any
+  individual page, so its React state (and the hidden Spotify embed —
+  see below) never remounts or restarts on navigation — same reasoning
+  `NavBar`/`NextEventTicker` already live in the root layout for.
 - **Per-page voiceover narration** (still driven by `JumbotronCrawl`,
   gated behind its `showVoiceControls` prop, default `false`, wired on
   for `/about` only "for now" — the autoscroll itself still runs on
@@ -1181,9 +1181,10 @@ has `showVoiceControls` on, its `JumbotronCrawl` registers
 rendering its own buttons, and unregisters on unmount or the moment
 `showVoiceControls` goes false. `MusicPlayer` reads whatever's
 currently registered and renders those two buttons itself — right after
-its own four, in the owner's exact order (Back, Play, Forward, Mute,
-Voice, Replay) — only when something's actually there, so pages
-without voiceover just show four buttons, not six with two dead ones.
+its own five, in the owner's exact order (Back, Play, Forward, Stop,
+Mute, Voice, Replay — Stop added later, see below) — only when
+something's actually there, so pages without voiceover just show five
+buttons, not seven with two dead ones.
 The fade-to-black gradient behind the row lives in `JumbotronFrame` now
 (was inside `JumbotronCrawl`, gated to voice pages) and is
 unconditional, since the row itself is universal.
@@ -1198,22 +1199,52 @@ icons scaled down to match.
 `h-3.5 w-3.5 sm:h-4 sm:w-4` → `h-5 w-5 sm:h-6 sm:w-6`, icons bumped to
 match (`h-[10px]`/`h-3` for the two icon sizes, up from `h-[7px]`/`h-2`).
 
-**Owner TODO, revisit when ready — there's no actual audio for either
-system yet:**
-- Background music: `MusicPlayer.tsx`'s `TRACKS` array points at
-  `/audio/music/track-1.mp3`, `-2.mp3`, `-3.mp3` — none of which exist.
-  Real music is copyrighted intellectual property the same way the real
-  fonts above are licensed property, so rather than pull in something
-  without knowing it's cleared to use, this ships fully wired up and
-  silent (`play()` rejections are caught so a missing file doesn't
-  throw) until real files land. Drop 2-3 royalty-free or licensed mp3s
-  into `public/audio/music/` with matching names (or edit `TRACKS` to
-  point wherever they end up) and playback works with no other changes.
-- Voiceover narration: still the same situation already noted in the
-  "Future: announcer narration audio" section above (blocked on page
-  copy being finalized, then generating audio via ElevenLabs or
-  similar) — the Voice-mute toggle is real UI now, it just has nothing
-  to actually mute yet.
+**Background music now plays through a real Spotify embed, per the
+owner's own idea** — resolves what used to be a TODO here (self-hosted
+mp3s that never got sourced). Instead of hosting audio files, playback
+goes through Spotify's officially embeddable iFrame API: Spotify
+handles all licensing, nothing is hosted or distributed by this site.
+The widget's own visual chrome is hidden — a 1x1, `overflow: hidden`
+container (deliberately not `display: none`, since some browsers
+deprioritize/pause fully-hidden media iframes) — and every button
+talks to the hidden player through Spotify's real JS API instead of
+showing its UI.
+
+**Checked the actual Spotify iFrame API docs before wiring anything
+up**, since guessing at method names would just ship broken buttons.
+The documented surface is narrower than a 5-button transport strip
+wants:
+- `play()`/`pause()`/`togglePlay()`/`seek(seconds)`/`loadEntity(uri)`
+  are real — Play/Pause and Stop use these.
+- **No documented skip-to-next/previous-track method exists at all.**
+  Back/Forward work around that by loading a different URI from a
+  fixed list, `TRACK_URIS` in `MusicPlayer.tsx` (four tracks the owner
+  supplied) — a real, working substitute, not a true native skip.
+  Verified the index genuinely advances/retreats correctly via a
+  temporary debug attribute; an initial spot-check misread which URI
+  belonged to which index and looked like a direction bug, it wasn't.
+- **No volume/mute method exists in the API at all.** Per the owner,
+  Mute stays in the row rather than disappearing (native `disabled`,
+  dimmed via opacity) rather than silently doing nothing —
+  "might repurpose later," not deleted.
+- Stop (new button, per the owner) isn't a real Spotify method either
+  — implemented as `pause()` + `seek(0)`, genuinely supported and
+  matches what "Stop" means (halted, reset to the start) as opposed to
+  Pause (halted, position kept).
+
+Verified live, not just assumed: the hidden iframe is created with the
+correct track loaded, Play/Pause toggles and gets corrected by real
+`playback_update` events *from the embed itself* (confirming genuine
+cross-origin communication, not just local optimistic state — a click
+that auto-play-blocks or a preview that ends will visibly flip the
+button back on its own), Next/Previous swap the loaded track
+correctly, and Stop/the disabled Mute both behave as intended.
+
+**Voiceover narration is still the one unresolved TODO here** — same
+situation as the "Future: announcer narration audio" section above
+(blocked on page copy being finalized, then generating audio via
+ElevenLabs or similar) — the Voice-mute toggle is real UI now, it just
+has nothing to actually mute yet.
 
 ## Privacy
 Site collects phone numbers, emails, and photos — needs a Privacy Policy
