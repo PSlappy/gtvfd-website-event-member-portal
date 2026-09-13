@@ -3,20 +3,19 @@ import JumbotronCrawl from "@/components/jumbotron/JumbotronCrawl";
 
 /**
  * TEMPORARY page, not linked from the real nav — visit it directly at
- * /nav-color-test. Built so the owner can compare nav-button color
- * combos side by side instead of the real NavBar only ever showing
- * one combo per segment at a time. Delete this whole route once a
+ * /nav-color-test (or the "Button Test" quick-link in the main screen's
+ * bottom-right corner). Built so the owner can compare nav-button color
+ * combos side by side instead of the real NavBar only ever showing one
+ * combo per segment at a time. Delete this whole route once a
  * direction is picked; nothing else in the app depends on it.
  *
- * Rebuilt from scratch per the owner: every earlier test row (Chase
- * Ring/Shine swatches, the Tech Gold reference row, the metallic-vs-
- * current comparison) is gone — this page now shows exactly the three
- * rows of four color-combo swatches the owner specified, styled as
- * exact copies of the real six-segment nav bar's box model/typography
- * (`NavBarButton`'s shape and text treatment) rather than the old
- * pill-shaped `Swatch`. No Chase Ring or Shine on any of these, same
- * as the earlier metallic-comparison row — the only variable here is
- * the four color properties in the owner's spec.
+ * Current shape: Row 1's three-button pattern (About/Donations/
+ * Contact) shown five times, once per nav (panel) background — White,
+ * Grey, Metallic Gold, Navy Blue, Black, in that order — plus Row 2
+ * and Row 3, each their own single combo. All styled as exact copies
+ * of the real six-segment nav bar's box model/typography
+ * (`NavBarButton`'s shape and text treatment). No Chase Ring or Shine
+ * on any of these — the only variable here is color.
  */
 
 type ColorToken = "grey" | "navy" | "white" | "metallicGold" | "black";
@@ -29,6 +28,12 @@ const METALLIC_GOLD_GRADIENT =
 // documented in globals.css for the real nav bar: there's no official
 // digital value for the metallic ink anyway, and a hairline is too
 // thin a surface for banding to read as metallic.
+//
+// "Grey" is a standing definition now, per the owner: always Light
+// Gray (#E5E5E5 / RGB 229, 229, 229), not a generic gray — use this
+// value whenever "Grey" comes up again in future requests, not a
+// guess. "Navy Blue" is the literal --gt-navy (#051E39 / RGB 5, 30,
+// 57), also spelled out explicitly by the owner this round.
 const FLAT_VALUE: Record<ColorToken, string> = {
   grey: "#e5e5e5",
   navy: "#051e39",
@@ -135,9 +140,14 @@ type TestRow = {
   // no matter what it's set to. True adds a gap + padding so the
   // panel color shows through around/between the buttons; only the
   // "duplicate Row 1" rows below need this, since comparing panel
-  // colors is their whole point — Row 1/2/3 stay flush, unchanged,
+  // colors is their whole point — Row 2/3 stay flush, unchanged,
   // matching the real nav bar's own look.
   showPanelPadding?: boolean;
+  // Skips the .gt-pixel-grid overlay entirely — per the owner, the
+  // five Row 1 nav-background rows need to show the requested colors
+  // completely solid, with no dot-texture/blend-mode diluting them.
+  // Row 2/3 keep the overlay, still matching the real nav bar exactly.
+  noOverlay?: boolean;
   buttons: {
     label: string;
     background: ColorToken;
@@ -149,12 +159,12 @@ type TestRow = {
 
 const LABELS = ["ABOUT", "SCHEDULE", "DONATIONS", "CONTACT"];
 
-// Row 1's three-button pattern, reused as-is across the four
-// "duplicate Row 1 on other nav backgrounds" rows below — only the
-// panel background changes between them, not the buttons themselves.
-// Schedule's swatch was removed entirely, per the owner ("I don't
-// like that design"). Contact's colors were corrected, also per the
-// owner: Metallic Gold font, Navy font outline, White button border.
+// Row 1's three-button pattern, reused as-is across all five nav-
+// background rows below — only the panel background changes between
+// them, not the buttons themselves. Schedule's swatch was removed
+// entirely, per the owner ("I don't like that design"). Contact's
+// colors were corrected, also per the owner: Metallic Gold font, Navy
+// font outline, White button border.
 const row1Buttons: TestRow["buttons"] = [
   {
     label: LABELS[0],
@@ -181,39 +191,47 @@ const row1Buttons: TestRow["buttons"] = [
   },
 ];
 
-// Exactly the owner's table, column by column.
+// Five Row 1 nav-background variations, per the owner, in this exact
+// order: White, Grey (Light Gray), Metallic Gold (Tech Gold Metallic),
+// Navy Blue, Black. The three buttons are identical across all five —
+// only the panel behind them changes. showPanelPadding so the panel
+// color is actually visible behind the zero-gap flex-1 buttons;
+// noOverlay so it renders fully solid, no pixel-grid texture diluting
+// the requested color.
 const rows: TestRow[] = [
   {
-    heading: "Row 1 Test Buttons",
-    panelBackground: "navy",
+    heading: "Row 1 — White Nav Background",
+    panelBackground: "white",
+    showPanelPadding: true,
+    noOverlay: true,
     buttons: row1Buttons,
   },
-  // Four duplicates of Row 1, per the owner, each on a different nav
-  // (panel) background — the buttons themselves are identical to Row
-  // 1 above, only the strip behind them changes. showPanelPadding so
-  // that background is actually visible (see the field's own comment).
   {
     heading: "Row 1 — Grey Nav Background",
     panelBackground: "grey",
     showPanelPadding: true,
+    noOverlay: true,
     buttons: row1Buttons,
   },
   {
     heading: "Row 1 — Metallic Gold Nav Background",
     panelBackground: "metallicGold",
     showPanelPadding: true,
+    noOverlay: true,
     buttons: row1Buttons,
   },
   {
-    heading: "Row 1 — Navy Nav Background",
+    heading: "Row 1 — Navy Blue Nav Background",
     panelBackground: "navy",
     showPanelPadding: true,
+    noOverlay: true,
     buttons: row1Buttons,
   },
   {
     heading: "Row 1 — Black Nav Background",
     panelBackground: "black",
     showPanelPadding: true,
+    noOverlay: true,
     buttons: row1Buttons,
   },
   {
@@ -314,21 +332,23 @@ export default function NavColorTestPage() {
             <p className="gt-led-text-dim text-center text-[10px] uppercase tracking-[0.25em] text-gt-gray-light/60 sm:text-xs">
               {row.heading}
             </p>
-            {/* Matches the real nav bar's wrapper exactly (thin
-                light-gray border, pixel-grid overlay) — per the owner,
+            {/* Matches the real nav bar's wrapper (thin light-gray
+                border, pixel-grid overlay on Row 2/3) — per the owner,
                 so these swatches read as "on an actual nav bar," not
                 floating on the plain black main-screen background.
                 border-y here (not the real nav's border-b only) since
                 this is a standalone strip, not nested inside the outer
-                frame's own border. Panel background is per-row now
-                (navy normally, matching the real nav bar — varied for
-                the "duplicate Row 1" rows below), so it's an inline
-                style rather than the earlier hardcoded bg-gt-navy
-                class. showPanelPadding rows get a gap + padding so
-                that background is actually visible — real bug fixed
-                here: flex-1 buttons with zero gap tile the strip
-                completely, so the panel color was set correctly but
-                never actually showed through underneath them. */}
+                frame's own border. Panel background is per-row (navy
+                for Row 2/3, matching the real nav bar — varied across
+                the five Row 1 nav-background rows), so it's an inline
+                style rather than a hardcoded bg-gt-navy class.
+                showPanelPadding rows get a gap + padding so that
+                background is actually visible — real bug fixed here:
+                flex-1 buttons with zero gap tile the strip completely,
+                so the panel color was set correctly but never actually
+                showed through underneath them. noOverlay rows skip the
+                pixel-grid dot texture so the requested color renders
+                fully solid, no blend-mode diluting it. */}
             <div
               className={`relative flex w-full items-stretch border-y-[1px] border-gt-gray-light sm:border-y-2 ${
                 row.showPanelPadding ? "gap-2 p-3" : ""
@@ -338,10 +358,12 @@ export default function NavColorTestPage() {
               {row.buttons.map((button, i) => (
                 <TestNavButton key={`${row.heading}-${i}`} {...button} />
               ))}
-              <div
-                aria-hidden
-                className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
-              />
+              {!row.noOverlay && (
+                <div
+                  aria-hidden
+                  className="gt-pixel-grid pointer-events-none absolute inset-0 z-10 mix-blend-overlay"
+                />
+              )}
             </div>
           </div>
         ))}
