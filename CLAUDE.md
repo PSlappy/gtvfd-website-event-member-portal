@@ -1012,7 +1012,8 @@ updated closer to each game):
   page, each with a small monogram "logo" badge (RW / AJC / WSJ) since
   using the outlets' actual trademarked logo art wasn't pursued.
 - Current Owners section (player-card style): Patrick Shea, Harry
-  Rizvi. Founders/Previous Owners/Donors section: Sam Huffman,
+  Rizvi. **"Founders & Donors" section** (heading shortened from
+  "Founders, Previous Owners & Donors" per the owner): Sam Huffman,
   Christian Shea (both "for now" per the owner — a dedicated donors
   list may expand this later). `PlayerCard`
   (`components/jumbotron/PlayerCard.tsx`) is a roster-tile design
@@ -1153,11 +1154,15 @@ stretch (top-right music, bottom-center-ish voice) before landing here;
 if older context mentions that layout, it's superseded.
 
 - **Site-wide background music** (`components/jumbotron/MusicPlayer.tsx`):
-  Back/Play-Pause/Forward/Stop/Mute, icon-only, no text. Mounted once
-  inside `JumbotronFrame`'s main screen rather than inside any
-  individual page, so its React state (and the hidden Spotify embed —
-  see below) never remounts or restarts on navigation — same reasoning
-  `NavBar`/`NextEventTicker` already live in the root layout for.
+  Back/Play-Pause/Forward, icon-only, no text (Stop and Mute were both
+  removed later, see below). Mounted once inside `JumbotronFrame`'s
+  main screen rather than inside any individual page, so its React
+  state (and the hidden Spotify embed — see below) never remounts or
+  restarts on navigation — same reasoning `NavBar`/`NextEventTicker`
+  already live in the root layout for. Confirmed live, not just
+  assumed from the architecture: clicking a nav link mid-playback
+  keeps the same button state and the same loaded track, it doesn't
+  reset.
 - **Per-page voiceover narration** (still driven by `JumbotronCrawl`,
   gated behind its `showVoiceControls` prop, default `false`, wired on
   for `/about` only "for now" — the autoscroll itself still runs on
@@ -1181,10 +1186,12 @@ has `showVoiceControls` on, its `JumbotronCrawl` registers
 rendering its own buttons, and unregisters on unmount or the moment
 `showVoiceControls` goes false. `MusicPlayer` reads whatever's
 currently registered and renders those two buttons itself — right after
-its own five, in the owner's exact order (Back, Play, Forward, Stop,
-Mute, Voice, Replay — Stop added later, see below) — only when
-something's actually there, so pages without voiceover just show five
-buttons, not seven with two dead ones.
+its own three (Back, Play, Forward), separated by a thin vertical
+divider (added once Stop/Mute were dropped, per the owner, so the row
+wouldn't just be five icons with no visual seam between "music" and
+"this page's narration") — only when something's actually there, so
+pages without voiceover just show three buttons and no divider, not
+five with two dead ones.
 The fade-to-black gradient behind the row lives in `JumbotronFrame` now
 (was inside `JumbotronCrawl`, gated to voice pages) and is
 unconditional, since the row itself is universal.
@@ -1212,10 +1219,11 @@ showing its UI.
 
 **Checked the actual Spotify iFrame API docs before wiring anything
 up**, since guessing at method names would just ship broken buttons.
-The documented surface is narrower than a 5-button transport strip
-wants:
+The documented surface was narrower than the original 5-button
+transport strip wanted (Stop and Mute have both since been removed,
+see below — this is what drove that):
 - `play()`/`pause()`/`togglePlay()`/`seek(seconds)`/`loadEntity(uri)`
-  are real — Play/Pause and Stop use these.
+  are real — Play/Pause (and, at the time, Stop) use these.
 - **No documented skip-to-next/previous-track method exists at all.**
   Back/Forward work around that by loading a different URI from a
   fixed list, `TRACK_URIS` in `MusicPlayer.tsx` (four tracks the owner
@@ -1223,22 +1231,42 @@ wants:
   Verified the index genuinely advances/retreats correctly via a
   temporary debug attribute; an initial spot-check misread which URI
   belonged to which index and looked like a direction bug, it wasn't.
-- **No volume/mute method exists in the API at all.** Per the owner,
-  Mute stays in the row rather than disappearing (native `disabled`,
-  dimmed via opacity) rather than silently doing nothing —
-  "might repurpose later," not deleted.
-- Stop (new button, per the owner) isn't a real Spotify method either
-  — implemented as `pause()` + `seek(0)`, genuinely supported and
-  matches what "Stop" means (halted, reset to the start) as opposed to
-  Pause (halted, position kept).
+- **No volume/mute method exists in the API at all.** Mute briefly
+  stayed in the row as a disabled, dimmed placeholder ("might
+  repurpose later") rather than being removed outright at first, then
+  was removed for real once the owner asked for it — see below.
+- Stop wasn't a real Spotify method either — implemented as `pause()`
+  + `seek(0)` — but was later removed too, per the owner, since
+  Play/Pause covers the same need (see below).
 
 Verified live, not just assumed: the hidden iframe is created with the
 correct track loaded, Play/Pause toggles and gets corrected by real
 `playback_update` events *from the embed itself* (confirming genuine
 cross-origin communication, not just local optimistic state — a click
 that auto-play-blocks or a preview that ends will visibly flip the
-button back on its own), Next/Previous swap the loaded track
-correctly, and Stop/the disabled Mute both behave as intended.
+button back on its own), and Next/Previous swap the loaded track
+correctly.
+
+**Stop and Mute were removed outright, per the owner** — not disabled,
+not hidden, deleted from `MusicPlayer.tsx` entirely (`stop()`,
+`IconStop`, `IconSpeaker`, and their buttons), since Mute never
+actually muted anything (no method for it exists, see above) and Stop
+was redundant with Play/Pause. The row is now just Back/Play/Forward,
+plus Voice/Replay when a page has them (see the divider note above).
+
+**Autoplay + a random starting track, per the owner.** The setup
+effect now picks a random index out of `TRACK_URIS` on mount (used for
+both the initial `createController` call and the initial
+`trackIndex` state, so the button state and the loaded track agree
+from the first render) and calls `controller.play()` as soon as the
+controller's ready, instead of always loading track 0 and waiting for
+a click. Browsers can still block unmuted autoplay without a prior
+user gesture on the page — there's no way to detect or route around
+that from application code, no method for it either — but the
+existing `playback_update` listener already corrects `isPlaying` back
+to `false` on its own if that happens (this is the same behavior
+documented above for a blocked click or a finished preview clip), and
+the Play button just works normally from a manual click after that.
 
 **Voiceover narration is still the one unresolved TODO here** — same
 situation as the "Future: announcer narration audio" section above
