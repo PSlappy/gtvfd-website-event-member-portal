@@ -5,37 +5,86 @@ import { useVoiceControls } from "./VoiceControlsContext";
 
 /**
  * The site's single persistent media-controls row, per the owner:
- * background music (Previous/Play/Next/Mute, this component's own
- * state) and, when the current page has voiceover narration, that
- * page's Voice-mute/Replay too — all six buttons together in one row,
- * icon-only, in this exact order: Back, Play, Forward, Mute, Voice,
- * Replay. Mounted once in `JumbotronFrame` (not inside any page), so
- * the music state and the underlying `<audio>` element never remount
- * or restart on navigation — same reasoning `NavBar`/`NextEventTicker`
- * stay mounted in the root layout for.
+ * background music (Previous/Play/Next/Stop/Mute, this component's
+ * own state) and, when the current page has voiceover narration, that
+ * page's Voice-mute/Replay too — all together in one row, icon-only,
+ * in this order: Back, Play, Forward, Stop, Mute, Voice, Replay.
+ * Mounted once in `JumbotronFrame` (not inside any page), so playback
+ * never restarts on navigation — same reasoning `NavBar`/
+ * `NextEventTicker` stay mounted in the root layout for.
  *
- * The Voice/Replay pair isn't owned by this component — it comes from
- * `VoiceControlsContext`, which the current page's `JumbotronCrawl`
- * registers into when it has `showVoiceControls` on (About only, for
- * now). Only rendered when something's actually registered, so pages
- * without voiceover just show the four music buttons.
+ * The Voice/Replay pair isn't owned by this component — see
+ * `VoiceControlsContext`.
  *
- * TODO(owner): there's no actual background music yet. `TRACKS` below
- * points at files that don't exist — same "no licensed/sourced asset"
- * situation as the Typography TODO in CLAUDE.md, and for the same
- * reason: music is real intellectual property, and rather than pull
- * in something without knowing it's cleared to use, this ships with
- * the full player wired up and silent until real files land at those
- * paths. Drop 2-3 royalty-free/licensed mp3s into
- * `public/audio/music/` with matching filenames (or edit `TRACKS` to
- * point at wherever they end up) and playback works with no other
- * changes.
+ * Real audio, per the owner: instead of self-hosting music files (the
+ * "no licensed asset yet" TODO this used to carry), this plays
+ * through Spotify's own officially embeddable iFrame API — Spotify
+ * handles all licensing, nothing is hosted or distributed here. The
+ * widget's own visual chrome is hidden (see the 1x1, clipped
+ * `spotifyContainerRef` div below — not `display: none`, since some
+ * browsers deprioritize/pause fully-hidden media iframes; a
+ * zero-size-but-rendered one keeps playing); every button here talks
+ * to the hidden player through Spotify's real JS API instead of
+ * showing its UI.
+ *
+ * Spotify's officially documented API is narrower than the six-button
+ * row wants, though — confirmed against the actual docs before
+ * building this, not assumed:
+ * - `play()`/`pause()`/`resume()`/`togglePlay()`/`seek(seconds)`/
+ *   `loadEntity(uri)` exist and are what Play/Pause and Stop use.
+ * - There is NO documented skip-to-next/previous-track method at all.
+ *   Back/Forward below work around that by loading a different URI
+ *   from `TRACK_URIS` (a short list the owner supplied) instead of
+ *   asking the embed to "skip" — a real, working substitute, not a
+ *   true next()/previous() the way the old <audio>-based version had.
+ * - There is NO volume/mute method in the API, full stop. Mute can't
+ *   be wired to anything real, so per the owner it stays in the row,
+ *   visibly disabled, rather than either lying about what it does or
+ *   disappearing — "might repurpose later."
+ * - Stop isn't a real Spotify API method either — implemented as
+ *   `pause()` + `seek(0)`, which is genuinely supported and matches
+ *   what "Stop" means (halted and back at the start), unlike Pause
+ *   (halted, position kept).
  */
-const TRACKS = [
-  { title: "Track 1", src: "/audio/music/track-1.mp3" },
-  { title: "Track 2", src: "/audio/music/track-2.mp3" },
-  { title: "Track 3", src: "/audio/music/track-3.mp3" },
+const TRACK_URIS = [
+  "spotify:track:0ZOzvjnZDwrtluHrwbtvGR",
+  "spotify:track:52vkM2u1I5N7puXQfi5typ",
+  "spotify:track:0Rhi3Bn5e02JyuehXOAJmY",
+  "spotify:track:58k6SxNmGP1Viq6oTn7Aiy",
 ];
+
+const SPOTIFY_IFRAME_API_SCRIPT_SRC =
+  "https://open.spotify.com/embed/iframe-api/v1";
+
+// Deliberately narrow — this is the part of Spotify's iFrame API this
+// component actually calls, not a guess at the full surface (there's
+// no official @types package for it).
+type SpotifyController = {
+  play: () => void;
+  pause: () => void;
+  togglePlay: () => void;
+  seek: (seconds: number) => void;
+  loadEntity: (uri: string) => void;
+  addListener: (
+    event: "ready" | "playback_started" | "playback_update",
+    callback: (e: { data?: { isPaused?: boolean } }) => void,
+  ) => void;
+};
+
+type SpotifyIFrameApi = {
+  createController: (
+    element: HTMLElement,
+    options: { uri: string; width?: string | number; height?: string | number },
+    callback: (controller: SpotifyController) => void,
+  ) => void;
+};
+
+declare global {
+  interface Window {
+    onSpotifyIframeApiReady?: (api: SpotifyIFrameApi) => void;
+    __gtSpotifyIframeApi?: SpotifyIFrameApi;
+  }
+}
 
 // Every icon here is sized to match the buttons' own dimensions (see
 // `buttonClass` below) — landed between the original size and the
@@ -75,6 +124,14 @@ function IconPause() {
   );
 }
 
+function IconStop() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-3 w-3">
+      <rect x="5" y="5" width="14" height="14" fill="currentColor" />
+    </svg>
+  );
+}
+
 function IconSpeaker() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-[10px] w-[10px]">
@@ -87,20 +144,6 @@ function IconSpeaker() {
       />
       <path
         d="M19 6a9 9 0 0 1 0 12"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function IconMuted() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-[10px] w-[10px]">
-      <path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor" />
-      <path
-        d="M16 9.5 20.5 14M20.5 9.5 16 14"
         stroke="currentColor"
         strokeWidth="1.6"
         strokeLinecap="round"
@@ -180,48 +223,89 @@ function IconReplay() {
 }
 
 export default function MusicPlayer() {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const spotifyContainerRef = useRef<HTMLDivElement>(null);
+  const controllerRef = useRef<SpotifyController | null>(null);
   const [trackIndex, setTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const { voiceControls } = useVoiceControls();
 
-  // Changing `src` resets playback, so pick the new track back up if
-  // it was already playing when Previous/Next/auto-advance-on-end
-  // moved to it.
   useEffect(() => {
-    if (isPlaying) {
-      audioRef.current?.play().catch(() => {});
+    function setupController(api: SpotifyIFrameApi) {
+      if (!spotifyContainerRef.current || controllerRef.current) return;
+      api.createController(
+        spotifyContainerRef.current,
+        { uri: TRACK_URIS[0], width: "1", height: "1" },
+        (controller) => {
+          controllerRef.current = controller;
+          controller.addListener("playback_update", (e) => {
+            if (typeof e.data?.isPaused === "boolean") {
+              setIsPlaying(!e.data.isPaused);
+            }
+          });
+        },
+      );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trackIndex]);
 
-  function togglePlay() {
-    const el = audioRef.current;
-    if (!el) return;
-    if (isPlaying) {
-      el.pause();
-      setIsPlaying(false);
-    } else {
-      el.play().catch(() => {});
+    // The API can already be available (a prior mount already loaded
+    // it — this component should only ever mount once, but React
+    // StrictMode double-invokes effects in dev) — reuse it instead of
+    // injecting the script or clobbering the global callback again.
+    if (window.__gtSpotifyIframeApi) {
+      setupController(window.__gtSpotifyIframeApi);
+      return;
+    }
+
+    const previousCallback = window.onSpotifyIframeApiReady;
+    window.onSpotifyIframeApiReady = (api) => {
+      window.__gtSpotifyIframeApi = api;
+      previousCallback?.(api);
+      setupController(api);
+    };
+
+    if (!document.getElementById("gt-spotify-iframe-api")) {
+      const script = document.createElement("script");
+      script.id = "gt-spotify-iframe-api";
+      script.src = SPOTIFY_IFRAME_API_SCRIPT_SRC;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  function loadTrack(index: number, autoplay: boolean) {
+    const controller = controllerRef.current;
+    if (!controller) return;
+    controller.loadEntity(TRACK_URIS[index]);
+    if (autoplay) {
+      controller.play();
       setIsPlaying(true);
     }
   }
 
+  function togglePlay() {
+    controllerRef.current?.togglePlay();
+    setIsPlaying((p) => !p);
+  }
+
   function previousTrack() {
-    setTrackIndex((i) => (i - 1 + TRACKS.length) % TRACKS.length);
+    setTrackIndex((i) => {
+      const next = (i - 1 + TRACK_URIS.length) % TRACK_URIS.length;
+      loadTrack(next, isPlaying);
+      return next;
+    });
   }
 
   function nextTrack() {
-    setTrackIndex((i) => (i + 1) % TRACKS.length);
-  }
-
-  function toggleMuted() {
-    setIsMuted((m) => {
-      const next = !m;
-      if (audioRef.current) audioRef.current.muted = next;
+    setTrackIndex((i) => {
+      const next = (i + 1) % TRACK_URIS.length;
+      loadTrack(next, isPlaying);
       return next;
     });
+  }
+
+  function stop() {
+    controllerRef.current?.pause();
+    controllerRef.current?.seek(0);
+    setIsPlaying(false);
   }
 
   // Went h-7/sm:h-8 → h-3.5/sm:h-4 (50% smaller) → h-5/sm:h-6, per the
@@ -232,12 +316,13 @@ export default function MusicPlayer() {
 
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-3 z-40 flex items-center justify-center gap-1.5">
-      <audio
-        ref={audioRef}
-        src={TRACKS[trackIndex].src}
-        muted={isMuted}
-        preload="none"
-        onEnded={nextTrack}
+      {/* Hidden but functional Spotify embed — 1x1 and clipped, not
+          display:none, so playback keeps working while nothing
+          visibly renders. Spotify's own script populates this div. */}
+      <div
+        ref={spotifyContainerRef}
+        aria-hidden
+        className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0"
       />
       <button
         type="button"
@@ -266,12 +351,23 @@ export default function MusicPlayer() {
       </button>
       <button
         type="button"
-        onClick={toggleMuted}
-        aria-label={isMuted ? "Unmute music" : "Mute music"}
-        aria-pressed={isMuted}
+        onClick={stop}
+        aria-label="Stop music"
         className={`${buttonClass} bg-gt-navy text-gt-gold`}
       >
-        {isMuted ? <IconMuted /> : <IconSpeaker />}
+        <IconStop />
+      </button>
+      {/* Disabled, not removed — per the owner, Spotify's API has no
+          volume/mute method to wire this to, but it might get
+          repurposed later rather than deleted outright. */}
+      <button
+        type="button"
+        disabled
+        aria-label="Mute music (not available yet)"
+        aria-disabled="true"
+        className={`${buttonClass} cursor-not-allowed bg-gt-navy text-gt-gold opacity-40`}
+      >
+        <IconSpeaker />
       </button>
       {voiceControls && (
         <>
