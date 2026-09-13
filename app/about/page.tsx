@@ -76,7 +76,7 @@ export default function AboutPage() {
 
         <div className="gt-display-in flex flex-col items-center gap-4 [animation-delay:240ms]">
           <p className="text-center text-sm uppercase tracking-[0.3em] text-gt-gold">
-            <Typewriter text="Founders, Previous Owners & Donors" speed={60} />
+            <Typewriter text="Founders & Donors" speed={60} />
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <PlayerCard firstName="Sam" lastName="Huffman" role="Founder" />

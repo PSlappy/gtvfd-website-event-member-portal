@@ -5,13 +5,18 @@ import { useVoiceControls } from "./VoiceControlsContext";
 
 /**
  * The site's single persistent media-controls row, per the owner:
- * background music (Previous/Play/Next/Stop/Mute, this component's
- * own state) and, when the current page has voiceover narration, that
- * page's Voice-mute/Replay too — all together in one row, icon-only,
- * in this order: Back, Play, Forward, Stop, Mute, Voice, Replay.
- * Mounted once in `JumbotronFrame` (not inside any page), so playback
- * never restarts on navigation — same reasoning `NavBar`/
- * `NextEventTicker` stay mounted in the root layout for.
+ * background music (Previous/Play/Next, this component's own state)
+ * and, when the current page has voiceover narration, that page's
+ * Voice-mute/Replay too — separated by a thin divider — all together
+ * in one row, icon-only, bottom-center. Mounted once in
+ * `JumbotronFrame` (not inside any page), so playback never restarts
+ * on navigation — same reasoning `NavBar`/`NextEventTicker` stay
+ * mounted in the root layout for; verified live, not just assumed
+ * from the architecture: navigating between pages doesn't recreate
+ * the hidden iframe or reset `trackIndex`/`isPlaying`, since this
+ * component sits outside `main` entirely and Next.js's App Router
+ * keeps shared layout components mounted across route changes within
+ * the same layout.
  *
  * The Voice/Replay pair isn't owned by this component — see
  * `VoiceControlsContext`.
@@ -27,24 +32,32 @@ import { useVoiceControls } from "./VoiceControlsContext";
  * to the hidden player through Spotify's real JS API instead of
  * showing its UI.
  *
- * Spotify's officially documented API is narrower than the six-button
+ * Spotify's officially documented API is narrower than a media-player
  * row wants, though — confirmed against the actual docs before
  * building this, not assumed:
- * - `play()`/`pause()`/`resume()`/`togglePlay()`/`seek(seconds)`/
- *   `loadEntity(uri)` exist and are what Play/Pause and Stop use.
+ * - `play()`/`pause()`/`togglePlay()`/`seek(seconds)`/`loadEntity(uri)`
+ *   exist and are what Play/Pause uses.
  * - There is NO documented skip-to-next/previous-track method at all.
  *   Back/Forward below work around that by loading a different URI
  *   from `TRACK_URIS` (a short list the owner supplied) instead of
  *   asking the embed to "skip" — a real, working substitute, not a
- *   true next()/previous() the way the old <audio>-based version had.
- * - There is NO volume/mute method in the API, full stop. Mute can't
- *   be wired to anything real, so per the owner it stays in the row,
- *   visibly disabled, rather than either lying about what it does or
- *   disappearing — "might repurpose later."
- * - Stop isn't a real Spotify API method either — implemented as
- *   `pause()` + `seek(0)`, which is genuinely supported and matches
- *   what "Stop" means (halted and back at the start), unlike Pause
- *   (halted, position kept).
+ *   true next()/previous().
+ * - There is NO volume/mute method in the API at all — this is why
+ *   there's no Mute button here anymore (it briefly existed, visibly
+ *   disabled, then was removed outright per the owner once it was
+ *   clear it wasn't going to do anything). Stop was also removed, per
+ *   the owner, since Pause already covers the same need.
+ *
+ * Autoplay + random starting track, per the owner: picks a random
+ * index from `TRACK_URIS` once, on mount, and calls `play()`
+ * immediately after the controller's ready. Browsers may still block
+ * unmuted autoplay without a prior user gesture on the page — if that
+ * happens, the `playback_update` listener below corrects `isPlaying`
+ * back to `false` almost immediately (confirmed live during testing:
+ * this is exactly how a blocked/ended preview shows up), and the Play
+ * button just works normally from a manual click after that. There's
+ * no way to detect or work around the block itself — no method in the
+ * API for it — so this is a best-effort attempt, not a guarantee.
  */
 const TRACK_URIS = [
   "spotify:track:0ZOzvjnZDwrtluHrwbtvGR",
@@ -124,38 +137,8 @@ function IconPause() {
   );
 }
 
-function IconStop() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-3 w-3">
-      <rect x="5" y="5" width="14" height="14" fill="currentColor" />
-    </svg>
-  );
-}
-
-function IconSpeaker() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-[10px] w-[10px]">
-      <path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor" />
-      <path
-        d="M16.5 8.5a5 5 0 0 1 0 7"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M19 6a9 9 0 0 1 0 12"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-// A person's head/shoulders plus sound-wave arcs, distinct from the
-// plain speaker-cone icon above (that one's the site's music mute) —
-// this is specifically the "someone is speaking" icon for a page's
-// voiceover narration.
+// A person's head/shoulders plus sound-wave arcs — the "someone is
+// speaking" icon for a page's voiceover narration.
 function IconVoice() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-3 w-3">
@@ -232,9 +215,11 @@ export default function MusicPlayer() {
   useEffect(() => {
     function setupController(api: SpotifyIFrameApi) {
       if (!spotifyContainerRef.current || controllerRef.current) return;
+      const startIndex = Math.floor(Math.random() * TRACK_URIS.length);
+      setTrackIndex(startIndex);
       api.createController(
         spotifyContainerRef.current,
-        { uri: TRACK_URIS[0], width: "1", height: "1" },
+        { uri: TRACK_URIS[startIndex], width: "1", height: "1" },
         (controller) => {
           controllerRef.current = controller;
           controller.addListener("playback_update", (e) => {
@@ -242,6 +227,12 @@ export default function MusicPlayer() {
               setIsPlaying(!e.data.isPaused);
             }
           });
+          // Autoplay attempt, per the owner — browsers may block this
+          // without a prior user gesture on the page; the listener
+          // above corrects `isPlaying` back to false if so, and the
+          // button works normally from a manual click after that.
+          controller.play();
+          setIsPlaying(true);
         },
       );
     }
@@ -302,12 +293,6 @@ export default function MusicPlayer() {
     });
   }
 
-  function stop() {
-    controllerRef.current?.pause();
-    controllerRef.current?.seek(0);
-    setIsPlaying(false);
-  }
-
   // Went h-7/sm:h-8 → h-3.5/sm:h-4 (50% smaller) → h-5/sm:h-6, per the
   // owner: the 50%-smaller pass read too small, the original read too
   // big, this lands roughly halfway between the two.
@@ -349,28 +334,12 @@ export default function MusicPlayer() {
       >
         <IconNext />
       </button>
-      <button
-        type="button"
-        onClick={stop}
-        aria-label="Stop music"
-        className={`${buttonClass} bg-gt-navy text-gt-gold`}
-      >
-        <IconStop />
-      </button>
-      {/* Disabled, not removed — per the owner, Spotify's API has no
-          volume/mute method to wire this to, but it might get
-          repurposed later rather than deleted outright. */}
-      <button
-        type="button"
-        disabled
-        aria-label="Mute music (not available yet)"
-        aria-disabled="true"
-        className={`${buttonClass} cursor-not-allowed bg-gt-navy text-gt-gold opacity-40`}
-      >
-        <IconSpeaker />
-      </button>
       {voiceControls && (
         <>
+          {/* Divider, per the owner — visually separates the site-wide
+              music controls from this page's own voiceover controls,
+              since they're two unrelated systems sharing one row. */}
+          <div aria-hidden className="mx-1 h-4 w-px bg-gt-gold/40" />
           <button
             type="button"
             onClick={voiceControls.toggleMuted}
