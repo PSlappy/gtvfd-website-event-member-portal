@@ -2,8 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import {
+  backgroundColorValue,
+  backgroundImageValue,
+} from "@/lib/navColorTokens";
 import MusicPlayer from "./MusicPlayer";
+import { useNavTheme } from "./NavThemeContext";
 import SnakeTrail from "./SnakeTrail";
 import { VoiceControlsProvider } from "./VoiceControlsContext";
 
@@ -16,10 +21,12 @@ import { VoiceControlsProvider } from "./VoiceControlsContext";
  * strip, and bottom bar stay fixed. `bottomBar` is expected to be
  * `NextEventTicker`, which owns its own three-panel layout.
  *
- * "use client" + `usePathname` exist only to gate the test-only
- * Refresh Sweep effect below to `/nav-color-test` — remove both (and
- * that block) if this component doesn't need route-awareness for
- * anything else once that test page is gone.
+ * "use client" + `usePathname` gate the "Nav Settings" quick-link
+ * (hidden on `/nav-settings` itself) and read the live nav-bar-
+ * background color from `NavThemeContext` — this component has to be
+ * rendered inside `<NavThemeProvider>` (see `app/layout.tsx`), not the
+ * one creating it, since it needs to consume the same theme its own
+ * `nav` prop's `NavBarButton`s do.
  */
 export default function JumbotronFrame({
   nav,
@@ -33,7 +40,11 @@ export default function JumbotronFrame({
   bottomBar: ReactNode;
 }) {
   const pathname = usePathname();
-  const showRefreshSweepTest = pathname === "/nav-color-test";
+  const { theme } = useNavTheme();
+  const navBarBackgroundStyle: CSSProperties = {
+    backgroundColor: backgroundColorValue(theme.navBarBackground),
+    backgroundImage: backgroundImageValue(theme.navBarBackground),
+  };
 
   return (
     <VoiceControlsProvider>
@@ -58,8 +69,17 @@ export default function JumbotronFrame({
             {/* nav bar — its own screen behind the bezel, not shared with
             its neighbors. No padding here on purpose, per the owner —
             the six nav segments should fill this strip edge to edge,
-            not sit inset within it. */}
-            <div className="relative flex shrink-0 items-stretch border-b-[1px] border-gt-gray-light bg-gt-navy sm:border-b-2">
+            not sit inset within it. Background is the live
+            "Nav Bar Background Color" setting from /nav-settings now
+            (was a hardcoded bg-gt-navy class) — note this is
+            practically invisible in the current edge-to-edge layout,
+            since the segments cover the strip completely with no gap
+            for it to show through; it's still wired up correctly for
+            if that layout ever changes. */}
+            <div
+              className="relative flex shrink-0 items-stretch border-b-[1px] border-gt-gray-light sm:border-b-2"
+              style={navBarBackgroundStyle}
+            >
               {nav}
               <div
                 aria-hidden
@@ -218,17 +238,6 @@ export default function JumbotronFrame({
                 aria-hidden
                 className="gt-scan-sweep pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-transparent via-white/[0.05] to-transparent mix-blend-screen"
               />
-              {/* TEST ONLY, /nav-color-test — "Refresh Sweep": a faint,
-              fast, continuous band, meant to read as a barely-
-              noticeable display refresh rather than the more dramatic
-              scan-sweep above. See globals.css for why it's a
-              separate effect rather than a retune of that one. */}
-              {showRefreshSweepTest && (
-                <div
-                  aria-hidden
-                  className="gt-refresh-sweep pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-transparent via-white/[0.06] to-transparent mix-blend-screen"
-                />
-              )}
               <div
                 aria-hidden
                 className="gt-pixel-grid-screen pointer-events-none absolute inset-0 z-10 mix-blend-screen"
@@ -255,26 +264,29 @@ export default function JumbotronFrame({
               controls, if any, via VoiceControlsContext — see
               MusicPlayer.tsx. */}
               <MusicPlayer />
-              {/* TEMPORARY, per the owner: quick jump to the nav/button
-              color-test page from anywhere on the site, bottom-right
-              so it doesn't collide with MusicPlayer's centered row.
-              Hidden on the test page itself (no point linking to where
-              you already are). Remove once /nav-color-test is gone.
-              Positioning lives on this plain wrapper, not the Link
-              itself — `.gt-jumbotron-btn` hardcodes `position:
-              relative` (needed elsewhere to lift buttons above the
-              pixel-grid overlay) and, since it's defined later in
-              globals.css than Tailwind's utilities, silently wins over
-              an `absolute` class on the same element at equal
+              {/* Quick jump to the nav bar's live theme settings from
+              anywhere on the site, bottom-right so it doesn't collide
+              with MusicPlayer's centered row. Hidden on /nav-settings
+              itself (no point linking to where you already are).
+              Replaces the old /nav-color-test quick-link now that
+              that whole test page is gone — the settings screen is
+              its replacement, per the owner, so this isn't temporary
+              scaffolding the way that link was. Positioning lives on
+              this plain wrapper, not the Link itself —
+              `.gt-jumbotron-btn` hardcodes `position: relative`
+              (needed elsewhere to lift buttons above the pixel-grid
+              overlay) and, since it's defined later in globals.css
+              than Tailwind's utilities, silently wins over an
+              `absolute` class on the same element at equal
               specificity. Same reason MusicPlayer's row above keeps
               its own positioning on an outer div too. */}
-              {!showRefreshSweepTest && (
+              {pathname !== "/nav-settings" && (
                 <div className="pointer-events-none absolute bottom-3 right-3 z-40">
                   <Link
-                    href="/nav-color-test"
+                    href="/nav-settings"
                     className="gt-jumbotron-btn pointer-events-auto flex h-6 items-center rounded-full border-2 border-gt-gold bg-gt-navy px-2.5 text-[8px] font-bold uppercase tracking-wider text-gt-gold sm:h-7 sm:px-3 sm:text-[9px]"
                   >
-                    Button Test
+                    Nav Settings
                   </Link>
                 </div>
               )}

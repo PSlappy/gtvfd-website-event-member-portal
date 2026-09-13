@@ -53,10 +53,6 @@ export default function NavBar() {
             active={active}
             icon={item.icon}
             square={item.square}
-            // TEST ONLY, per the owner: preview a gold-bg/navy-text/
-            // white-outline combo on About specifically. Remove once
-            // they've seen it — see NavBarButton's doc comment.
-            colorPreview={item.href === "/about"}
             ariaLabel={item.icon ? item.label : undefined}
             ariaCurrent={active ? "page" : undefined}
           >

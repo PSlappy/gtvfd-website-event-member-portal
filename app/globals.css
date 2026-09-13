@@ -685,229 +685,6 @@ body {
 }
 
 /*
- * TEST-ONLY EFFECTS — both scoped to /nav-color-test for now, not
- * used anywhere else in the app yet. Per the owner: preview these
- * before deciding whether they belong on real buttons/screens
- * site-wide. Kept as their own classes (not folded into
- * `.gt-jumbotron-btn` or `JumbotronFrame`'s real scan-sweep) so nothing
- * here affects production until that decision is made.
- */
-
-/*
- * "Shine" — a soft diagonal light reflection sweeping from the
- * bottom-left corner to the upper-right, like a glint of light
- * reflecting off a glossy surface. `.gt-shine` is a plain absolutely-
- * positioned span placed *inside* a button (see Swatch in
- * app/nav-color-test/page.tsx) — deliberately its own element rather
- * than a pseudo-element on the button itself, since Chase Ring
- * already uses both `::before` and `::after` on the same host and a
- * given element can't have a third. `overflow: hidden` on `.gt-shine`
- * clips the sweep to the button's own rounded shape without touching
- * the parent's `overflow` (which has to stay visible for Chase Ring's
- * ring to extend outside the button as designed).
- */
-@keyframes gt-shine-sweep {
-  0%,
-  10% {
-    transform: translate(-45%, 45%);
-  }
-  55% {
-    transform: translate(45%, -45%);
-  }
-  100% {
-    transform: translate(45%, -45%);
-  }
-}
-
-.gt-shine {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  border-radius: inherit;
-  pointer-events: none;
-  /* White by default. `.gt-shine-gold`/`.gt-shine-navy` (combined
-     alongside this class) override the variable to run the same
-     sweep in a different color — same pattern as Chase Ring's
-     `--gt-chase-color`. */
-  --gt-shine-color: 255, 255, 255;
-}
-
-.gt-shine-gold {
-  --gt-shine-color: 179, 144, 81;
-}
-
-.gt-shine-navy {
-  --gt-shine-color: 94, 138, 196;
-}
-
-.gt-shine::before {
-  content: "";
-  position: absolute;
-  inset: -60%;
-  background: linear-gradient(
-    35deg,
-    transparent 44%,
-    rgba(var(--gt-shine-color), 0.55) 50%,
-    transparent 56%
-  );
-  animation: gt-shine-sweep 3.2s ease-in-out infinite;
-}
-
-/*
- * "Refresh Sweep" — a faint horizontal band drifting down the
- * screen on a quick, continuous loop, meant to read as a barely-
- * noticeable display refresh rather than the main screen's existing
- * `.gt-scan-sweep` (a single slow, more dramatic light beam). A
- * genuinely different effect, not a retune of the existing one, so
- * both can be compared independently.
- */
-@keyframes gt-refresh-sweep {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(100%);
-  }
-}
-
-.gt-refresh-sweep {
-  animation: gt-refresh-sweep 2s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gt-shine::before,
-  .gt-refresh-sweep {
-    animation: none;
-    opacity: 0;
-  }
-}
-
-/*
- * TEST-ONLY, /nav-color-test — "metallic" backgrounds: a banded
- * light/dark diagonal gradient meant to suggest a brushed-metal sheen
- * (a flat CSS color can't actually be metallic; a gradient is the
- * closest approximation). Per the owner, requested after seeing the
- * Tech Gold (Metallic) reference swatch, which used this same
- * technique because the brand guide gives Metallic Tech Gold (PMS
- * 10126 C) no RGB/CMYK/HEX at all — it's an offset-print-only spot
- * color, not something with an official digital value. Gold's bands
- * here are that same invented approximation; navy's and white's are
- * new, equally invented (their solid colors DO have official digital
- * values — `--gt-navy`, `--gt-gray-light` — a "metallic" version of
- * either is a look this brand guide doesn't define at all).
- *
- * Combined with `.gt-jumbotron-btn` via a compound selector (same
- * pattern as `.gt-depth-panel.gt-jumbotron-btn` elsewhere in this
- * file) rather than colliding with it: both classes would otherwise
- * set `background-image` outright on the same element, and whichever
- * came later in the file would silently win. The compound rule
- * layers the button's own glossy top-to-bottom highlight *over* the
- * metallic band gradient instead, so a metallic button still reads
- * as the same rendered CG object every other button on the site is,
- * just with a shimmering fill instead of a flat one.
- */
-.gt-jumbotron-btn.gt-metallic-gold {
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.35) 0%,
-      rgba(255, 255, 255, 0.05) 40%,
-      rgba(0, 0, 0, 0.15) 100%
-    ),
-    linear-gradient(
-      135deg,
-      #b39051 0%,
-      #ddc38a 22%,
-      #8a7350 45%,
-      #ddc38a 68%,
-      #b39051 100%
-    );
-}
-
-.gt-jumbotron-btn.gt-metallic-navy {
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.25) 0%,
-      rgba(255, 255, 255, 0.03) 40%,
-      rgba(0, 0, 0, 0.25) 100%
-    ),
-    linear-gradient(
-      135deg,
-      #051e39 0%,
-      #3d5f8a 22%,
-      #02101f 45%,
-      #3d5f8a 68%,
-      #051e39 100%
-    );
-}
-
-.gt-jumbotron-btn.gt-metallic-white {
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.5) 0%,
-      rgba(255, 255, 255, 0.1) 40%,
-      rgba(0, 0, 0, 0.08) 100%
-    ),
-    linear-gradient(
-      135deg,
-      #e5e5e5 0%,
-      #ffffff 22%,
-      #9a9a9a 45%,
-      #ffffff 68%,
-      #e5e5e5 100%
-    );
-}
-
-/*
- * TEST-ONLY, /nav-color-test's metallic-comparison row: strips the
- * button's own semi-transparent glossy overlay (the first, top layer
- * in every `.gt-metallic-*` rule above, and in `.gt-jumbotron-btn`'s
- * own base `background-image`) so these six swatches show a fully
- * solid, undiluted fill — flat color or pure metallic bands, with no
- * alpha blending — per the owner, for a cleaner side-by-side
- * comparison. Not meant for use anywhere else; every other button on
- * the site keeps its glossy highlight.
- */
-.gt-jumbotron-btn.gt-solid-fill {
-  background-image: none;
-}
-
-.gt-jumbotron-btn.gt-metallic-gold.gt-solid-fill {
-  background-image: linear-gradient(
-    135deg,
-    #b39051 0%,
-    #ddc38a 22%,
-    #8a7350 45%,
-    #ddc38a 68%,
-    #b39051 100%
-  );
-}
-
-.gt-jumbotron-btn.gt-metallic-navy.gt-solid-fill {
-  background-image: linear-gradient(
-    135deg,
-    #051e39 0%,
-    #3d5f8a 22%,
-    #02101f 45%,
-    #3d5f8a 68%,
-    #051e39 100%
-  );
-}
-
-.gt-jumbotron-btn.gt-metallic-white.gt-solid-fill {
-  background-image: linear-gradient(
-    135deg,
-    #e5e5e5 0%,
-    #ffffff 22%,
-    #9a9a9a 45%,
-    #ffffff 68%,
-    #e5e5e5 100%
-  );
-}
-
-/*
  * Nav bar "scoreboard segment" buttons, per the owner: the primary
  * nav no longer uses the site's usual pill-shaped `JumbotronButton`
  * (that style is unchanged everywhere else) — it's six equal-width
@@ -918,43 +695,52 @@ body {
  * every other button on the site that folding it into the shared
  * component would mean more conditional branches than shared code.
  *
- * Text uses the same banded metallic-gold gradient as
- * `.gt-metallic-gold` above, clipped to the glyphs themselves via
- * `background-clip: text` instead of filling a box, plus a
+ * Text uses the same banded metallic-gold gradient used throughout the
+ * site (see `lib/navColorTokens.ts`), clipped to the glyphs themselves
+ * via `background-clip: text` instead of filling a box, plus a
  * `-webkit-text-stroke` outline for bold "scoreboard lettering."
  * Colors are plain classes rather than Tailwind's hover:/active:
  * utilities since a gradient text fill and a text-stroke outline
  * aren't expressible as Tailwind utilities.
+ *
+ * Rest-state colors are CSS custom properties now, not literal values
+ * — `NavBarButton.tsx` sets them inline per-render from
+ * `NavThemeContext` (the owner's live settings screen at
+ * `/nav-settings`), so the same rule here can render whatever the
+ * owner currently has configured. The `var(..., fallback)` second
+ * argument is each property's original hardcoded value, so anything
+ * that doesn't set these (there isn't anything, in practice, but it's
+ * a safety net) still renders the site's actual default look. Hover/
+ * Click/Current below stay hardcoded, deliberately not configurable —
+ * only Rest is meant to be live-tunable.
  */
 .gt-nav-scoreboard-btn {
   position: relative;
   z-index: 20;
   isolation: isolate;
   mix-blend-mode: normal;
-  /* Rest now uses what used to be the Click-only background (light
-     gray), per the owner — Click's own rule below still sets the same
-     value explicitly rather than relying on inheriting this, so it
-     stays correct on its own if Rest ever changes again. Border is
-     white here, not navy — this state's own spec, not carried over
-     from the old Click state, which was navy. */
-  background-color: var(--gt-gray-light);
-  border-color: #ffffff;
+  background-color: var(--gt-nav-btn-bg-color, var(--gt-gray-light));
+  background-image: var(--gt-nav-btn-bg-image, none);
+  border-color: var(--gt-nav-btn-border-color, #ffffff);
 }
 
 .gt-nav-scoreboard-text {
-  background-image: linear-gradient(
-    135deg,
-    #b39051 0%,
-    #ddc38a 22%,
-    #8a7350 45%,
-    #ddc38a 68%,
-    #b39051 100%
+  background-image: var(
+    --gt-nav-text-bg-image,
+    linear-gradient(
+      135deg,
+      #b39051 0%,
+      #ddc38a 22%,
+      #8a7350 45%,
+      #ddc38a 68%,
+      #b39051 100%
+    )
   );
   background-clip: text;
   -webkit-background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  -webkit-text-stroke: 0.5px #ffffff;
+  color: var(--gt-nav-text-color, transparent);
+  -webkit-text-fill-color: var(--gt-nav-text-fill-color, transparent);
+  -webkit-text-stroke: 0.5px var(--gt-nav-text-stroke-color, #ffffff);
 }
 
 /* Hover, per the owner: background navy, fill navy (matches the
@@ -1065,47 +851,4 @@ body {
  */
 .gt-nav-scoreboard-icon {
   display: flex;
-}
-
-/*
- * TEST ONLY, per the owner: locks a single nav segment (About, wired
- * in NavBar.tsx) into a fixed gold-background/navy-text/white-outline
- * combo regardless of route or hover/click, purely so the owner can
- * see the combination in place. Not a real variant — remove this
- * block (and the `colorPreview` prop in NavBarButton.tsx) once it's
- * served its purpose. Placed last and compounded with `.gt-nav-current`
- * too so it wins even if About is ever the active route while this is
- * still in place.
- */
-.gt-nav-scoreboard-btn.gt-nav-color-preview,
-.gt-nav-scoreboard-btn.gt-nav-color-preview:hover,
-.gt-nav-scoreboard-btn.gt-nav-color-preview:active,
-.gt-nav-scoreboard-btn.gt-nav-current.gt-nav-color-preview,
-.gt-nav-scoreboard-btn.gt-nav-current.gt-nav-color-preview:hover,
-.gt-nav-scoreboard-btn.gt-nav-current.gt-nav-color-preview:active {
-  background-color: transparent;
-  background-image: linear-gradient(
-    135deg,
-    #b39051 0%,
-    #ddc38a 22%,
-    #8a7350 45%,
-    #ddc38a 68%,
-    #b39051 100%
-  );
-  border-color: #ffffff;
-}
-
-.gt-nav-scoreboard-btn.gt-nav-color-preview .gt-nav-scoreboard-text,
-.gt-nav-scoreboard-btn.gt-nav-color-preview:hover .gt-nav-scoreboard-text,
-.gt-nav-scoreboard-btn.gt-nav-color-preview:active .gt-nav-scoreboard-text,
-.gt-nav-scoreboard-btn.gt-nav-current.gt-nav-color-preview .gt-nav-scoreboard-text,
-.gt-nav-scoreboard-btn.gt-nav-current.gt-nav-color-preview:hover
-  .gt-nav-scoreboard-text,
-.gt-nav-scoreboard-btn.gt-nav-current.gt-nav-color-preview:active
-  .gt-nav-scoreboard-text {
-  background-image: none;
-  color: var(--gt-navy);
-  -webkit-text-fill-color: var(--gt-navy);
-  -webkit-text-stroke: 0.5px #ffffff;
-  animation: none;
 }
