@@ -384,151 +384,94 @@ reference site's internal class/variable names, which were
 use these names, not a re-description, when any of them comes up
 again in later conversations.
 
-**Nav color A/B test moved off the real nav, onto its own page.** The
-first pass put the test combos directly on `NavBar` (About through
-Book Us always showing their assigned color regardless of the actual
-current page); the owner then asked for that reverted and the
-comparison done on a dedicated page instead. `NavBar` is back to
-exactly its normal state — current-page-is-gold, everything else
-`outline` — with no trace of the test left in it, and the temporary
-`navyWhite`/`navyGold` variants that only existed to support it were
-removed from `JumbotronButton`.
-**The comparison itself lives at `/nav-color-test`**
-(`app/nav-color-test/page.tsx`) — **not linked from the real nav,
-visit it directly by URL. This whole route is temporary — delete it
-once the owner picks a direction**, along with reverting the note
-above the moment `NavBar` actually changes for real. (Explicitly
-confirmed still wanted as of a later round of feedback — don't delete
-unprompted just because some time has passed.) The original comparison
-needed one real, permanent addition to `JumbotronButton` that's stayed
-regardless of what this page currently shows: a third Chase Ring
-color, `.gt-chase-navy` (a brightened blue — the literal `--gt-navy`
-is nearly invisible against this site's own black/navy backgrounds —
-same color `SnakeTrail` uses for its navy dots), alongside the
-existing gold default and `.gt-chase-white`.
+**Nav color testing history (all superseded — /nav-color-test is
+deleted).** Briefly: the comparison started as a direct edit to
+`NavBar` itself, got moved to its own page once the owner asked for a
+side-by-side view instead, then went through many rebuilds (a navy/
+white/gold Chase-Ring comparison, a Shine/Refresh-Sweep preview, a
+Tech Gold brand-guide reference row, a metallic-vs-current fill
+comparison, then a plain 3-row/4-column color-combo table, then that
+same table duplicated across several nav-panel backgrounds) before the
+owner proposed replacing the whole approach — see below. One real,
+permanent artifact survived all of it: `.gt-chase-navy` on
+`JumbotronButton` (a brightened blue Chase Ring color — the literal
+`--gt-navy` is nearly invisible against this site's own black/navy
+backgrounds — same color `SnakeTrail` uses for its navy dots). Two
+standing definitions from that history are still load-bearing for the
+live settings screen below: **"Grey" always means Light Gray
+(`#E5E5E5`, RGB 229/229/229)**, and **"Navy [Blue]" means the literal
+`--gt-navy` (`#051E39`, RGB 5/30/57)** — not a guess, restate these if
+asked again without values given. The Metallic Tech Gold site-wide
+replacement question is also still genuinely open — no comparison UI
+supports looking at it anymore, but nothing about the decision itself
+changed; revisit once the owner wants to look at that again.
 
-**Rebuilt from scratch more than once since, per the owner — most
-recently, entirely replacing every prior row.** Earlier versions of
-this page carried, in order: the original navy/white/gold Chase-Ring
-comparison (a local `Swatch` component), a Shine/Refresh-Sweep preview
-row, a Tech Gold brand-guide reference row (real values fetched from
-ramblinwreck.com/georgia-tech-athletics-brand-guidelines — PMS 118C,
-its CMYK equivalent, and the digital HEX all convert to RGB 179, 144,
-81; Metallic Tech Gold PMS 10126 C has no official digital value at
-all, offset-print-only), and a current-vs-metallic fill comparison
-(`.gt-solid-fill` in globals.css, still there, strips the button
-gloss overlay for a clean comparison). **All of that is gone now** —
-the owner asked for every button removed and replaced with exactly
-three rows of four color-combo swatches (see the file for the live
-spec), styled as exact copies of the real nav bar's `NavBarButton` box
-model/text treatment rather than the old pill-shaped `Swatch`.
-`.gt-shine`/`.gt-refresh-sweep` in globals.css and the
-`showRefreshSweepTest` route gate in `JumbotronFrame.tsx` are left in
-place but currently unused by this page — nothing renders them right
-now; remove them too if this route's purpose keeps changing and they
-stay unused.
+**Replaced entirely with a live theme settings screen, per the
+owner's own idea.** Rather than Claude hand-editing a static
+comparison page every round, the owner wanted to adjust the *real* nav
+bar's colors directly and see it update immediately — "just like
+light/dark mode... but with more colors and on more elements." Built
+as:
+- **`lib/navColorTokens.ts`** — the shared four-color vocabulary
+  (White, Grey, Metallic Gold, Navy — deliberately only these four,
+  not the wider set test pages used over time) plus
+  `backgroundColorValue()`/`backgroundImageValue()` helpers (Metallic
+  Gold needs a `background-image` gradient since it has no flat
+  digital value; the other three are flat `background-color`s).
+- **`components/jumbotron/NavThemeContext.tsx`** — a `NavTheme` (five
+  properties: `buttonBackground`, `fontColor`, `fontOutlineColor`,
+  `buttonBorderColor`, `navBarBackground`) held in React state,
+  provided once in `app/layout.tsx` (wrapping `<JumbotronFrame>`, not
+  created inside it — `JumbotronFrame` itself needs to consume the
+  same theme its `nav` prop's buttons do, so the provider has to be an
+  ancestor of both). Persisted to `localStorage`, read back in a
+  `useEffect` after mount rather than a `useState` lazy initializer —
+  the same hydration-mismatch reasoning already documented for
+  `PageTransition`'s random-transition pick: this provider wraps
+  server-rendered content, so reading a browser-only API during the
+  initial render would make the client's first paint disagree with
+  what the server sent. `DEFAULT_NAV_THEME` matches the site's actual
+  shipped look, so an unvisited/reset settings screen changes nothing.
+- **`app/nav-settings/page.tsx`** — the settings UI: five rows (one
+  per `NavTheme` property), four circular swatches each, click to
+  select. Not linked from the real nav (an internal tool, not visitor
+  content) — reachable via the "Nav Settings" quick-link, bottom-right
+  of the main screen (`JumbotronFrame.tsx`, replaces the old "Button
+  Test" link that pointed at `/nav-color-test`; hidden on
+  `/nav-settings` itself). Also has a "Reset to Defaults" button.
+- **`NavBarButton.tsx`** now sets the theme as CSS custom properties
+  via inline `style` (e.g. `--gt-nav-btn-bg-color`), not literal
+  inline style properties directly — load-bearing distinction: a
+  literal `style={{ backgroundColor: ... }}` would have permanently
+  pinned that property regardless of hover/active state (inline style
+  always beats a stylesheet rule, pseudo-class or not, unless that
+  rule uses `!important`), breaking Hover/Click/Current entirely. A
+  custom property is just a variable; `.gt-nav-scoreboard-btn`'s own
+  rule reads it via `var(--gt-nav-btn-bg-color, <original hardcoded
+  value>)`, and Hover/Click/Current's existing rules (which set
+  literal values, unchanged) still win on top of it at their own
+  higher specificity, exactly as before. **Only Rest is configurable
+  this way, on purpose** — Hover/Click/Current keep their designed
+  behavior untouched.
+- `colorPreview` (the one-off About-only locked test combo) was
+  removed entirely from `NavBarButton`/`NavBar`/globals.css —
+  superseded by the real settings screen.
+- Dead CSS deleted along with the page: `.gt-shine*`,
+  `.gt-refresh-sweep`, `.gt-metallic-gold`/`-navy`/`-white`,
+  `.gt-solid-fill`, `.gt-nav-color-preview`, and
+  `JumbotronFrame.tsx`'s `showRefreshSweepTest` route gate — none of
+  it was used anywhere except the deleted page.
 
-**The Metallic Tech Gold site-wide replacement question is still
-genuinely open** — the comparison UI that supported that decision no
-longer exists on this page, but `.gt-metallic-gold`/`-navy`/`-white`
-in globals.css are untouched and the actual site-wide swap still
-hasn't happened. Revisit once the owner wants to look at that again.
-
-**Follow-up fixes to the rebuilt three-row page, per the owner:**
-- Row 1's Donations swatch had the wrong border — Metallic Gold in the
-  original spec table, corrected to Navy (an error in the table
-  itself, not a build mistake).
-- Couldn't scroll far enough to see Row 3 fully: the page's own
-  `py-10` bottom padding wasn't enough clearance for the persistent
-  media-controls row + fade (`MusicPlayer`, fixed/absolute at the
-  bottom of the main screen, so it doesn't add to document-flow
-  height) — the crawl's max-scroll stopped short of the last row,
-  leaving it stuck partly hidden underneath. Fixed with `pb-32`.
-- Each row now sits inside a wrapper matching the real nav bar's own
-  chrome exactly — navy background, thin light-gray border (`border-y`
-  here since this is a standalone strip, not the real nav's `border-b`
-  nested inside the outer frame), and the same `.gt-pixel-grid`
-  overlay — instead of floating directly on the plain black main-
-  screen background. Per the owner: "I need to see what the buttons
-  look like on a nav bar."
-- Added a temporary "Button Test" quick-link (small pill,
-  `JumbotronFrame.tsx`, bottom-right of the main screen, hidden on
-  `/nav-color-test` itself) so this page is reachable from anywhere on
-  the site without typing the URL. **Real bug caught building it:**
-  `.gt-jumbotron-btn` hardcodes `position: relative` (needed elsewhere
-  to lift buttons above the pixel-grid overlay), and since it's
-  defined later in globals.css than Tailwind's utilities, it silently
-  won over an `absolute` class on the same element at equal
-  specificity — the link rendered inline and 642px wide instead of
-  pinned to the corner. Fixed by moving `absolute`/`bottom-3`/`right-3`
-  to a plain wrapper div around the link instead, the same pattern
-  `MusicPlayer`'s own row already uses for the identical reason.
-  **Briefly removed, then restored the same turn it was flagged** — a
-  follow-up message ("I dont need a temp button to navigate to the
-  test button page anywhere?") was misread as a removal request, but
-  the owner meant the opposite: it was needed and hadn't actually been
-  visible/working for them yet. Back in `JumbotronFrame.tsx`
-  unchanged from the original description above.
-
-**Two more follow-up fixes on this page, per the owner:**
-- **Real bug:** the swatches read as washed-out/translucent instead of
-  solid right after the nav-bar-matching wrapper (with its
-  `.gt-pixel-grid` overlay) was added — the overlay is
-  `position: absolute` with its own `z-10`, which paints above any
-  non-positioned sibling regardless of DOM order, the exact bug
-  documented repeatedly elsewhere in this codebase
-  (`.gt-jumbotron-btn`'s own `z-index: 20` exists for the same
-  reason). Fixed the same way: `relative z-20` on `TestNavButton`.
-- Row 1's Schedule swatch removed entirely ("I don't like that
-  design") — that row is three buttons now, not four.
-
-**Row 1 corrected again, then duplicated across four backgrounds, per
-the owner.** Contact's swatch was still wrong: Metallic Gold font,
-Navy font outline, White button border (was Navy font / Metallic Gold
-outline / Metallic Gold border) — the `row1Buttons` array is now
-shared/reused rather than redefined per row, so this fix (and any
-future one to Row 1's three buttons) automatically applies everywhere
-Row 1 appears. Four more rows were added directly under the original,
-each an exact duplicate of Row 1's three buttons, differing only in
-the *panel* (strip) background behind them: Grey, Metallic Gold, Navy,
-Black, in that order — not the individual buttons' own `background`
-field, which stays grey for all five. Required pulling the panel
-background out of the hardcoded `bg-gt-navy` class on the row wrapper
-into a new `panelBackground` field on `TestRow`, applied via
-`backgroundStyle()` (the same helper the buttons already use) as an
-inline style. A new `"black"` `ColorToken` was added for the last
-duplicate — pure `#000000`, matching the main screen's own background.
-
-**Real bug caught right after: the four duplicate rows' panel colors
-were set correctly but never actually visible** — the buttons are
-`flex-1` with zero gap between them (matching the real nav bar
-exactly), so they tile the strip completely and there's no gap left
-for the panel background to show through no matter what it's set to;
-every row just looked white/grey regardless. Fixed with a new
-`showPanelPadding` flag on `TestRow` (`gap-2 p-3` on the wrapper),
-applied only to the four duplicate rows, whose whole point is
-comparing panel colors — Row 1/2/3 themselves stay flush edge-to-edge,
-unchanged, since they're still meant to match the real nav bar's own
-look exactly.
-
-**Then replaced entirely with the owner's exact five backgrounds, in
-this order: White, Grey, Metallic Gold, Navy Blue, Black.** Supersedes
-the "four duplicates on Grey/Metallic Gold/Navy/Black" set above —
-White is new, and there's only one Navy row now (not an original-plus-
-duplicate). Row 1's three buttons stay identical across all five;
-`showPanelPadding` carries over unchanged. Also added a `noOverlay`
-flag ("All of these Nav Bar Tests should have NO transparency to
-them") that skips the `.gt-pixel-grid` overlay on these five rows
-specifically — the dot-texture `mix-blend-overlay` was diluting the
-requested solid color even though each color value itself had no
-alpha. Row 2/3 keep the overlay, since they weren't part of this
-complaint and are still meant to match the real nav bar exactly.
-**"Grey" and "Navy Blue" are now standing color definitions, per the
-owner** — Grey always means Light Gray (`#E5E5E5`, RGB 229/229/229,
-already this page's existing `grey` token, unchanged), Navy Blue is
-the literal `--gt-navy` (`#051E39`, RGB 5/30/57). Worth remembering
-for any future request that just says "Grey" or "Navy Blue" without
-restating the values.
+**Known limitation, flagged in code comments, not silently shipped:**
+"Nav Bar Background Color" is fully wired up (the nav wrapper's
+background in `JumbotronFrame.tsx` reads the same theme), but has
+**no visible effect** in the nav bar's current edge-to-edge layout —
+the six segments are `flex-1` with zero gap and cover the strip
+completely, so there's no exposed panel area for that color to show
+through, the same root cause the old test page's "duplicate on
+different backgrounds" rows had to work around with extra padding.
+Revisit if the owner wants this setting to actually do something
+without changing the nav's fill-the-strip layout.
 
 Stage 5 (Schedule page content) is done. `/schedule` already covered
 the literal spec since stage 2's pull-forward (Date, Opponent,
